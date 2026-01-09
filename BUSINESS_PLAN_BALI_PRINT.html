@@ -10,6 +10,11 @@
             margin: 20mm;
         }
         
+        @media print {
+            @page { margin: 20mm; }
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -42,46 +47,55 @@
             align-items: center;
             min-height: 100vh;
             text-align: center;
-            background: linear-gradient(135deg, #0066cc 0%, #00b8d4 100%);
-            color: white;
+            background: #fff;
+            color: #1a1a1a;
             padding: 40px;
+            border: 2px solid #1a1a1a;
+        }
+        
+        /* Рамка для всех страниц */
+        .content {
+            border: 1px solid #ddd;
+            padding: 25px 30px;
+            min-height: calc(100vh - 40mm);
         }
         
         .cover h1 {
-            font-size: 36pt;
+            font-size: 42pt;
             font-weight: 700;
             margin-bottom: 20px;
+            letter-spacing: 2px;
         }
         
         .cover h2 {
-            font-size: 20pt;
+            font-size: 18pt;
             font-weight: 400;
             margin-bottom: 40px;
-            opacity: 0.9;
+            color: #555;
         }
         
         .cover .meta {
             font-size: 12pt;
-            opacity: 0.8;
-            margin-top: 60px;
+            color: #666;
+            margin-top: 80px;
         }
         
-        .cover .logo {
-            font-size: 72pt;
-            margin-bottom: 30px;
+        .cover .brand {
+            font-size: 24pt;
+            font-weight: 700;
+            margin-bottom: 60px;
+            letter-spacing: 3px;
+            border-bottom: 3px solid #1a1a1a;
+            padding-bottom: 15px;
         }
         
-        /* Content pages */
-        .content {
-            padding: 20px 0;
-        }
         
         h1 {
             font-size: 22pt;
-            color: #0066cc;
+            color: #1a1a1a;
             margin: 30px 0 20px 0;
             padding-bottom: 10px;
-            border-bottom: 3px solid #0066cc;
+            border-bottom: 3px solid #1a1a1a;
         }
         
         h2 {
@@ -106,6 +120,7 @@
             border-collapse: collapse;
             margin: 15px 0;
             font-size: 10pt;
+            page-break-inside: avoid;
         }
         
         th, td {
@@ -125,7 +140,7 @@
         }
         
         .highlight-row {
-            background: #e6f3ff !important;
+            background: #e8e8e8 !important;
             font-weight: 600;
         }
         
@@ -139,9 +154,10 @@
         
         .box {
             background: #f8f9fa;
-            border-left: 4px solid #0066cc;
+            border-left: 4px solid #333;
             padding: 15px 20px;
             margin: 15px 0;
+            page-break-inside: avoid;
         }
         
         .box-green {
@@ -157,7 +173,7 @@
         }
         
         .summary-table th {
-            background: #0066cc;
+            background: #333;
             color: white;
         }
         
@@ -187,12 +203,8 @@
             color: #dc3545;
         }
         
-        .star {
-            color: #ffc107;
-        }
-        
         strong {
-            color: #0066cc;
+            color: #1a1a1a;
         }
         
         .footer {
@@ -211,19 +223,68 @@
         .no-break {
             page-break-inside: avoid;
         }
+        
+        /* Kanban */
+        .kanban {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            page-break-inside: avoid;
+        }
+        
+        .kanban-column {
+            flex: 1;
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .kanban-header {
+            font-weight: 700;
+            font-size: 11pt;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .kanban-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 8px;
+            font-size: 9pt;
+        }
+        
+        .kanban-card strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .kanban-tag {
+            display: inline-block;
+            font-size: 8pt;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-top: 5px;
+        }
+        
+        .tag-ready { background: #d4edda; color: #155724; }
+        .tag-progress { background: #fff3cd; color: #856404; }
+        .tag-planned { background: #e2e3e5; color: #383d41; }
     </style>
 </head>
 <body>
 
 <!-- ОБЛОЖКА -->
 <div class="page cover">
-    <div class="logo">💧</div>
+    <div class="brand">AQUAFUTURE</div>
     <h1>БИЗНЕС-ПЛАН</h1>
-    <h2>Производство премиальной воды<br>из воздуха на Бали</h2>
+    <h2>Производство премиальной воды<br>из воздуха на Бали, Индонезия</h2>
     <div class="meta">
-        <p><strong>AquaFuture</strong></p>
-        <p>Версия 1.0 | Январь 2026</p>
-        <p>Конфиденциально</p>
+        <p>Версия 1.0</p>
+        <p>Январь 2026</p>
+        <p style="margin-top: 20px; font-style: italic;">Конфиденциально</p>
     </div>
 </div>
 
@@ -241,8 +302,9 @@
         <li>Финансовые прогнозы</li>
         <li>План запуска</li>
         <li>Каналы сбыта</li>
-        <li>Риски и митигация</li>
+        <li>Риски и способы снижения</li>
         <li>Условия для инвестора</li>
+        <li>Планы развития</li>
     </ol>
 </div>
 
@@ -272,7 +334,7 @@
             <li><span class="check">✓</span> <strong>Низкие операционные расходы</strong> — 60% от выручки</li>
             <li><span class="check">✓</span> <strong>Премиальный рынок</strong> — 6+ млн туристов в год</li>
             <li><span class="check">✓</span> <strong>Высокий спрос</strong> — отели 4-5*, виллы, рестораны, спа</li>
-            <li><span class="check">✓</span> <strong>Экологичное позиционирование</strong> — тренд на sustainability</li>
+            <li><span class="check">✓</span> <strong>Экологичное позиционирование</strong> — тренд на экологичность и бережное производство</li>
         </ul>
     </div>
 </div>
@@ -336,8 +398,9 @@
         <tr><th>Год</th><th>Туристов (млн)</th></tr>
         <tr><td>2023</td><td>5.3</td></tr>
         <tr><td>2024</td><td>6.1</td></tr>
-        <tr><td>2025 (прогноз)</td><td>6.8</td></tr>
+        <tr><td>2025</td><td>6.8</td></tr>
         <tr><td>2026 (прогноз)</td><td><strong>7.2</strong></td></tr>
+        <tr><td>2027 (прогноз)</td><td><strong>7.6</strong></td></tr>
     </table>
     
     <h2>Целевые сегменты B2B</h2>
@@ -398,7 +461,7 @@
     <h2>Юридическая структура</h2>
     <div class="box">
         <ul>
-            <li><strong>Форма:</strong> PT (Perseroan Terbatas) — индонезийское ООО</li>
+            <li><strong>Форма:</strong> Perseroan Terbatas (индонезийское ООО)</li>
             <li><strong>Минимальный капитал:</strong> $70 000 (для иностранных инвесторов)</li>
             <li><strong>Лицензия:</strong> BPOM (аналог Роспотребнадзора)</li>
             <li><strong>Срок регистрации:</strong> 2-4 недели</li>
@@ -417,7 +480,7 @@
             <th>1 000 л/сут</th>
             <th>2 000 л/сут</th>
             <th>3 000 л/сут</th>
-            <th style="background:#0066cc;color:white;">5 000 л/сут ⭐</th>
+            <th style="background:#333;color:white;">5 000 л/сут ★</th>
             <th>10 000 л/сут</th>
         </tr>
         <tr>
@@ -425,7 +488,7 @@
             <td>$150 000</td>
             <td>$215 000</td>
             <td>$320 000</td>
-            <td style="background:#e6f3ff;"><strong>$470 000</strong></td>
+            <td style="background:#e8e8e8;"><strong>$470 000</strong></td>
             <td>$960 000</td>
         </tr>
         <tr>
@@ -433,7 +496,7 @@
             <td>780 л</td>
             <td>1 560 л</td>
             <td>2 340 л</td>
-            <td style="background:#e6f3ff;">3 900 л</td>
+            <td style="background:#e8e8e8;">3 900 л</td>
             <td>7 800 л</td>
         </tr>
         <tr>
@@ -441,7 +504,7 @@
             <td>284 700 л</td>
             <td>569 400 л</td>
             <td>854 100 л</td>
-            <td style="background:#e6f3ff;">1 423 500 л</td>
+            <td style="background:#e8e8e8;">1 423 500 л</td>
             <td>2 847 000 л</td>
         </tr>
         <tr>
@@ -449,7 +512,7 @@
             <td>$119 574</td>
             <td>$239 148</td>
             <td>$358 722</td>
-            <td style="background:#e6f3ff;">$597 870</td>
+            <td style="background:#e8e8e8;">$597 870</td>
             <td>$1 195 740</td>
         </tr>
         <tr>
@@ -457,7 +520,7 @@
             <td>$47 830</td>
             <td>$95 659</td>
             <td>$143 489</td>
-            <td style="background:#e6f3ff;">$239 148</td>
+            <td style="background:#e8e8e8;">$239 148</td>
             <td>$478 296</td>
         </tr>
         <tr>
@@ -465,7 +528,7 @@
             <td>$23 915</td>
             <td>$47 830</td>
             <td>$71 744</td>
-            <td style="background:#e6f3ff;"><strong>$119 574</strong></td>
+            <td style="background:#e8e8e8;"><strong>$119 574</strong></td>
             <td>$239 148</td>
         </tr>
         <tr>
@@ -473,7 +536,7 @@
             <td>15.9%</td>
             <td>22.2%</td>
             <td>22.4%</td>
-            <td style="background:#e6f3ff;"><strong>25.4%</strong></td>
+            <td style="background:#e8e8e8;"><strong>25.4%</strong></td>
             <td>24.9%</td>
         </tr>
         <tr>
@@ -481,13 +544,13 @@
             <td>6.3 года</td>
             <td>4.5 года</td>
             <td>4.5 года</td>
-            <td style="background:#e6f3ff;"><strong>3.9 года</strong></td>
+            <td style="background:#e8e8e8;"><strong>3.9 года</strong></td>
             <td>4.0 года</td>
         </tr>
     </table>
     
     <div class="box box-green">
-        <h3>⭐ Рекомендация: 5 000 л/сутки</h3>
+        <h3>★ Рекомендация: 5 000 л/сутки</h3>
         <ul>
             <li><span class="check">✓</span> Лучший ROI (25.4%)</li>
             <li><span class="check">✓</span> Быстрая окупаемость (3.9 года)</li>
@@ -512,7 +575,7 @@
         <tr><td>Лицензии (BPOM)</td><td>$5 000</td><td>1.1%</td></tr>
         <tr><td>Маркетинг и запуск</td><td>$22 000</td><td>4.7%</td></tr>
         <tr style="background:#fff3cd;"><td><strong>Резервный фонд</strong></td><td><strong>$125 800</strong></td><td><strong>26.8%</strong></td></tr>
-        <tr style="background:#e6f3ff;"><td><strong>Комиссия организатора</strong></td><td><strong>$94 000</strong></td><td><strong>20.0%</strong></td></tr>
+        <tr style="background:#e8e8e8;"><td><strong>Комиссия организатора</strong></td><td><strong>$94 000</strong></td><td><strong>20.0%</strong></td></tr>
         <tr style="background:#d4edda;"><td><strong>ИТОГО</strong></td><td><strong>$470 000</strong></td><td><strong>100%</strong></td></tr>
     </table>
     
@@ -590,7 +653,7 @@
     <table>
         <tr><th>Сценарий</th><th>Влажность</th><th>Цена</th><th>ROI</th><th>Окупаемость</th></tr>
         <tr><td>Пессимистичный</td><td>65%</td><td>$0.35</td><td>12%</td><td>8.3 лет</td></tr>
-        <tr style="background:#e6f3ff;"><td><strong>Базовый</strong></td><td><strong>78%</strong></td><td><strong>$0.42</strong></td><td><strong>25%</strong></td><td><strong>3.9 лет</strong></td></tr>
+        <tr style="background:#e8e8e8;"><td><strong>Базовый</strong></td><td><strong>78%</strong></td><td><strong>$0.42</strong></td><td><strong>25%</strong></td><td><strong>3.9 лет</strong></td></tr>
         <tr><td>Оптимистичный</td><td>85%</td><td>$0.50</td><td>38%</td><td>2.6 лет</td></tr>
     </table>
 </div>
@@ -599,7 +662,7 @@
 <div class="page content">
     <h1>9. План запуска</h1>
     
-    <h2>Timeline: 3-5 месяцев</h2>
+    <h2>График работ: 3-5 месяцев</h2>
     
     <table>
         <tr><th>Этап</th><th>Описание</th><th>Срок</th></tr>
@@ -608,7 +671,7 @@
             <td>
                 • Подписание инвестиционного соглашения<br>
                 • Перевод 100% инвестиций<br>
-                • Регистрация PT (ООО в Индонезии)
+                • Регистрация ООО в Индонезии
             </td>
             <td>1-2 нед</td>
         </tr>
@@ -669,6 +732,44 @@
         </tr>
     </table>
     
+    <h2>Канбан-доска проекта</h2>
+    <div class="kanban">
+        <div class="kanban-column">
+            <div class="kanban-header">Готово</div>
+            <div class="kanban-card">
+                <strong>Бизнес-план</strong>
+                Разработка и расчёты
+                <div><span class="kanban-tag tag-ready">Готово</span></div>
+            </div>
+            <div class="kanban-card">
+                <strong>Калькулятор ROI</strong>
+                Веб-инструмент для инвесторов
+                <div><span class="kanban-tag tag-ready">Готово</span></div>
+            </div>
+        </div>
+        <div class="kanban-column">
+            <div class="kanban-header">В работе</div>
+            <div class="kanban-card">
+                <strong>Поиск инвестора</strong>
+                Презентации, переговоры
+                <div><span class="kanban-tag tag-progress">В процессе</span></div>
+            </div>
+        </div>
+        <div class="kanban-column">
+            <div class="kanban-header">Запланировано</div>
+            <div class="kanban-card">
+                <strong>Подписание договора</strong>
+                Инвестиционное соглашение
+                <div><span class="kanban-tag tag-planned">Ожидание</span></div>
+            </div>
+            <div class="kanban-card">
+                <strong>Запуск Бали</strong>
+                Первая точка
+                <div><span class="kanban-tag tag-planned">Ожидание</span></div>
+            </div>
+        </div>
+    </div>
+    
     <div class="box box-green">
         <p><strong>Общий срок до автономной работы: 3-5 месяцев</strong></p>
     </div>
@@ -715,10 +816,10 @@
 
 <!-- 11. РИСКИ -->
 <div class="page content">
-    <h1>11. Риски и митигация</h1>
+    <h1>11. Риски и способы снижения</h1>
     
     <table>
-        <tr><th>Риск</th><th>Вероятность</th><th>Влияние</th><th>Митигация</th></tr>
+        <tr><th>Риск</th><th>Вероятность</th><th>Влияние</th><th>Способ снижения</th></tr>
         <tr>
             <td><strong>Сезонность туризма</strong></td>
             <td>Средняя</td>
@@ -795,7 +896,7 @@
     <h2>Условия выхода</h2>
     <table>
         <tr><th>Сценарий</th><th>Условия</th></tr>
-        <tr><td>Buyout организатором</td><td>По оценке 3x годовой прибыли, не ранее 3 лет</td></tr>
+        <tr><td>Выкуп организатором</td><td>По оценке 3x годовой прибыли, не ранее 3 лет</td></tr>
         <tr><td>Продажа третьему лицу</td><td>С согласия обеих сторон, право первого отказа</td></tr>
         <tr><td>Ликвидация</td><td>Раздел активов пропорционально вкладу</td></tr>
     </table>
@@ -803,9 +904,109 @@
     <h2>Гарантии</h2>
     <div class="box">
         <ul>
-            <li>Инвестиционное соглашение по праву Сингапура</li>
-            <li>Эскроу-счёт для первоначального транша</li>
-            <li>Залог доли в PT на период окупаемости</li>
+            <li><strong>Инвестиционное соглашение</strong> по российскому или индонезийскому праву (на выбор инвестора)</li>
+            <li><strong>Поэтапное финансирование:</strong> 50% при подписании договора, 50% после поставки оборудования</li>
+            <li><strong>Отчётность:</strong> ежемесячные финансовые отчёты с доступом к банковским выпискам</li>
+            <li><strong>Аудит:</strong> право инвестора на независимый аудит в любое время</li>
+        </ul>
+    </div>
+</div>
+
+<!-- 13. ПЛАНЫ РАЗВИТИЯ -->
+<div class="page content">
+    <h1>13. Планы развития</h1>
+    
+    <h2>Стратегия масштабирования</h2>
+    
+    <div class="box box-green">
+        <p><strong>Бали — это первая точка.</strong> После успешного запуска и выхода на стабильную прибыль планируется масштабирование на другие регионы с высокой прибыльностью.</p>
+    </div>
+    
+    <h2>Сравнение регионов по прибыльности</h2>
+    <table>
+        <tr><th>Регион</th><th>Влажность</th><th>Цена воды</th><th>Опер. расх.</th><th>ROI</th><th>Окупаемость</th></tr>
+        <tr>
+            <td>Москва</td>
+            <td>75%</td>
+            <td>$1.54/л</td>
+            <td>75%</td>
+            <td><strong>56%</strong></td>
+            <td>1.8 лет</td>
+        </tr>
+        <tr>
+            <td>Краснодарский край</td>
+            <td>70%</td>
+            <td>$1.28/л</td>
+            <td>75%</td>
+            <td><strong>44%</strong></td>
+            <td>2.3 лет</td>
+        </tr>
+        <tr style="background:#d4edda;">
+            <td><strong>Бали</strong> (текущий)</td>
+            <td>78%</td>
+            <td>$0.42/л</td>
+            <td>60%</td>
+            <td><strong>25%</strong></td>
+            <td>3.9 лет</td>
+        </tr>
+        <tr>
+            <td>Дубай (ОАЭ)</td>
+            <td>55%</td>
+            <td>$0.40/л</td>
+            <td>80%</td>
+            <td>8.5%</td>
+            <td>11.7 лет</td>
+        </tr>
+        <tr>
+            <td>Эр-Рияд</td>
+            <td>47%</td>
+            <td>$0.40/л</td>
+            <td>80%</td>
+            <td>7.3%</td>
+            <td>13.7 лет</td>
+        </tr>
+    </table>
+    
+    <h2>Почему Бали первый, если Россия выгоднее?</h2>
+    <div class="box">
+        <ul>
+            <li><strong>Простота запуска</strong> — меньше бюрократии, быстрая регистрация</li>
+            <li><strong>Международный рынок</strong> — 7+ млн туристов, платёжеспособный спрос</li>
+            <li><strong>Низкие риски</strong> — стабильная валюта, понятное законодательство</li>
+            <li><strong>Тестовая площадка</strong> — отработка процессов перед масштабированием</li>
+            <li><strong>Премиум-позиционирование</strong> — экологичный бренд для luxury-сегмента</li>
+        </ul>
+        <p style="margin-top: 15px;"><em>После успешного запуска Бали — выход на российский рынок с проверенной моделью.</em></p>
+    </div>
+    
+    <h2>Этапы масштабирования</h2>
+    <table>
+        <tr><th>Год</th><th>Действие</th><th>Инвестиции</th><th>Ожидаемый результат</th></tr>
+        <tr><td>2026</td><td>Запуск Бали</td><td>$470 000</td><td>1 точка, прибыль $239k/год</td></tr>
+        <tr><td>2027</td><td>Увеличение мощности Бали</td><td>$200 000</td><td>+5000 л/сут, удвоение прибыли</td></tr>
+        <tr><td>2027-2028</td><td>Запуск Краснодар (ROI 44%)</td><td>$470 000</td><td>2 точки, выход на рынок РФ</td></tr>
+        <tr><td>2028-2029</td><td>Запуск Москва (ROI 56%)</td><td>$470 000</td><td>3 точки, максимальный ROI</td></tr>
+        <tr><td>2030+</td><td>Новые регионы</td><td>По ситуации</td><td>Сеть 5+ точек</td></tr>
+    </table>
+    
+    <h2>Цели к 2030 году</h2>
+    <div class="box">
+        <ul>
+            <li><strong>5+ производственных точек</strong> в разных странах</li>
+            <li><strong>Суммарная мощность:</strong> 50 000+ л/сутки</li>
+            <li><strong>Годовая выручка:</strong> $5+ млн</li>
+            <li><strong>Чистая прибыль:</strong> $1.5+ млн/год</li>
+            <li><strong>Бренд AquaFuture</strong> — узнаваемый в премиум-сегменте</li>
+        </ul>
+    </div>
+    
+    <h2>Преимущества для инвестора первой точки</h2>
+    <div class="box box-green">
+        <ul>
+            <li><span class="check">✓</span> <strong>Приоритетное право</strong> на участие в следующих проектах</li>
+            <li><span class="check">✓</span> <strong>Лучшие условия</strong> — более высокая доля или скидка на вход</li>
+            <li><span class="check">✓</span> <strong>Проверенная модель</strong> — после успеха Бали риски ниже</li>
+            <li><span class="check">✓</span> <strong>Партнёрство</strong> — совместное развитие международной сети</li>
         </ul>
     </div>
     
