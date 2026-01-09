@@ -71,7 +71,8 @@ function updateMap(countryName, regionName) {
     // Если выбран регион, добавляем его маркер
     if (regionName && country.regions[regionName]) {
         const region = country.regions[regionName];
-        const regionCoords = region.coords;
+        // Fallback: если координат региона нет, используем координаты страны
+        const regionCoords = Array.isArray(region.coords) ? region.coords : countryCoords;
         
         regionMarker = L.marker(regionCoords, {
             icon: redIcon
@@ -81,7 +82,8 @@ function updateMap(countryName, regionName) {
                            window.currentLang === 'en' ? 'Humidity' :
                            window.currentLang === 'zh' ? '湿度' : 'Humedad';
         
-        regionMarker.bindPopup(`<b>${regionName}</b><br>${humidityText}: ${region.humidity}%`).openPopup();
+        const humidityValue = (region.humidity === null || region.humidity === undefined) ? '—' : `${region.humidity}%`;
+        regionMarker.bindPopup(`<b>${regionName}</b><br>${humidityText}: ${humidityValue}`).openPopup();
         
         // Центрируем карту на регионе
         map.setView(regionCoords, 6);

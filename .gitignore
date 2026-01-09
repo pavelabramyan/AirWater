@@ -1,0 +1,8 @@
+.DS_Store
+.cursor/
+__pycache__/
+*.pyc
+admin.log
+admin_https.log
+admin_run.log
+*.log

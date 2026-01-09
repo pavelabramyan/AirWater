@@ -127,7 +127,10 @@ function initLocationSelects() {
                 const region = country.regions[regionName];
                 const option = document.createElement('option');
                 option.value = regionName;
-                option.textContent = `${regionName} - ${region.humidity}%`;
+                const humidityText = (region && region.humidity !== null && region.humidity !== undefined)
+                    ? `${region.humidity}%`
+                    : '—';
+                option.textContent = `${regionName} - ${humidityText}`;
                 regionSelect.appendChild(option);
             });
             
@@ -154,7 +157,13 @@ function initLocationSelects() {
         if (selectedCountry && selectedRegion && locations[selectedCountry]) {
             const region = locations[selectedCountry].regions[selectedRegion];
             if (region) {
-                setHumidity(region.humidity);
+                setHumidity((region.humidity !== null && region.humidity !== undefined) ? region.humidity : null);
+
+                // Автоподстановка средней цены воды (USD / 1L) по региону, если задана
+                const priceInput = document.getElementById('pricePerLiter');
+                if (priceInput && region.waterPriceUsd1L !== null && region.waterPriceUsd1L !== undefined) {
+                    priceInput.value = region.waterPriceUsd1L;
+                }
                 
                 // Update map
                 if (typeof updateMap === 'function') {
@@ -164,6 +173,8 @@ function initLocationSelects() {
         } else {
             setHumidity(null);
         }
+        // Пересчёт после смены региона/цены
+        calculateROI();
     });
 }
 
