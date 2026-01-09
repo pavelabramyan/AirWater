@@ -507,6 +507,146 @@ section {
     color: var(--primary-color);
 }
 
+/* Roadmap Section */
+.roadmap {
+    background: var(--bg-light);
+}
+
+.timeline {
+    position: relative;
+    max-width: 800px;
+    margin: 48px auto 0;
+    padding-left: 60px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+    border-radius: 2px;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 32px;
+    animation: fadeInUp 0.6s ease;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-icon {
+    position: absolute;
+    left: -48px;
+    top: 0;
+    width: 48px;
+    height: 48px;
+    background: white;
+    border: 4px solid var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: var(--shadow-md);
+    z-index: 1;
+}
+
+.timeline-content {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.timeline-content:hover {
+    transform: translateX(8px);
+    box-shadow: var(--shadow-md);
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.timeline-header h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.timeline-duration {
+    background: var(--gradient-3);
+    color: var(--text-dark);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.timeline-steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.timeline-steps li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+    color: var(--text-light);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.timeline-steps li:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-steps li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.timeline-total {
+    text-align: center;
+    margin-top: 48px;
+    padding: 24px;
+    background: var(--gradient-2);
+    border-radius: 16px;
+    color: white;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.timeline-total-label {
+    display: block;
+    font-size: 16px;
+    opacity: 0.9;
+    margin-bottom: 8px;
+}
+
+.timeline-total-value {
+    display: block;
+    font-size: 32px;
+    font-weight: 800;
+}
+
 /* Contact Section */
 .contact {
     background: var(--gradient-2);
@@ -644,5 +784,37 @@ section {
     
     .stat-number {
         font-size: 36px;
+    }
+    
+    .timeline {
+        padding-left: 50px;
+    }
+    
+    .timeline::before {
+        left: 18px;
+    }
+    
+    .timeline-icon {
+        left: -42px;
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+    
+    .timeline-content {
+        padding: 16px;
+    }
+    
+    .timeline-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .timeline-header h3 {
+        font-size: 18px;
+    }
+    
+    .timeline-total-value {
+        font-size: 24px;
     }
 }
