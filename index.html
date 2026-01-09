@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaFuture - Инвестиции в производство воды из воздуха</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <span class="logo-icon">💧</span>
+                    <span class="logo-text" data-i18n="nav.logo">AquaFuture</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#about" data-i18n="nav.about">О проекте</a>
+                    <a href="#calculator" data-i18n="nav.calculator">Калькулятор</a>
+                    <a href="#advantages" data-i18n="nav.advantages">Преимущества</a>
+                    <a href="#contact" data-i18n="nav.contact">Контакты</a>
+                </div>
+                <div class="lang-selector">
+                    <select id="langSelect">
+                        <option value="ru">🇷🇺 RU</option>
+                        <option value="en">🇬🇧 EN</option>
+                        <option value="zh">🇨🇳 中文</option>
+                        <option value="es">🇪🇸 ES</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title" data-i18n="hero.title">Производство премиальной воды<br>из воздуха по всему миру</h1>
+                <p class="hero-subtitle" data-i18n="hero.subtitle">Инновационная технология. Устойчивый бизнес. Глобальный масштаб.</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">5000</div>
+                        <div class="stat-label" data-i18n="hero.stat1">литров в сутки</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label" data-i18n="hero.stat2">чистая вода</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label" data-i18n="hero.stat3">автоматизация</div>
+                    </div>
+                </div>
+                <a href="#calculator" class="cta-button" data-i18n="hero.cta">Рассчитать инвестицию</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title" data-i18n="about.title">О проекте</h2>
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="card-icon">🌍</div>
+                    <h3 data-i18n="about.card1.title">Глобальное масштабирование</h3>
+                    <p data-i18n="about.card1.text">Размещение производств в регионах с высокой влажностью и платежеспособным спросом на премиальную воду</p>
+                </div>
+                <div class="about-card">
+                    <div class="card-icon">🔬</div>
+                    <h3 data-i18n="about.card2.title">Передовая технология</h3>
+                    <p data-i18n="about.card2.text">Установки производительностью 5000 л/сутки из Китая + автоматизированные линии розлива и упаковки</p>
+                </div>
+                <div class="about-card">
+                    <div class="card-icon">📈</div>
+                    <h3 data-i18n="about.card3.title">Высокая рентабельность</h3>
+                    <p data-i18n="about.card3.text">Быстрая окупаемость за счет низких операционных затрат и растущего спроса на экологичную воду</p>
+                </div>
+                <div class="about-card">
+                    <div class="card-icon">✅</div>
+                    <h3 data-i18n="about.card4.title">Полная готовность</h3>
+                    <p data-i18n="about.card4.text">Лицензирование, сертификация, аренда помещений - все этапы проработаны и готовы к реализации</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calculator Section -->
+    <section id="calculator" class="calculator">
+        <div class="container">
+            <h2 class="section-title" data-i18n="calculator.title">Калькулятор рентабельности инвестиций</h2>
+            <p class="section-subtitle" data-i18n="calculator.subtitle">Рассчитайте потенциальную прибыль от инвестиции в одно производство</p>
+            
+            <div class="calculator-wrapper">
+                <div class="calculator-inputs">
+                    <div class="input-group">
+                        <label data-i18n="calculator.country">Страна *</label>
+                        <select id="countrySelect" required>
+                            <option value="" data-i18n="calculator.country.select">Выберите страну</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label data-i18n="calculator.region">Регион *</label>
+                        <select id="regionSelect" required disabled>
+                            <option value="" data-i18n="calculator.region.select">Сначала выберите страну</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label data-i18n="calculator.humidity">Среднегодовая влажность</label>
+                        <input type="text" id="humidityDisplay" value="—" readonly>
+                        <small data-i18n="calculator.humidity.note">Выработка зависит от влажности региона</small>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label data-i18n="calculator.investment">Сумма инвестиции (USD)</label>
+                        <input type="number" id="investmentAmount" min="300000" step="10000" value="900000">
+                        <small data-i18n="calculator.investment.note">Минимальная инвестиция: $900,000 (1 производство)</small>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label data-i18n="calculator.production">Производство (литров/день)</label>
+                        <input type="number" id="dailyProduction" value="5000" readonly>
+                        <small data-i18n="calculator.production.note">При влажности 100% = 5000 л/сутки</small>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label data-i18n="calculator.price">Цена за литр (USD)</label>
+                        <input type="number" id="pricePerLiter" min="0.5" max="5" step="0.1" value="1.5">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label data-i18n="calculator.operating">Операционные расходы (% от выручки)</label>
+                        <input type="number" id="operatingCosts" min="20" max="60" step="5" value="35">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label data-i18n="calculator.period">Период расчета (лет)</label>
+                        <input type="number" id="period" min="1" max="10" step="1" value="5">
+                    </div>
+                </div>
+                
+                <div class="calculator-results">
+                    <div class="result-card highlight">
+                        <div class="result-label" data-i18n="calculator.roi">ROI (возврат инвестиций)</div>
+                        <div class="result-value" id="roi">0%</div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <div class="result-label" data-i18n="calculator.revenue">Годовая выручка</div>
+                        <div class="result-value" id="annualRevenue">$0</div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <div class="result-label" data-i18n="calculator.profit">Годовая прибыль</div>
+                        <div class="result-value" id="annualProfit">$0</div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <div class="result-label" data-i18n="calculator.payback">Окупаемость</div>
+                        <div class="result-value" id="paybackPeriod">0 лет</div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <div class="result-label" data-i18n="calculator.total">Общая прибыль за период</div>
+                        <div class="result-value" id="totalProfit">$0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="map-container">
+                <div id="map" style="height: 400px; border-radius: 16px; margin-top: 32px;"></div>
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="profitChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advantages Section -->
+    <section id="advantages" class="advantages">
+        <div class="container">
+            <h2 class="section-title" data-i18n="advantages.title">Почему это выгодно</h2>
+            <div class="advantages-list">
+                <div class="advantage-item">
+                    <div class="advantage-number">01</div>
+                    <div class="advantage-content">
+                        <h3 data-i18n="advantages.item1.title">Растущий рынок</h3>
+                        <p data-i18n="advantages.item1.text">Мировой рынок бутилированной воды растет на 7-8% ежегодно. Спрос на премиальную экологичную воду особенно высок в развивающихся регионах.</p>
+                    </div>
+                </div>
+                <div class="advantage-item">
+                    <div class="advantage-number">02</div>
+                    <div class="advantage-content">
+                        <h3 data-i18n="advantages.item2.title">Низкие операционные затраты</h3>
+                        <p data-i18n="advantages.item2.text">Не требуется подключение к водопроводу. Энергопотребление оптимизировано. Минимальный штат сотрудников благодаря автоматизации.</p>
+                    </div>
+                </div>
+                <div class="advantage-item">
+                    <div class="advantage-number">03</div>
+                    <div class="advantage-content">
+                        <h3 data-i18n="advantages.item3.title">Экологичность</h3>
+                        <p data-i18n="advantages.item3.text">100% экологичное производство без вреда для окружающей среды. Уникальное позиционирование на рынке премиальной воды.</p>
+                    </div>
+                </div>
+                <div class="advantage-item">
+                    <div class="advantage-number">04</div>
+                    <div class="advantage-content">
+                        <h3 data-i18n="advantages.item4.title">Масштабируемость</h3>
+                        <p data-i18n="advantages.item4.text">Успешное первое производство открывает возможности для масштабирования в другие регионы с аналогичными условиями.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Investment Details -->
+    <section class="investment-details">
+        <div class="container">
+            <h2 class="section-title" data-i18n="investment.title">Структура инвестиций</h2>
+            <div class="investment-breakdown">
+                <div class="breakdown-item">
+                    <span class="breakdown-label" data-i18n="investment.item1">Оборудование (установка + линии)</span>
+                    <span class="breakdown-value">60%</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label" data-i18n="investment.item2">Аренда и подготовка помещения</span>
+                    <span class="breakdown-value">15%</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label" data-i18n="investment.item3">Лицензирование и сертификация</span>
+                    <span class="breakdown-value">10%</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label" data-i18n="investment.item4">Маркетинг и запуск</span>
+                    <span class="breakdown-value">10%</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label" data-i18n="investment.item5">Резервный фонд</span>
+                    <span class="breakdown-value">5%</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title" data-i18n="contact.title">Начните инвестировать сегодня</h2>
+            <p class="section-subtitle" data-i18n="contact.subtitle">Свяжитесь с нами для получения подробной информации и презентации проекта</p>
+            <form class="contact-form" id="contactForm">
+                <div class="form-row">
+                    <input type="text" id="name" placeholder="" data-i18n-placeholder="contact.form.name" required>
+                    <input type="email" id="email" placeholder="" data-i18n-placeholder="contact.form.email" required>
+                </div>
+                <div class="form-row">
+                    <input type="tel" id="phone" placeholder="" data-i18n-placeholder="contact.form.phone" required>
+                    <input type="number" id="investmentInterest" placeholder="" data-i18n-placeholder="contact.form.amount" min="900000" step="10000">
+                </div>
+                <textarea id="message" rows="5" placeholder="" data-i18n-placeholder="contact.form.message"></textarea>
+                <button type="submit" class="cta-button" data-i18n="contact.form.submit">Отправить заявку</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <span class="logo-icon">💧</span>
+                    <span class="logo-text">AquaFuture</span>
+                </div>
+                <p class="footer-text" data-i18n="footer.text">Производство премиальной воды из воздуха. Инвестиции в устойчивое будущее.</p>
+                <p class="footer-copyright" data-i18n="footer.copyright">© 2025 AquaFuture. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="locations.js"></script>
+    <script src="i18n.js"></script>
+    <script src="calculator.js"></script>
+    <script src="chart.js"></script>
+    <script src="map.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

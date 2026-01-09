@@ -1,0 +1,4046 @@
+{
+  "Россия": {
+    "coords": "61.5240, 105.3188",
+    "regions": {
+      "Москва и Московская область": {
+        "humidity": null,
+        "coords": null
+      },
+      "Санкт-Петербург и Ленинградская область": {
+        "humidity": null,
+        "coords": null
+      },
+      "Краснодарский край": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ростовская область": {
+        "humidity": null,
+        "coords": null
+      },
+      "Республика Крым": {
+        "humidity": null,
+        "coords": null
+      },
+      "Приморский край": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Китай": {
+    "coords": "35.8617, 104.1954",
+    "regions": {
+      "Калининградская область": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гуандун": {
+        "humidity": null,
+        "coords": null
+      },
+      "Фуцзянь": {
+        "humidity": null,
+        "coords": null
+      },
+      "Чжэцзян": {
+        "humidity": null,
+        "coords": null
+      },
+      "Цзянсу": {
+        "humidity": null,
+        "coords": null
+      },
+      "Шанхай": {
+        "humidity": null,
+        "coords": null
+      },
+      "Хайнань": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "США": {
+    "coords": "37.0902, -95.7129",
+    "regions": {
+      "Сычуань": {
+        "humidity": null,
+        "coords": null
+      },
+      "Флорида": {
+        "humidity": null,
+        "coords": null
+      },
+      "Луизиана": {
+        "humidity": null,
+        "coords": null
+      },
+      "Техас (восточная часть)": {
+        "humidity": null,
+        "coords": null
+      },
+      "Калифорния (северная часть)": {
+        "humidity": null,
+        "coords": null
+      },
+      "Вашингтон": {
+        "humidity": null,
+        "coords": null
+      },
+      "Орегон": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Бразилия": {
+    "coords": "-14.2350, -51.9253",
+    "regions": {
+      "Гавайи": {
+        "humidity": null,
+        "coords": null
+      },
+      "Амазонас": {
+        "humidity": null,
+        "coords": null
+      },
+      "Пара": {
+        "humidity": null,
+        "coords": null
+      },
+      "Рио-де-Жанейро": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сан-Паулу": {
+        "humidity": null,
+        "coords": null
+      },
+      "Баия": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Индия": {
+    "coords": "20.5937, 78.9629",
+    "regions": {
+      "Минас-Жерайс": {
+        "humidity": null,
+        "coords": null
+      },
+      "Керала": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гоа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Западная Бенгалия": {
+        "humidity": null,
+        "coords": null
+      },
+      "Тамилнад": {
+        "humidity": null,
+        "coords": null
+      },
+      "Карнатака": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Индонезия": {
+    "coords": "-0.7893, 113.9213",
+    "regions": {
+      "Махараштра": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ява": {
+        "humidity": null,
+        "coords": null
+      },
+      "Суматра": {
+        "humidity": null,
+        "coords": null
+      },
+      "Калимантан": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сулавеси": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Мексика": {
+    "coords": "23.6345, -102.5528",
+    "regions": {
+      "Бали": {
+        "humidity": null,
+        "coords": null
+      },
+      "Юкатан": {
+        "humidity": null,
+        "coords": null
+      },
+      "Веракрус": {
+        "humidity": null,
+        "coords": null
+      },
+      "Табаско": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кинтана-Роо": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Филиппины": {
+    "coords": "12.8797, 121.7740",
+    "regions": {
+      "Чьяпас": {
+        "humidity": null,
+        "coords": null
+      },
+      "Метро Манила": {
+        "humidity": null,
+        "coords": null
+      },
+      "Висайи": {
+        "humidity": null,
+        "coords": null
+      },
+      "Минданао": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Таиланд": {
+    "coords": "15.8700, 100.9925",
+    "regions": {
+      "Лусон (север)": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бангкок": {
+        "humidity": null,
+        "coords": null
+      },
+      "Пхукет": {
+        "humidity": null,
+        "coords": null
+      },
+      "Чиангмай": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Вьетнам": {
+    "coords": "14.0583, 108.2772",
+    "regions": {
+      "Паттайя": {
+        "humidity": null,
+        "coords": null
+      },
+      "Хошимин": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ханой": {
+        "humidity": null,
+        "coords": null
+      },
+      "Дананг": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Испания": {
+    "coords": "40.4637, -3.7492",
+    "regions": {
+      "Кантхо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Галисия": {
+        "humidity": null,
+        "coords": null
+      },
+      "Астурия": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кантабрия": {
+        "humidity": null,
+        "coords": null
+      },
+      "Валенсия": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Италия": {
+    "coords": "41.8719, 12.5674",
+    "regions": {
+      "Андалусия": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ломбардия": {
+        "humidity": null,
+        "coords": null
+      },
+      "Венето": {
+        "humidity": null,
+        "coords": null
+      },
+      "Лигурия": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Франция": {
+    "coords": "46.2276, 2.2137",
+    "regions": {
+      "Тоскана": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бретань": {
+        "humidity": null,
+        "coords": null
+      },
+      "Нормандия": {
+        "humidity": null,
+        "coords": null
+      },
+      "Аквитания": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Германия": {
+    "coords": "51.1657, 10.4515",
+    "regions": {
+      "Прованс": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гамбург": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бремен": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бавария": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Великобритания": {
+    "coords": "55.3781, -3.4360",
+    "regions": {
+      "Баден-Вюртемберг": {
+        "humidity": null,
+        "coords": null
+      },
+      "Шотландия": {
+        "humidity": null,
+        "coords": null
+      },
+      "Уэльс": {
+        "humidity": null,
+        "coords": null
+      },
+      "Северная Ирландия": {
+        "humidity": null,
+        "coords": null
+      },
+      "Англия (север)": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Япония": {
+    "coords": "36.2048, 138.2529",
+    "regions": {
+      "Англия (юг)": {
+        "humidity": null,
+        "coords": null
+      },
+      "Токио": {
+        "humidity": null,
+        "coords": null
+      },
+      "Осака": {
+        "humidity": null,
+        "coords": null
+      },
+      "Киото": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Австралия": {
+    "coords": "-25.2744, 133.7751",
+    "regions": {
+      "Окинава": {
+        "humidity": null,
+        "coords": null
+      },
+      "Квинсленд (север)": {
+        "humidity": null,
+        "coords": null
+      },
+      "Новый Южный Уэльс (восток)": {
+        "humidity": null,
+        "coords": null
+      },
+      "Виктория": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Канада": {
+    "coords": "56.1304, -106.3468",
+    "regions": {
+      "Западная Австралия (север)": {
+        "humidity": null,
+        "coords": null
+      },
+      "Британская Колумбия": {
+        "humidity": null,
+        "coords": null
+      },
+      "Новая Шотландия": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ньюфаундленд": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Аргентина": {
+    "coords": "-38.4161, -63.6167",
+    "regions": {
+      "Онтарио (юг)": {
+        "humidity": null,
+        "coords": null
+      },
+      "Буэнос-Айрес": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мисьонес": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Колумбия": {
+    "coords": "4.5709, -74.2973",
+    "regions": {
+      "Корриентес": {
+        "humidity": null,
+        "coords": null
+      },
+      "Богота": {
+        "humidity": null,
+        "coords": null
+      },
+      "Медельин": {
+        "humidity": null,
+        "coords": null
+      },
+      "Картахена": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Чили": {
+    "coords": "-35.6751, -71.5430",
+    "regions": {
+      "Кали": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сантьяго": {
+        "humidity": null,
+        "coords": null
+      },
+      "Вальпараисо": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Перу": {
+    "coords": "-9.1900, -75.0152",
+    "regions": {
+      "Лос-Лагос": {
+        "humidity": null,
+        "coords": null
+      },
+      "Лима": {
+        "humidity": null,
+        "coords": null
+      },
+      "Икитос": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Египет": {
+    "coords": "26.8206, 30.8025",
+    "regions": {
+      "Трухильо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Каир": {
+        "humidity": null,
+        "coords": null
+      },
+      "Александрия": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "ЮАР": {
+    "coords": "-30.5595, 22.9375",
+    "regions": {
+      "Дельта Нила": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кейптаун": {
+        "humidity": null,
+        "coords": null
+      },
+      "Дурбан": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Нигерия": {
+    "coords": "9.0820, 8.6753",
+    "regions": {
+      "Йоханнесбург": {
+        "humidity": null,
+        "coords": null
+      },
+      "Лагос": {
+        "humidity": null,
+        "coords": null
+      },
+      "Порт-Харкорт": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Кения": {
+    "coords": "-0.0236, 37.9062",
+    "regions": {
+      "Абуджа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Найроби": {
+        "humidity": null,
+        "coords": null
+      },
+      "Момбаса": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Турция": {
+    "coords": "38.9637, 35.2433",
+    "regions": {
+      "Кисуму": {
+        "humidity": null,
+        "coords": null
+      },
+      "Стамбул": {
+        "humidity": null,
+        "coords": null
+      },
+      "Анкара": {
+        "humidity": null,
+        "coords": null
+      },
+      "Трабзон": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "ОАЭ": {
+    "coords": "23.4241, 53.8478",
+    "regions": {
+      "Анталья": {
+        "humidity": null,
+        "coords": null
+      },
+      "Дубай": {
+        "humidity": null,
+        "coords": null
+      },
+      "Абу-Даби": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Саудовская Аравия": {
+    "coords": "23.8859, 45.0792",
+    "regions": {
+      "Шарджа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Эр-Рияд": {
+        "humidity": null,
+        "coords": null
+      },
+      "Джидда": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Израиль": {
+    "coords": "31.0461, 34.8516",
+    "regions": {
+      "Даммам": {
+        "humidity": null,
+        "coords": null
+      },
+      "Тель-Авив": {
+        "humidity": null,
+        "coords": null
+      },
+      "Хайфа": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Южная Корея": {
+    "coords": "35.9078, 127.7669",
+    "regions": {
+      "Иерусалим": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сеул": {
+        "humidity": null,
+        "coords": null
+      },
+      "Пусан": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Малайзия": {
+    "coords": "4.2105, 101.9758",
+    "regions": {
+      "Инчхон": {
+        "humidity": null,
+        "coords": null
+      },
+      "Куала-Лумпур": {
+        "humidity": null,
+        "coords": null
+      },
+      "Пенанг": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сабах": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Сингапур": {
+    "coords": "1.3521, 103.8198",
+    "regions": {
+      "Саравак": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Новая Зеландия": {
+    "coords": "-40.9006, 174.8860",
+    "regions": {
+      "Сингапур": {
+        "humidity": null,
+        "coords": null
+      },
+      "Окленд": {
+        "humidity": null,
+        "coords": null
+      },
+      "Веллингтон": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Албания": {
+    "coords": "41.1533, 20.1683",
+    "regions": {
+      "Крайстчерч": {
+        "humidity": null,
+        "coords": null
+      },
+      "Тирана": {
+        "humidity": null,
+        "coords": null
+      },
+      "Дуррес": {
+        "humidity": null,
+        "coords": null
+      },
+      "Влёра": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Андорра": {
+    "coords": "42.5462, 1.6016",
+    "regions": {
+      "Шкодер": {
+        "humidity": null,
+        "coords": null
+      },
+      "Андорра-ла-Велья": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Австрия": {
+    "coords": "47.5162, 14.5501",
+    "regions": {
+      "Энкамп": {
+        "humidity": null,
+        "coords": null
+      },
+      "Вена": {
+        "humidity": null,
+        "coords": null
+      },
+      "Зальцбург": {
+        "humidity": null,
+        "coords": null
+      },
+      "Инсбрук": {
+        "humidity": null,
+        "coords": null
+      },
+      "Грац": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Беларусь": {
+    "coords": "53.7098, 27.9534",
+    "regions": {
+      "Линц": {
+        "humidity": null,
+        "coords": null
+      },
+      "Минск": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гомель": {
+        "humidity": null,
+        "coords": null
+      },
+      "Могилёв": {
+        "humidity": null,
+        "coords": null
+      },
+      "Витебск": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гродно": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Бельгия": {
+    "coords": "50.5039, 4.4699",
+    "regions": {
+      "Брест": {
+        "humidity": null,
+        "coords": null
+      },
+      "Брюссель": {
+        "humidity": null,
+        "coords": null
+      },
+      "Антверпен": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гент": {
+        "humidity": null,
+        "coords": null
+      },
+      "Брюгге": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Босния и Герцеговина": {
+    "coords": "43.9159, 17.6791",
+    "regions": {
+      "Льеж": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сараево": {
+        "humidity": null,
+        "coords": null
+      },
+      "Баня-Лука": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мостар": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Болгария": {
+    "coords": "42.7339, 25.4858",
+    "regions": {
+      "Тузла": {
+        "humidity": null,
+        "coords": null
+      },
+      "София": {
+        "humidity": null,
+        "coords": null
+      },
+      "Пловдив": {
+        "humidity": null,
+        "coords": null
+      },
+      "Варна": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бургас": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Хорватия": {
+    "coords": "45.1000, 15.2000",
+    "regions": {
+      "Русе": {
+        "humidity": null,
+        "coords": null
+      },
+      "Загреб": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сплит": {
+        "humidity": null,
+        "coords": null
+      },
+      "Дубровник": {
+        "humidity": null,
+        "coords": null
+      },
+      "Риека": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Кипр": {
+    "coords": "35.1264, 33.4299",
+    "regions": {
+      "Осиек": {
+        "humidity": null,
+        "coords": null
+      },
+      "Никосия": {
+        "humidity": null,
+        "coords": null
+      },
+      "Лимассол": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ларнака": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Чехия": {
+    "coords": "49.8175, 15.4730",
+    "regions": {
+      "Пафос": {
+        "humidity": null,
+        "coords": null
+      },
+      "Прага": {
+        "humidity": null,
+        "coords": null
+      },
+      "Брно": {
+        "humidity": null,
+        "coords": null
+      },
+      "Острава": {
+        "humidity": null,
+        "coords": null
+      },
+      "Пльзень": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Дания": {
+    "coords": "56.2639, 9.5018",
+    "regions": {
+      "Либерец": {
+        "humidity": null,
+        "coords": null
+      },
+      "Копенгаген": {
+        "humidity": null,
+        "coords": null
+      },
+      "Орхус": {
+        "humidity": null,
+        "coords": null
+      },
+      "Оденсе": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ольборг": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Эстония": {
+    "coords": "58.5953, 25.0136",
+    "regions": {
+      "Эсбьерг": {
+        "humidity": null,
+        "coords": null
+      },
+      "Таллин": {
+        "humidity": null,
+        "coords": null
+      },
+      "Тарту": {
+        "humidity": null,
+        "coords": null
+      },
+      "Нарва": {
+        "humidity": null,
+        "coords": null
+      },
+      "Пярну": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Финляндия": {
+    "coords": "61.9241, 25.7482",
+    "regions": {
+      "Вильянди": {
+        "humidity": null,
+        "coords": null
+      },
+      "Хельсинки": {
+        "humidity": null,
+        "coords": null
+      },
+      "Тампере": {
+        "humidity": null,
+        "coords": null
+      },
+      "Турку": {
+        "humidity": null,
+        "coords": null
+      },
+      "Оулу": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Греция": {
+    "coords": "39.0742, 21.8243",
+    "regions": {
+      "Ювяскюля": {
+        "humidity": null,
+        "coords": null
+      },
+      "Афины": {
+        "humidity": null,
+        "coords": null
+      },
+      "Салоники": {
+        "humidity": null,
+        "coords": null
+      },
+      "Патры": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ираклион": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Венгрия": {
+    "coords": "47.1625, 19.5033",
+    "regions": {
+      "Лариса": {
+        "humidity": null,
+        "coords": null
+      },
+      "Будапешт": {
+        "humidity": null,
+        "coords": null
+      },
+      "Дебрецен": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сегед": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мишкольц": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Исландия": {
+    "coords": "64.9631, -19.0208",
+    "regions": {
+      "Печ": {
+        "humidity": null,
+        "coords": null
+      },
+      "Рейкьявик": {
+        "humidity": null,
+        "coords": null
+      },
+      "Акюрейри": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кеблавик": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Ирландия": {
+    "coords": "53.4129, -8.2439",
+    "regions": {
+      "Хафнарфьордюр": {
+        "humidity": null,
+        "coords": null
+      },
+      "Дублин": {
+        "humidity": null,
+        "coords": null
+      },
+      "Корк": {
+        "humidity": null,
+        "coords": null
+      },
+      "Лимерик": {
+        "humidity": null,
+        "coords": null
+      },
+      "Голуэй": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Латвия": {
+    "coords": "56.8796, 24.6032",
+    "regions": {
+      "Уотерфорд": {
+        "humidity": null,
+        "coords": null
+      },
+      "Рига": {
+        "humidity": null,
+        "coords": null
+      },
+      "Даугавпилс": {
+        "humidity": null,
+        "coords": null
+      },
+      "Лиепая": {
+        "humidity": null,
+        "coords": null
+      },
+      "Елгава": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Литва": {
+    "coords": "55.1694, 23.8813",
+    "regions": {
+      "Юрмала": {
+        "humidity": null,
+        "coords": null
+      },
+      "Вильнюс": {
+        "humidity": null,
+        "coords": null
+      },
+      "Каунас": {
+        "humidity": null,
+        "coords": null
+      },
+      "Клайпеда": {
+        "humidity": null,
+        "coords": null
+      },
+      "Шяуляй": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Люксембург": {
+    "coords": "49.8153, 6.1296",
+    "regions": {
+      "Паневежис": {
+        "humidity": null,
+        "coords": null
+      },
+      "Люксембург": {
+        "humidity": null,
+        "coords": null
+      },
+      "Эш-сюр-Альзетт": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Мальта": {
+    "coords": "35.9375, 14.3754",
+    "regions": {
+      "Дюделанж": {
+        "humidity": null,
+        "coords": null
+      },
+      "Валлетта": {
+        "humidity": null,
+        "coords": null
+      },
+      "Слима": {
+        "humidity": null,
+        "coords": null
+      },
+      "Биркиркара": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Молдова": {
+    "coords": "47.4116, 28.3699",
+    "regions": {
+      "Моста": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кишинёв": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бельцы": {
+        "humidity": null,
+        "coords": null
+      },
+      "Тирасполь": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Монако": {
+    "coords": "43.7384, 7.4246",
+    "regions": {
+      "Бендеры": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Черногория": {
+    "coords": "42.7087, 19.3744",
+    "regions": {
+      "Монако": {
+        "humidity": null,
+        "coords": null
+      },
+      "Подгорица": {
+        "humidity": null,
+        "coords": null
+      },
+      "Никшич": {
+        "humidity": null,
+        "coords": null
+      },
+      "Плевля": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Нидерланды": {
+    "coords": "52.1326, 5.2913",
+    "regions": {
+      "Биело-Поле": {
+        "humidity": null,
+        "coords": null
+      },
+      "Амстердам": {
+        "humidity": null,
+        "coords": null
+      },
+      "Роттердам": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гаага": {
+        "humidity": null,
+        "coords": null
+      },
+      "Утрехт": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Северная Македония": {
+    "coords": "41.6086, 21.7453",
+    "regions": {
+      "Эйндховен": {
+        "humidity": null,
+        "coords": null
+      },
+      "Скопье": {
+        "humidity": null,
+        "coords": null
+      },
+      "Битола": {
+        "humidity": null,
+        "coords": null
+      },
+      "Куманово": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Норвегия": {
+    "coords": "60.4720, 8.4689",
+    "regions": {
+      "Прилеп": {
+        "humidity": null,
+        "coords": null
+      },
+      "Осло": {
+        "humidity": null,
+        "coords": null
+      },
+      "Берген": {
+        "humidity": null,
+        "coords": null
+      },
+      "Тронхейм": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ставангер": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Польша": {
+    "coords": "51.9194, 19.1451",
+    "regions": {
+      "Берум": {
+        "humidity": null,
+        "coords": null
+      },
+      "Варшава": {
+        "humidity": null,
+        "coords": null
+      },
+      "Краков": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гданьск": {
+        "humidity": null,
+        "coords": null
+      },
+      "Вроцлав": {
+        "humidity": null,
+        "coords": null
+      },
+      "Познань": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Португалия": {
+    "coords": "39.3999, -8.2245",
+    "regions": {
+      "Лодзь": {
+        "humidity": null,
+        "coords": null
+      },
+      "Лиссабон": {
+        "humidity": null,
+        "coords": null
+      },
+      "Порту": {
+        "humidity": null,
+        "coords": null
+      },
+      "Коимбра": {
+        "humidity": null,
+        "coords": null
+      },
+      "Брага": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Румыния": {
+    "coords": "45.9432, 24.9668",
+    "regions": {
+      "Фару": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бухарест": {
+        "humidity": null,
+        "coords": null
+      },
+      "Клуж-Напока": {
+        "humidity": null,
+        "coords": null
+      },
+      "Тимишоара": {
+        "humidity": null,
+        "coords": null
+      },
+      "Яссы": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Сербия": {
+    "coords": "44.0165, 21.0059",
+    "regions": {
+      "Констанца": {
+        "humidity": null,
+        "coords": null
+      },
+      "Белград": {
+        "humidity": null,
+        "coords": null
+      },
+      "Нови-Сад": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ниш": {
+        "humidity": null,
+        "coords": null
+      },
+      "Крагуевац": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Словакия": {
+    "coords": "48.6690, 19.6990",
+    "regions": {
+      "Суботица": {
+        "humidity": null,
+        "coords": null
+      },
+      "Братислава": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кошице": {
+        "humidity": null,
+        "coords": null
+      },
+      "Прешов": {
+        "humidity": null,
+        "coords": null
+      },
+      "Жилина": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Словения": {
+    "coords": "46.1512, 14.9955",
+    "regions": {
+      "Банска-Бистрица": {
+        "humidity": null,
+        "coords": null
+      },
+      "Любляна": {
+        "humidity": null,
+        "coords": null
+      },
+      "Марибор": {
+        "humidity": null,
+        "coords": null
+      },
+      "Целе": {
+        "humidity": null,
+        "coords": null
+      },
+      "Копер": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Швейцария": {
+    "coords": "46.8182, 8.2275",
+    "regions": {
+      "Нова-Горица": {
+        "humidity": null,
+        "coords": null
+      },
+      "Цюрих": {
+        "humidity": null,
+        "coords": null
+      },
+      "Женева": {
+        "humidity": null,
+        "coords": null
+      },
+      "Базель": {
+        "humidity": null,
+        "coords": null
+      },
+      "Берн": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Украина": {
+    "coords": "48.3794, 31.1656",
+    "regions": {
+      "Лозанна": {
+        "humidity": null,
+        "coords": null
+      },
+      "Киев": {
+        "humidity": null,
+        "coords": null
+      },
+      "Харьков": {
+        "humidity": null,
+        "coords": null
+      },
+      "Одесса": {
+        "humidity": null,
+        "coords": null
+      },
+      "Днепр": {
+        "humidity": null,
+        "coords": null
+      },
+      "Львов": {
+        "humidity": null,
+        "coords": null
+      },
+      "Запорожье": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Афганистан": {
+    "coords": "33.9391, 67.7100",
+    "regions": {
+      "Кривой Рог": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кабул": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кандагар": {
+        "humidity": null,
+        "coords": null
+      },
+      "Герат": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мазари-Шариф": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Бангладеш": {
+    "coords": "23.6850, 90.3563",
+    "regions": {
+      "Джелалабад": {
+        "humidity": null,
+        "coords": null
+      },
+      "Дакка": {
+        "humidity": null,
+        "coords": null
+      },
+      "Читтагонг": {
+        "humidity": null,
+        "coords": null
+      },
+      "Силхет": {
+        "humidity": null,
+        "coords": null
+      },
+      "Раджшахи": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Бутан": {
+    "coords": "27.5142, 90.4336",
+    "regions": {
+      "Кхулна": {
+        "humidity": null,
+        "coords": null
+      },
+      "Тхимпху": {
+        "humidity": null,
+        "coords": null
+      },
+      "Пунакха": {
+        "humidity": null,
+        "coords": null
+      },
+      "Паро": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Бруней": {
+    "coords": "4.5353, 114.7277",
+    "regions": {
+      "Гелепху": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бандар-Сери-Бегаван": {
+        "humidity": null,
+        "coords": null
+      },
+      "Куала-Белайт": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Камбоджа": {
+    "coords": "12.5657, 104.9910",
+    "regions": {
+      "Сериа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Пномпень": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сиемреап": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сиануквиль": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Мьянма": {
+    "coords": "21.9162, 95.9560",
+    "regions": {
+      "Баттамбанг": {
+        "humidity": null,
+        "coords": null
+      },
+      "Янгон": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мандалай": {
+        "humidity": null,
+        "coords": null
+      },
+      "Нейпьидо": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Непал": {
+    "coords": "28.3949, 84.1240",
+    "regions": {
+      "Моулмейн": {
+        "humidity": null,
+        "coords": null
+      },
+      "Катманду": {
+        "humidity": null,
+        "coords": null
+      },
+      "Покхара": {
+        "humidity": null,
+        "coords": null
+      },
+      "Биратнагар": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Пакистан": {
+    "coords": "30.3753, 69.3451",
+    "regions": {
+      "Лалитпур": {
+        "humidity": null,
+        "coords": null
+      },
+      "Исламабад": {
+        "humidity": null,
+        "coords": null
+      },
+      "Карачи": {
+        "humidity": null,
+        "coords": null
+      },
+      "Лахор": {
+        "humidity": null,
+        "coords": null
+      },
+      "Фейсалабад": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Шри-Ланка": {
+    "coords": "7.8731, 80.7718",
+    "regions": {
+      "Равалпинди": {
+        "humidity": null,
+        "coords": null
+      },
+      "Коломбо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Канди": {
+        "humidity": null,
+        "coords": null
+      },
+      "Галле": {
+        "humidity": null,
+        "coords": null
+      },
+      "Негомбо": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Алжир": {
+    "coords": "28.0339, 1.6596",
+    "regions": {
+      "Джафна": {
+        "humidity": null,
+        "coords": null
+      },
+      "Алжир": {
+        "humidity": null,
+        "coords": null
+      },
+      "Оран": {
+        "humidity": null,
+        "coords": null
+      },
+      "Константина": {
+        "humidity": null,
+        "coords": null
+      },
+      "Аннаба": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Ангола": {
+    "coords": "-11.2027, 17.8739",
+    "regions": {
+      "Батна": {
+        "humidity": null,
+        "coords": null
+      },
+      "Луанда": {
+        "humidity": null,
+        "coords": null
+      },
+      "Уамбо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Лобиту": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бенгела": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Бенин": {
+    "coords": "9.3077, 2.3158",
+    "regions": {
+      "Кабинда": {
+        "humidity": null,
+        "coords": null
+      },
+      "Порто-Ново": {
+        "humidity": null,
+        "coords": null
+      },
+      "Котону": {
+        "humidity": null,
+        "coords": null
+      },
+      "Параку": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Ботсвана": {
+    "coords": "-22.3285, 24.6849",
+    "regions": {
+      "Джугу": {
+        "humidity": null,
+        "coords": null
+      },
+      "Габороне": {
+        "humidity": null,
+        "coords": null
+      },
+      "Франсистаун": {
+        "humidity": null,
+        "coords": null
+      },
+      "Маун": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Буркина-Фасо": {
+    "coords": "12.2383, -1.5616",
+    "regions": {
+      "Селиби-Пикве": {
+        "humidity": null,
+        "coords": null
+      },
+      "Уагадугу": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бобо-Диуласо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кудугу": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Бурунди": {
+    "coords": "-3.3731, 29.9189",
+    "regions": {
+      "Уахигуя": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гитега": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бужумбура": {
+        "humidity": null,
+        "coords": null
+      },
+      "Муйинга": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Камерун": {
+    "coords": "7.3697, 12.3547",
+    "regions": {
+      "Руйиги": {
+        "humidity": null,
+        "coords": null
+      },
+      "Яунде": {
+        "humidity": null,
+        "coords": null
+      },
+      "Дуала": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гаруа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бафусам": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "ЦАР": {
+    "coords": "6.6111, 20.9394",
+    "regions": {
+      "Марва": {
+        "humidity": null,
+        "coords": null
+      },
+      "Банги": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бимбо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Берберати": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Чад": {
+    "coords": "15.4542, 18.7322",
+    "regions": {
+      "Буар": {
+        "humidity": null,
+        "coords": null
+      },
+      "Нджамена": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мунду": {
+        "humidity": null,
+        "coords": null
+      },
+      "Абеше": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Коморы": {
+    "coords": "-11.6455, 43.3333",
+    "regions": {
+      "Сарх": {
+        "humidity": null,
+        "coords": null
+      },
+      "Морони": {
+        "humidity": null,
+        "coords": null
+      },
+      "Муцамуду": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Конго": {
+    "coords": "-0.2280, 15.8277",
+    "regions": {
+      "Фомбони": {
+        "humidity": null,
+        "coords": null
+      },
+      "Браззавиль": {
+        "humidity": null,
+        "coords": null
+      },
+      "Пуэнт-Нуар": {
+        "humidity": null,
+        "coords": null
+      },
+      "Долизи": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "ДР Конго": {
+    "coords": "-4.0383, 21.7587",
+    "regions": {
+      "Нкайи": {
+        "humidity": null,
+        "coords": null
+      },
+      "Киншаса": {
+        "humidity": null,
+        "coords": null
+      },
+      "Лубумбаши": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кисангани": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мбужи-Майи": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кананга": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ямусукро": {
+        "humidity": null,
+        "coords": null
+      },
+      "Абиджан": {
+        "humidity": null,
+        "coords": null
+      },
+      "Буаке": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сан-Педро": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Джибути": {
+    "coords": "11.8251, 42.5903",
+    "regions": {
+      "Корого": {
+        "humidity": null,
+        "coords": null
+      },
+      "Джибути": {
+        "humidity": null,
+        "coords": null
+      },
+      "Али-Сабих": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Экваториальная Гвинея": {
+    "coords": "1.6508, 10.2679",
+    "regions": {
+      "Сан-Филипе": {
+        "humidity": null,
+        "coords": null
+      },
+      "Малабо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бата": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Эритрея": {
+    "coords": "15.1794, 39.7823",
+    "regions": {
+      "Эбебьин": {
+        "humidity": null,
+        "coords": null
+      },
+      "Асмэра": {
+        "humidity": null,
+        "coords": null
+      },
+      "Массауа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Керен": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Эсватини": {
+    "coords": "-26.5225, 31.4659",
+    "regions": {
+      "Асэб": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мбабане": {
+        "humidity": null,
+        "coords": null
+      },
+      "Манзини": {
+        "humidity": null,
+        "coords": null
+      },
+      "Биг-Бенд": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Эфиопия": {
+    "coords": "9.1450, 38.7667",
+    "regions": {
+      "Млакане": {
+        "humidity": null,
+        "coords": null
+      },
+      "Аддис-Абеба": {
+        "humidity": null,
+        "coords": null
+      },
+      "Дыре-Дауа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мекеле": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гондэр": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Габон": {
+    "coords": "-0.8037, 11.6094",
+    "regions": {
+      "Бахр-Дар": {
+        "humidity": null,
+        "coords": null
+      },
+      "Либревиль": {
+        "humidity": null,
+        "coords": null
+      },
+      "Порт-Жантиль": {
+        "humidity": null,
+        "coords": null
+      },
+      "Франсвиль": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Гамбия": {
+    "coords": "13.4432, -15.3101",
+    "regions": {
+      "Оем": {
+        "humidity": null,
+        "coords": null
+      },
+      "Банжул": {
+        "humidity": null,
+        "coords": null
+      },
+      "Серекунда": {
+        "humidity": null,
+        "coords": null
+      },
+      "Брикама": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Гана": {
+    "coords": "7.9465, -1.0232",
+    "regions": {
+      "Бакау": {
+        "humidity": null,
+        "coords": null
+      },
+      "Аккра": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кумаси": {
+        "humidity": null,
+        "coords": null
+      },
+      "Тамале": {
+        "humidity": null,
+        "coords": null
+      },
+      "Такоради": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Гвинея": {
+    "coords": "9.9456, -9.6966",
+    "regions": {
+      "Секонди": {
+        "humidity": null,
+        "coords": null
+      },
+      "Конакри": {
+        "humidity": null,
+        "coords": null
+      },
+      "Нзерекоре": {
+        "humidity": null,
+        "coords": null
+      },
+      "Канкан": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Гвинея-Бисау": {
+    "coords": "11.8037, -15.1804",
+    "regions": {
+      "Киндиа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бисау": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бафата": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Лесото": {
+    "coords": "-29.6100, 28.2336",
+    "regions": {
+      "Габу": {
+        "humidity": null,
+        "coords": null
+      },
+      "Масеру": {
+        "humidity": null,
+        "coords": null
+      },
+      "Тейатеяненг": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Либерия": {
+    "coords": "6.4281, -9.4295",
+    "regions": {
+      "Мохалес-Хук": {
+        "humidity": null,
+        "coords": null
+      },
+      "Монровия": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ганта": {
+        "humidity": null,
+        "coords": null
+      },
+      "Буханан": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Ливия": {
+    "coords": "26.3351, 17.2283",
+    "regions": {
+      "Каката": {
+        "humidity": null,
+        "coords": null
+      },
+      "Триполи": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бенгази": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мисурата": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Мадагаскар": {
+    "coords": "-18.7669, 46.8691",
+    "regions": {
+      "Сиба": {
+        "humidity": null,
+        "coords": null
+      },
+      "Антананариву": {
+        "humidity": null,
+        "coords": null
+      },
+      "Туамасина": {
+        "humidity": null,
+        "coords": null
+      },
+      "Анцеранана": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Малави": {
+    "coords": "-13.2543, 34.3015",
+    "regions": {
+      "Фианаранцуа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Лилонгве": {
+        "humidity": null,
+        "coords": null
+      },
+      "Блантайр": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мзузу": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Мали": {
+    "coords": "17.5707, -3.9962",
+    "regions": {
+      "Зомба": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бамако": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сикасо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мопти": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Мавритания": {
+    "coords": "21.0079, -10.9408",
+    "regions": {
+      "Куликоро": {
+        "humidity": null,
+        "coords": null
+      },
+      "Нуакшот": {
+        "humidity": null,
+        "coords": null
+      },
+      "Нуадибу": {
+        "humidity": null,
+        "coords": null
+      },
+      "Киффа": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Маврикий": {
+    "coords": "-20.3484, 57.5522",
+    "regions": {
+      "Росо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Порт-Луи": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кьюрпайп": {
+        "humidity": null,
+        "coords": null
+      },
+      "Вакоас": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Марокко": {
+    "coords": "31.7917, -7.0926",
+    "regions": {
+      "Катр-Борн": {
+        "humidity": null,
+        "coords": null
+      },
+      "Рабат": {
+        "humidity": null,
+        "coords": null
+      },
+      "Касабланка": {
+        "humidity": null,
+        "coords": null
+      },
+      "Марракеш": {
+        "humidity": null,
+        "coords": null
+      },
+      "Танжер": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Мозамбик": {
+    "coords": "-18.6657, 35.5296",
+    "regions": {
+      "Фес": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мапуту": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бейра": {
+        "humidity": null,
+        "coords": null
+      },
+      "Нампула": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Намибия": {
+    "coords": "-22.9576, 18.4904",
+    "regions": {
+      "Шимойо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Виндхук": {
+        "humidity": null,
+        "coords": null
+      },
+      "Свакопмунд": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ошакати": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Нигер": {
+    "coords": "17.6078, 8.0817",
+    "regions": {
+      "Рунду": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ниамей": {
+        "humidity": null,
+        "coords": null
+      },
+      "Зиндер": {
+        "humidity": null,
+        "coords": null
+      },
+      "Маради": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Руанда": {
+    "coords": "-1.9403, 29.8739",
+    "regions": {
+      "Агадес": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кигали": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бутаре": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гисеньи": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Сан-Томе и Принсипи": {
+    "coords": "0.1864, 6.6131",
+    "regions": {
+      "Муханга": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сан-Томе": {
+        "humidity": null,
+        "coords": null
+      },
+      "Триндаде": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Сенегал": {
+    "coords": "14.4974, -14.4524",
+    "regions": {
+      "Санту-Антан": {
+        "humidity": null,
+        "coords": null
+      },
+      "Дакар": {
+        "humidity": null,
+        "coords": null
+      },
+      "Тиес": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сен-Луи": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Сейшелы": {
+    "coords": "-4.6796, 55.4920",
+    "regions": {
+      "Зигиншор": {
+        "humidity": null,
+        "coords": null
+      },
+      "Виктория": {
+        "humidity": null,
+        "coords": null
+      },
+      "Анс-Рояль": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Сьерра-Леоне": {
+    "coords": "8.4606, -11.7799",
+    "regions": {
+      "Анс-Буало": {
+        "humidity": null,
+        "coords": null
+      },
+      "Фритаун": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кенема": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Сомали": {
+    "coords": "5.1521, 46.1996",
+    "regions": {
+      "Макени": {
+        "humidity": null,
+        "coords": null
+      },
+      "Могадишо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Харгейса": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кисмайо": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Судан": {
+    "coords": "12.8628, 30.2176",
+    "regions": {
+      "Байдабо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Хартум": {
+        "humidity": null,
+        "coords": null
+      },
+      "Порт-Судан": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ньяла": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Танзания": {
+    "coords": "-6.3690, 34.8888",
+    "regions": {
+      "Эль-Фашер": {
+        "humidity": null,
+        "coords": null
+      },
+      "Додома": {
+        "humidity": null,
+        "coords": null
+      },
+      "Дар-эс-Салам": {
+        "humidity": null,
+        "coords": null
+      },
+      "Аруша": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мванза": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Того": {
+    "coords": "8.6195, 0.8248",
+    "regions": {
+      "Занзибар": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ломе": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сокоде": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кара": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Тунис": {
+    "coords": "33.8869, 9.5375",
+    "regions": {
+      "Атакпаме": {
+        "humidity": null,
+        "coords": null
+      },
+      "Тунис": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сфакс": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сус": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Уганда": {
+    "coords": "1.3733, 32.2903",
+    "regions": {
+      "Бизерта": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кампала": {
+        "humidity": null,
+        "coords": null
+      },
+      "Джинджа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мбале": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Замбия": {
+    "coords": "-13.1339, 27.8493",
+    "regions": {
+      "Гулу": {
+        "humidity": null,
+        "coords": null
+      },
+      "Лусака": {
+        "humidity": null,
+        "coords": null
+      },
+      "Китве": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ндола": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Зимбабве": {
+    "coords": "-19.0154, 29.1549",
+    "regions": {
+      "Ливингстон": {
+        "humidity": null,
+        "coords": null
+      },
+      "Хараре": {
+        "humidity": null,
+        "coords": null
+      },
+      "Булавайо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мутаре": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Антигуа и Барбуда": {
+    "coords": "17.0608, -61.7964",
+    "regions": {
+      "Гверу": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сент-Джонс": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кодрингтон": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Багамы": {
+    "coords": "25.0343, -77.3963",
+    "regions": {
+      "Ол-Сэйнтс": {
+        "humidity": null,
+        "coords": null
+      },
+      "Нассау": {
+        "humidity": null,
+        "coords": null
+      },
+      "Фрипорт": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Барбадос": {
+    "coords": "13.1939, -59.5432",
+    "regions": {
+      "Кооперс-Таун": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бриджтаун": {
+        "humidity": null,
+        "coords": null
+      },
+      "Спейтстаун": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Белиз": {
+    "coords": "17.1899, -88.4976",
+    "regions": {
+      "Хоултаун": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бельмопан": {
+        "humidity": null,
+        "coords": null
+      },
+      "Белиз-Сити": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Боливия": {
+    "coords": "-16.2902, -63.5887",
+    "regions": {
+      "Сан-Игнасио": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ла-Пас": {
+        "humidity": null,
+        "coords": null
+      },
+      "Санта-Крус": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кочабамба": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сукре": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Коста-Рика": {
+    "coords": "9.7489, -83.7534",
+    "regions": {
+      "Оруро": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сан-Хосе": {
+        "humidity": null,
+        "coords": null
+      },
+      "Лимон": {
+        "humidity": null,
+        "coords": null
+      },
+      "Пунтаренас": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Куба": {
+    "coords": "21.5218, -77.7812",
+    "regions": {
+      "Алахуэла": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гавана": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сантьяго-де-Куба": {
+        "humidity": null,
+        "coords": null
+      },
+      "Камагуэй": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Доминика": {
+    "coords": "15.4150, -61.3710",
+    "regions": {
+      "Санта-Клара": {
+        "humidity": null,
+        "coords": null
+      },
+      "Розо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Портсмут": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Доминиканская Республика": {
+    "coords": "18.7357, -70.1627",
+    "regions": {
+      "Мариго": {
+        "humidity": null,
+        "coords": null
+      },
+      "Санто-Доминго": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сантьяго": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ла-Романа": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Эквадор": {
+    "coords": "-1.8312, -78.1834",
+    "regions": {
+      "Сан-Педро-де-Макорис": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кито": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гуаякиль": {
+        "humidity": null,
+        "coords": null
+      },
+      "Куэнка": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Сальвадор": {
+    "coords": "13.7942, -88.8965",
+    "regions": {
+      "Мачала": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сан-Сальвадор": {
+        "humidity": null,
+        "coords": null
+      },
+      "Санта-Ана": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сан-Мигель": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Гренада": {
+    "coords": "12.1165, -61.6790",
+    "regions": {
+      "Сонсонате": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сент-Джорджес": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гуяве": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Гватемала": {
+    "coords": "15.7835, -90.2308",
+    "regions": {
+      "Гренвилл": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гватемала": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кесальтенанго": {
+        "humidity": null,
+        "coords": null
+      },
+      "Эскуинтла": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Гайана": {
+    "coords": "4.8604, -58.9302",
+    "regions": {
+      "Антигуа-Гватемала": {
+        "humidity": null,
+        "coords": null
+      },
+      "Джорджтаун": {
+        "humidity": null,
+        "coords": null
+      },
+      "Линден": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Гаити": {
+    "coords": "18.9712, -72.2852",
+    "regions": {
+      "Нью-Амстердам": {
+        "humidity": null,
+        "coords": null
+      },
+      "Порт-о-Пренс": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кап-Аитьен": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Гондурас": {
+    "coords": "15.2000, -86.2419",
+    "regions": {
+      "Гонаив": {
+        "humidity": null,
+        "coords": null
+      },
+      "Тегусигальпа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сан-Педро-Сула": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ла-Сейба": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Ямайка": {
+    "coords": "18.1096, -77.2975",
+    "regions": {
+      "Чолома": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кингстон": {
+        "humidity": null,
+        "coords": null
+      },
+      "Монтего-Бей": {
+        "humidity": null,
+        "coords": null
+      },
+      "Спаниш-Таун": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Никарагуа": {
+    "coords": "12.2650, -85.2072",
+    "regions": {
+      "Портмор": {
+        "humidity": null,
+        "coords": null
+      },
+      "Манагуа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Леон": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гранада": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Панама": {
+    "coords": "8.5380, -80.7821",
+    "regions": {
+      "Масая": {
+        "humidity": null,
+        "coords": null
+      },
+      "Панама": {
+        "humidity": null,
+        "coords": null
+      },
+      "Колон": {
+        "humidity": null,
+        "coords": null
+      },
+      "Давид": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Парагвай": {
+    "coords": "-23.4425, -58.4438",
+    "regions": {
+      "Сантьяго": {
+        "humidity": null,
+        "coords": null
+      },
+      "Асунсьон": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сьюдад-дель-Эсте": {
+        "humidity": null,
+        "coords": null
+      },
+      "Энкарнасьон": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Сент-Китс и Невис": {
+    "coords": "17.3578, -62.7830",
+    "regions": {
+      "Педро-Хуан-Кабальеро": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бастер": {
+        "humidity": null,
+        "coords": null
+      },
+      "Чарлстаун": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Сент-Люсия": {
+    "coords": "13.9094, -60.9789",
+    "regions": {
+      "Сэнди-Пойнт-Таун": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кастри": {
+        "humidity": null,
+        "coords": null
+      },
+      "Суфриер": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Сент-Винсент и Гренадины": {
+    "coords": "12.9843, -61.2872",
+    "regions": {
+      "Вье-Фор": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кингстаун": {
+        "humidity": null,
+        "coords": null
+      },
+      "Джорджтаун": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Суринам": {
+    "coords": "3.9193, -56.0278",
+    "regions": {
+      "Биау": {
+        "humidity": null,
+        "coords": null
+      },
+      "Парамарибо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Лелидорп": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Тринидад и Тобаго": {
+    "coords": "10.6918, -61.2225",
+    "regions": {
+      "Никкери": {
+        "humidity": null,
+        "coords": null
+      },
+      "Порт-оф-Спейн": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сан-Фернандо": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Уругвай": {
+    "coords": "-32.5228, -55.7658",
+    "regions": {
+      "Чагуанас": {
+        "humidity": null,
+        "coords": null
+      },
+      "Монтевидео": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сальто": {
+        "humidity": null,
+        "coords": null
+      },
+      "Пайсанду": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Венесуэла": {
+    "coords": "6.4238, -66.5897",
+    "regions": {
+      "Лас-Пьедрас": {
+        "humidity": null,
+        "coords": null
+      },
+      "Каракас": {
+        "humidity": null,
+        "coords": null
+      },
+      "Маракайбо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Валенсия": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Фиджи": {
+    "coords": "-16.7784, 178.0650",
+    "regions": {
+      "Баркисимето": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сува": {
+        "humidity": null,
+        "coords": null
+      },
+      "Лаутока": {
+        "humidity": null,
+        "coords": null
+      },
+      "Нанди": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Папуа - Новая Гвинея": {
+    "coords": "-6.3150, 143.9555",
+    "regions": {
+      "Ламбаса": {
+        "humidity": null,
+        "coords": null
+      },
+      "Порт-Морсби": {
+        "humidity": null,
+        "coords": null
+      },
+      "Лаэ": {
+        "humidity": null,
+        "coords": null
+      },
+      "Маданг": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Самоа": {
+    "coords": "-13.7590, -172.1046",
+    "regions": {
+      "Горока": {
+        "humidity": null,
+        "coords": null
+      },
+      "Апиа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ваителе": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Соломоновы Острова": {
+    "coords": "-9.6457, 160.1562",
+    "regions": {
+      "Асау": {
+        "humidity": null,
+        "coords": null
+      },
+      "Хониара": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ауки": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Тонга": {
+    "coords": "-21.1789, -175.1982",
+    "regions": {
+      "Гизо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Нукуалофа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Неиафу": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Вануату": {
+    "coords": "-15.3767, 166.9592",
+    "regions": {
+      "Пангаи": {
+        "humidity": null,
+        "coords": null
+      },
+      "Порт-Вила": {
+        "humidity": null,
+        "coords": null
+      },
+      "Люганвиль": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Бахрейн": {
+    "coords": "26.0667, 50.5577",
+    "regions": {
+      "Исангел": {
+        "humidity": null,
+        "coords": null
+      },
+      "Манама": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мухаррак": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Ирак": {
+    "coords": "33.2232, 43.6793",
+    "regions": {
+      "Рифа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Багдад": {
+        "humidity": null,
+        "coords": null
+      },
+      "Басра": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мосул": {
+        "humidity": null,
+        "coords": null
+      },
+      "Эрбиль": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Иордания": {
+    "coords": "30.5852, 36.2384",
+    "regions": {
+      "Киркук": {
+        "humidity": null,
+        "coords": null
+      },
+      "Амман": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ирбид": {
+        "humidity": null,
+        "coords": null
+      },
+      "Акаба": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Кувейт": {
+    "coords": "29.3117, 47.4818",
+    "regions": {
+      "Зарка": {
+        "humidity": null,
+        "coords": null
+      },
+      "Эль-Кувейт": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ахмади": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Ливан": {
+    "coords": "33.8547, 35.8623",
+    "regions": {
+      "Хавалли": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бейрут": {
+        "humidity": null,
+        "coords": null
+      },
+      "Триполи": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сайда": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Оман": {
+    "coords": "21.4735, 55.9754",
+    "regions": {
+      "Тир": {
+        "humidity": null,
+        "coords": null
+      },
+      "Маскат": {
+        "humidity": null,
+        "coords": null
+      },
+      "Салала": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сохар": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Катар": {
+    "coords": "25.3548, 51.1839",
+    "regions": {
+      "Низва": {
+        "humidity": null,
+        "coords": null
+      },
+      "Доха": {
+        "humidity": null,
+        "coords": null
+      },
+      "Аль-Вакра": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Сирия": {
+    "coords": "34.8021, 38.9968",
+    "regions": {
+      "Аль-Хор": {
+        "humidity": null,
+        "coords": null
+      },
+      "Дамаск": {
+        "humidity": null,
+        "coords": null
+      },
+      "Алеппо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Латакия": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Йемен": {
+    "coords": "15.5527, 48.5164",
+    "regions": {
+      "Хомс": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сана": {
+        "humidity": null,
+        "coords": null
+      },
+      "Аден": {
+        "humidity": null,
+        "coords": null
+      },
+      "Таиз": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Казахстан": {
+    "coords": "48.0196, 66.9237",
+    "regions": {
+      "Ходейда": {
+        "humidity": null,
+        "coords": null
+      },
+      "Алматы": {
+        "humidity": null,
+        "coords": null
+      },
+      "Астана": {
+        "humidity": null,
+        "coords": null
+      },
+      "Шымкент": {
+        "humidity": null,
+        "coords": null
+      },
+      "Актобе": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Кыргызстан": {
+    "coords": "41.2044, 74.7661",
+    "regions": {
+      "Караганда": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бишкек": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ош": {
+        "humidity": null,
+        "coords": null
+      },
+      "Джалал-Абад": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Таджикистан": {
+    "coords": "38.8610, 71.2761",
+    "regions": {
+      "Каракол": {
+        "humidity": null,
+        "coords": null
+      },
+      "Душанбе": {
+        "humidity": null,
+        "coords": null
+      },
+      "Худжанд": {
+        "humidity": null,
+        "coords": null
+      },
+      "Куляб": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Туркменистан": {
+    "coords": "38.9697, 59.5563",
+    "regions": {
+      "Курган-Тюбе": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ашхабад": {
+        "humidity": null,
+        "coords": null
+      },
+      "Туркменабат": {
+        "humidity": null,
+        "coords": null
+      },
+      "Дашогуз": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Узбекистан": {
+    "coords": "41.3775, 64.5853",
+    "regions": {
+      "Мары": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ташкент": {
+        "humidity": null,
+        "coords": null
+      },
+      "Самарканд": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бухара": {
+        "humidity": null,
+        "coords": null
+      },
+      "Андижан": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Армения": {
+    "coords": "40.0691, 45.0382",
+    "regions": {
+      "Наманган": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ереван": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гюмри": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ванадзор": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Азербайджан": {
+    "coords": "40.1431, 47.5769",
+    "regions": {
+      "Эчмиадзин": {
+        "humidity": null,
+        "coords": null
+      },
+      "Баку": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гянджа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сумгаит": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Грузия": {
+    "coords": "42.3154, 43.3569",
+    "regions": {
+      "Мингечаур": {
+        "humidity": null,
+        "coords": null
+      },
+      "Тбилиси": {
+        "humidity": null,
+        "coords": null
+      },
+      "Батуми": {
+        "humidity": null,
+        "coords": null
+      },
+      "Кутаиси": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Лаос": {
+    "coords": "19.8563, 102.4955",
+    "regions": {
+      "Рустави": {
+        "humidity": null,
+        "coords": null
+      },
+      "Вьентьян": {
+        "humidity": null,
+        "coords": null
+      },
+      "Паксе": {
+        "humidity": null,
+        "coords": null
+      },
+      "Луангпхабанг": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Монголия": {
+    "coords": "46.8625, 103.8467",
+    "regions": {
+      "Саваннакхет": {
+        "humidity": null,
+        "coords": null
+      },
+      "Улан-Батор": {
+        "humidity": null,
+        "coords": null
+      },
+      "Эрдэнэт": {
+        "humidity": null,
+        "coords": null
+      },
+      "Дархан": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Северная Корея": {
+    "coords": "40.3399, 127.5101",
+    "regions": {
+      "Чойбалсан": {
+        "humidity": null,
+        "coords": null
+      },
+      "Пхеньян": {
+        "humidity": null,
+        "coords": null
+      },
+      "Хамхын": {
+        "humidity": null,
+        "coords": null
+      },
+      "Чхончжин": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Лихтенштейн": {
+    "coords": "47.1660, 9.5554",
+    "regions": {
+      "Нампхо": {
+        "humidity": null,
+        "coords": null
+      },
+      "Вадуц": {
+        "humidity": null,
+        "coords": null
+      },
+      "Шан": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Сан-Марино": {
+    "coords": "43.9424, 12.4578",
+    "regions": {
+      "Тризен": {
+        "humidity": null,
+        "coords": null
+      },
+      "Сан-Марино": {
+        "humidity": null,
+        "coords": null
+      },
+      "Серравалле": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Ватикан": {
+    "coords": "41.9029, 12.4534",
+    "regions": {
+      "Борго-Маджоре": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Кирибати": {
+    "coords": "-3.3704, -168.7340",
+    "regions": {
+      "Ватикан": {
+        "humidity": null,
+        "coords": null
+      },
+      "Тарава": {
+        "humidity": null,
+        "coords": null
+      },
+      "Бетио": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Маршалловы Острова": {
+    "coords": "7.1315, 171.1845",
+    "regions": {
+      "Баирики": {
+        "humidity": null,
+        "coords": null
+      },
+      "Маджуро": {
+        "humidity": null,
+        "coords": null
+      },
+      "Эбейе": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Микронезия": {
+    "coords": "7.4256, 150.5508",
+    "regions": {
+      "Джалуит": {
+        "humidity": null,
+        "coords": null
+      },
+      "Паликир": {
+        "humidity": null,
+        "coords": null
+      },
+      "Вено": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Науру": {
+    "coords": "-0.5228, 166.9315",
+    "regions": {
+      "Колониа": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ярен": {
+        "humidity": null,
+        "coords": null
+      },
+      "Аиво": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Палау": {
+    "coords": "7.5150, 134.5825",
+    "regions": {
+      "Боэ": {
+        "humidity": null,
+        "coords": null
+      },
+      "Нгерулмуд": {
+        "humidity": null,
+        "coords": null
+      },
+      "Корор": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Мальдивы": {
+    "coords": "3.2028, 73.2207",
+    "regions": {
+      "Мелекеок": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мале": {
+        "humidity": null,
+        "coords": null
+      },
+      "Аду": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Тимор-Лешти": {
+    "coords": "-8.8742, 125.7275",
+    "regions": {
+      "Фувахмулах": {
+        "humidity": null,
+        "coords": null
+      },
+      "Дили": {
+        "humidity": null,
+        "coords": null
+      },
+      "Баукау": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Тувалу": {
+    "coords": "-7.1095, 177.6493",
+    "regions": {
+      "Малиана": {
+        "humidity": null,
+        "coords": null
+      },
+      "Фунафути": {
+        "humidity": null,
+        "coords": null
+      },
+      "Ваиаку": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Кабо-Верде": {
+    "coords": "16.5388, -24.0132",
+    "regions": {
+      "Асау": {
+        "humidity": null,
+        "coords": null
+      },
+      "Прая": {
+        "humidity": null,
+        "coords": null
+      },
+      "Минделу": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Южный Судан": {
+    "coords": "6.8770, 31.3070",
+    "regions": {
+      "Эбебьин": {
+        "humidity": null,
+        "coords": null
+      },
+      "Джуба": {
+        "humidity": null,
+        "coords": null
+      },
+      "Вау": {
+        "humidity": null,
+        "coords": null
+      },
+      "Малакаль": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  },
+  "Швеция": {
+    "coords": "60.1282, 18.6435",
+    "regions": {
+      "Румбек": {
+        "humidity": null,
+        "coords": null
+      },
+      "Стокгольм": {
+        "humidity": null,
+        "coords": null
+      },
+      "Гётеборг": {
+        "humidity": null,
+        "coords": null
+      },
+      "Мальмё": {
+        "humidity": null,
+        "coords": null
+      },
+      "Уппсала": {
+        "humidity": null,
+        "coords": null
+      }
+    }
+  }
+}
