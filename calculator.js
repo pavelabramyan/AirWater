@@ -7,6 +7,20 @@ const PRODUCTION_INVESTMENTS = {
     10000: 1000000
 };
 
+// Операционные расходы по странам (% от выручки)
+const COUNTRY_OPERATING_COSTS = {
+    // Индонезия - дешёвая энергия, низкие зарплаты
+    'Индонезия': 60,
+    'Indonesia': 60,
+    '印度尼西亚': 60,
+    // Россия - средние расходы
+    'Россия': 75,
+    'Russia': 75,
+    '俄罗斯': 75,
+    'Rusia': 75
+};
+const DEFAULT_OPERATING_COSTS = 75;
+
 let currentHumidity = null;
 let currentWaterPrice = null;
 let currentBaseProduction = 5000;
@@ -149,6 +163,14 @@ function setWaterPrice(price) {
     calculateROI();
 }
 
+function setOperatingCostsByCountry(countryName) {
+    const operatingCostsInput = document.getElementById('operatingCosts');
+    if (operatingCostsInput && countryName) {
+        const costs = COUNTRY_OPERATING_COSTS[countryName] || DEFAULT_OPERATING_COSTS;
+        operatingCostsInput.value = costs;
+    }
+}
+
 function updateInvestmentFromCapacity() {
     const capacitySelect = document.getElementById('productionCapacity');
     const investmentInput = document.getElementById('investmentAmount');
@@ -202,6 +224,9 @@ function initLocationSelects() {
             if (typeof updateMap === 'function') {
                 updateMap(selectedCountry, null);
             }
+            
+            // Устанавливаем операционные расходы по стране
+            setOperatingCostsByCountry(selectedCountry);
         } else {
             if (typeof initMap === 'function') {
                 initMap();
