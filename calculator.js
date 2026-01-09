@@ -1,9 +1,15 @@
-// Hidden multiplier: real cost is 1/3 of displayed amount
-const HIDDEN_MULTIPLIER = 3;
-const REAL_COST_PER_PRODUCTION = 300000; // Real cost: $300k, displayed as $900k
-const BASE_PRODUCTION = 5000; // Base production at 100% humidity
+// Производительность → Инвестиции
+const PRODUCTION_INVESTMENTS = {
+    1000: 100000,
+    2000: 200000,
+    3000: 300000,
+    5000: 500000,
+    10000: 1000000
+};
 
 let currentHumidity = null;
+let currentWaterPrice = null;
+let currentBaseProduction = 5000;
 
 function formatCurrency(amount) {
     return new Intl.NumberFormat('en-US', {
@@ -21,45 +27,76 @@ function formatNumber(num) {
     }).format(num);
 }
 
+function getYearsText() {
+    const lang = window.currentLang || 'ru';
+    const texts = {
+        ru: 'лет',
+        en: 'years',
+        zh: '年',
+        es: 'años'
+    };
+    return texts[lang] || texts.en;
+}
+
+function getMonthsText() {
+    const lang = window.currentLang || 'ru';
+    const texts = {
+        ru: 'мес.',
+        en: 'mo.',
+        zh: '月',
+        es: 'meses'
+    };
+    return texts[lang] || texts.en;
+}
+
 function calculateROI() {
-    // Get input values
-    const displayedInvestment = parseFloat(document.getElementById('investmentAmount').value) || 900000;
-    const pricePerLiter = parseFloat(document.getElementById('pricePerLiter').value) || 1.5;
-    const operatingCostsPercent = parseFloat(document.getElementById('operatingCosts').value) || 35;
+    // Получаем значения из формы
+    const investment = parseFloat(document.getElementById('investmentAmount').value) || 500000;
+    const pricePerLiter = parseFloat(document.getElementById('pricePerLiter').value) || 0.50;
+    const operatingCostsPercent = parseFloat(document.getElementById('operatingCosts').value) || 75;
     const period = parseFloat(document.getElementById('period').value) || 5;
     
-    // Calculate production based on humidity
-    let dailyProduction = BASE_PRODUCTION;
-    if (currentHumidity !== null) {
-        dailyProduction = BASE_PRODUCTION * (currentHumidity / 100);
+    // Базовое производство из выбранной мощности
+    const productionCapacity = document.getElementById('productionCapacity');
+    const baseProduction = productionCapacity ? parseInt(productionCapacity.value) : 5000;
+    currentBaseProduction = baseProduction;
+    
+    // Скорректированное производство по влажности
+    let dailyProduction = baseProduction;
+    if (currentHumidity !== null && currentHumidity > 0) {
+        dailyProduction = baseProduction * (currentHumidity / 100);
     }
     
-    // Update production display
+    // Обновляем отображение производства
     const productionInput = document.getElementById('dailyProduction');
     if (productionInput) {
         productionInput.value = Math.round(dailyProduction);
     }
     
-    // Calculate real investment (hidden from investor)
-    const realInvestment = displayedInvestment / HIDDEN_MULTIPLIER;
-    
-    // Calculate annual metrics
+    // Годовые показатели
     const daysPerYear = 365;
     const annualProduction = dailyProduction * daysPerYear;
     const annualRevenue = annualProduction * pricePerLiter;
     const operatingCosts = annualRevenue * (operatingCostsPercent / 100);
     const annualProfit = annualRevenue - operatingCosts;
     
-    // Calculate ROI based on REAL investment (but show results as if based on displayed)
-    const roiPercent = (annualProfit / realInvestment) * 100;
+    // ROI и окупаемость
+    const roiPercent = investment > 0 ? (annualProfit / investment) * 100 : 0;
+    const paybackYears = annualProfit > 0 ? investment / annualProfit : Infinity;
     
-    // Calculate payback period (based on real investment)
-    const paybackYears = realInvestment / annualProfit;
-    
-    // Total profit over period
+    // Общая прибыль за период
     const totalProfit = annualProfit * period;
     
-    // Update UI (show results based on displayed investment for investor)
+    // Точка безубыточности (литры и дни)
+    let breakevenLiters = Infinity;
+    let breakevenDays = Infinity;
+    if (pricePerLiter > 0 && operatingCostsPercent < 100) {
+        const profitPerLiter = pricePerLiter * (1 - operatingCostsPercent / 100);
+        breakevenLiters = investment / profitPerLiter;
+        breakevenDays = dailyProduction > 0 ? breakevenLiters / dailyProduction : Infinity;
+    }
+    
+    // Обновляем UI
     const roiEl = document.getElementById('roi');
     const revenueEl = document.getElementById('annualRevenue');
     const profitEl = document.getElementById('annualProfit');
@@ -69,12 +106,23 @@ function calculateROI() {
     if (roiEl) roiEl.textContent = formatNumber(roiPercent) + '%';
     if (revenueEl) revenueEl.textContent = formatCurrency(annualRevenue);
     if (profitEl) profitEl.textContent = formatCurrency(annualProfit);
-    if (paybackEl) paybackEl.textContent = formatNumber(paybackYears) + ' ' + getYearsText();
+    
+    if (paybackEl) {
+        if (paybackYears === Infinity || paybackYears < 0) {
+            paybackEl.textContent = '—';
+        } else if (paybackYears < 1) {
+            const months = Math.round(paybackYears * 12);
+            paybackEl.textContent = months + ' ' + getMonthsText();
+        } else {
+            paybackEl.textContent = formatNumber(paybackYears) + ' ' + getYearsText();
+        }
+    }
+    
     if (totalEl) totalEl.textContent = formatCurrency(totalProfit);
     
-    // Update chart
-    if (typeof updateChart === 'function') {
-        updateChart(period, annualProfit, realInvestment);
+    // Обновляем график
+    if (typeof updateBreakevenChart === 'function') {
+        updateBreakevenChart(investment, annualProfit, period, breakevenDays);
     }
 }
 
@@ -87,18 +135,28 @@ function setHumidity(humidity) {
     calculateROI();
 }
 
-function getYearsText() {
-    const lang = window.currentLang || 'ru';
-    const texts = {
-        ru: 'лет',
-        en: 'years',
-        zh: '年',
-        es: 'años'
-    };
-    return texts[lang] || texts.en;
+function setWaterPrice(price) {
+    currentWaterPrice = price;
+    const priceInput = document.getElementById('pricePerLiter');
+    if (priceInput && price !== null) {
+        priceInput.value = price;
+    }
+    calculateROI();
 }
 
-// Initialize country and region selects
+function updateInvestmentFromCapacity() {
+    const capacitySelect = document.getElementById('productionCapacity');
+    const investmentInput = document.getElementById('investmentAmount');
+    
+    if (capacitySelect && investmentInput) {
+        const capacity = parseInt(capacitySelect.value);
+        const investment = PRODUCTION_INVESTMENTS[capacity] || 500000;
+        investmentInput.value = investment;
+    }
+    calculateROI();
+}
+
+// Инициализация выпадающих списков стран и регионов
 function initLocationSelects() {
     const countrySelect = document.getElementById('countrySelect');
     const regionSelect = document.getElementById('regionSelect');
@@ -107,7 +165,7 @@ function initLocationSelects() {
     
     const locations = getLocationsData();
     
-    // Populate countries
+    // Заполняем список стран
     Object.keys(locations).sort().forEach(countryName => {
         const option = document.createElement('option');
         option.value = countryName;
@@ -115,10 +173,11 @@ function initLocationSelects() {
         countrySelect.appendChild(option);
     });
     
-    // Country change handler
+    // Обработчик смены страны
     countrySelect.addEventListener('change', function() {
         const selectedCountry = this.value;
-        regionSelect.innerHTML = '<option value="" data-i18n="calculator.region.select">Сначала выберите страну</option>';
+        const selectRegionText = getSelectRegionText();
+        regionSelect.innerHTML = `<option value="">${selectRegionText}</option>`;
         regionSelect.disabled = !selectedCountry;
         
         if (selectedCountry && locations[selectedCountry]) {
@@ -130,26 +189,26 @@ function initLocationSelects() {
                 const humidityText = (region && region.humidity !== null && region.humidity !== undefined)
                     ? `${region.humidity}%`
                     : '—';
-                option.textContent = `${regionName} - ${humidityText}`;
+                option.textContent = `${regionName} (${humidityText})`;
                 regionSelect.appendChild(option);
             });
             
-            // Update map
+            // Обновляем карту
             if (typeof updateMap === 'function') {
                 updateMap(selectedCountry, null);
             }
         } else {
-            // Reset map
             if (typeof initMap === 'function') {
                 initMap();
             }
         }
         
-        // Reset humidity
+        // Сбрасываем влажность и цену
         setHumidity(null);
+        setWaterPrice(null);
     });
     
-    // Region change handler
+    // Обработчик смены региона
     regionSelect.addEventListener('change', function() {
         const selectedCountry = countrySelect.value;
         const selectedRegion = this.value;
@@ -157,32 +216,49 @@ function initLocationSelects() {
         if (selectedCountry && selectedRegion && locations[selectedCountry]) {
             const region = locations[selectedCountry].regions[selectedRegion];
             if (region) {
+                // Устанавливаем влажность
                 setHumidity((region.humidity !== null && region.humidity !== undefined) ? region.humidity : null);
-
-                // Автоподстановка средней цены воды (USD / 1L) по региону, если задана
-                const priceInput = document.getElementById('pricePerLiter');
-                if (priceInput && region.waterPriceUsd1L !== null && region.waterPriceUsd1L !== undefined) {
-                    priceInput.value = region.waterPriceUsd1L;
+                
+                // Устанавливаем цену воды
+                if (region.waterPriceUsd1L !== null && region.waterPriceUsd1L !== undefined) {
+                    setWaterPrice(region.waterPriceUsd1L);
                 }
                 
-                // Update map
+                // Обновляем карту
                 if (typeof updateMap === 'function') {
                     updateMap(selectedCountry, selectedRegion);
                 }
             }
         } else {
             setHumidity(null);
+            setWaterPrice(null);
         }
-        // Пересчёт после смены региона/цены
-        calculateROI();
     });
 }
 
-// Add event listeners
+function getSelectRegionText() {
+    const lang = window.currentLang || 'ru';
+    const texts = {
+        ru: 'Выберите регион',
+        en: 'Select region',
+        zh: '选择地区',
+        es: 'Seleccione región'
+    };
+    return texts[lang] || texts.ru;
+}
+
+// Инициализация
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize location selects
+    // Инициализация списков локаций
     initLocationSelects();
     
+    // Обработчик смены производительности
+    const capacitySelect = document.getElementById('productionCapacity');
+    if (capacitySelect) {
+        capacitySelect.addEventListener('change', updateInvestmentFromCapacity);
+    }
+    
+    // Обработчики для всех полей ввода
     const inputs = [
         'investmentAmount',
         'pricePerLiter',
@@ -198,18 +274,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Initial calculation
-    calculateROI();
+    // Устанавливаем начальные инвестиции по выбранной производительности
+    updateInvestmentFromCapacity();
     
-    // Ensure minimum investment
-    const investmentInput = document.getElementById('investmentAmount');
-    if (investmentInput) {
-        investmentInput.addEventListener('blur', function() {
-            const minInvestment = REAL_COST_PER_PRODUCTION * HIDDEN_MULTIPLIER;
-            if (parseFloat(this.value) < minInvestment) {
-                this.value = minInvestment;
-                calculateROI();
-            }
-        });
-    }
+    // Начальный расчёт
+    calculateROI();
 });
