@@ -6,3 +6,11 @@ admin.log
 admin_https.log
 admin_run.log
 *.log
+debug_*.png
+error_*.png
+nohup.out
+*.bak
+selenium_chrome_profile/
+tests/
+test_*.py
+Натальная карта/
