@@ -623,6 +623,13 @@ const locationsData = {
         'ОАЭ': {
             coords: [23.4241, 53.8478],
             regions: {
+                'Абу-Даби': { humidity: 60, coords: [24.4539, 54.3773], waterPriceUsd1L: 0.35 },
+                'Дубай': { humidity: 55, coords: [25.2048, 55.2708], waterPriceUsd1L: 0.40 },
+                'Шарджа': { humidity: 55, coords: [25.3463, 55.4209], waterPriceUsd1L: 0.32 },
+                'Аджман': { humidity: 55, coords: [25.4052, 55.5136], waterPriceUsd1L: 0.30 },
+                'Умм-эль-Кувейн': { humidity: 50, coords: [25.5647, 55.5552], waterPriceUsd1L: 0.30 },
+                'Рас-эль-Хайма': { humidity: 55, coords: [25.7895, 55.9432], waterPriceUsd1L: 0.30 },
+                'Фуджейра': { humidity: 65, coords: [25.1288, 56.3264], waterPriceUsd1L: 0.32 }
             }
         },
         'Оман': {
@@ -802,6 +809,19 @@ const locationsData = {
         'Саудовская Аравия': {
             coords: [23.8859, 45.0792],
             regions: {
+                'Эр-Рияд': { humidity: 47, coords: [24.7136, 46.6753], waterPriceUsd1L: 0.40 },
+                'Мекка': { humidity: 50, coords: [21.3891, 39.8579], waterPriceUsd1L: 0.45 },
+                'Медина': { humidity: 40, coords: [24.5247, 39.5692], waterPriceUsd1L: 0.42 },
+                'Восточная провинция': { humidity: 65, coords: [26.4207, 50.0888], waterPriceUsd1L: 0.38 },
+                'Асир': { humidity: 55, coords: [18.2164, 42.5053], waterPriceUsd1L: 0.35 },
+                'Джизан': { humidity: 70, coords: [16.8892, 42.5611], waterPriceUsd1L: 0.35 },
+                'Наджран': { humidity: 35, coords: [17.4933, 44.1277], waterPriceUsd1L: 0.35 },
+                'Аль-Баха': { humidity: 45, coords: [19.8614, 41.4414], waterPriceUsd1L: 0.35 },
+                'Табук': { humidity: 35, coords: [28.3838, 36.5550], waterPriceUsd1L: 0.38 },
+                'Аль-Джауф': { humidity: 35, coords: [29.7889, 39.8789], waterPriceUsd1L: 0.35 },
+                'Северные границы': { humidity: 40, coords: [31.1728, 37.9888], waterPriceUsd1L: 0.35 },
+                'Хаиль': { humidity: 35, coords: [27.5219, 41.6906], waterPriceUsd1L: 0.35 },
+                'Аль-Касим': { humidity: 40, coords: [26.2076, 43.4839], waterPriceUsd1L: 0.35 }
             }
         },
         'Северная Корея': {
@@ -1943,6 +1963,19 @@ const locationsData = {
         'Saudi Arabia': {
             coords: [23.8859, 45.0792],
             regions: {
+                'Riyadh': { humidity: 47, coords: [24.7136, 46.6753], waterPriceUsd1L: 0.40 },
+                'Mecca': { humidity: 50, coords: [21.3891, 39.8579], waterPriceUsd1L: 0.45 },
+                'Medina': { humidity: 40, coords: [24.5247, 39.5692], waterPriceUsd1L: 0.42 },
+                'Eastern Province': { humidity: 65, coords: [26.4207, 50.0888], waterPriceUsd1L: 0.38 },
+                'Asir': { humidity: 55, coords: [18.2164, 42.5053], waterPriceUsd1L: 0.35 },
+                'Jazan': { humidity: 70, coords: [16.8892, 42.5611], waterPriceUsd1L: 0.35 },
+                'Najran': { humidity: 35, coords: [17.4933, 44.1277], waterPriceUsd1L: 0.35 },
+                'Al Bahah': { humidity: 45, coords: [19.8614, 41.4414], waterPriceUsd1L: 0.35 },
+                'Tabuk': { humidity: 35, coords: [28.3838, 36.5550], waterPriceUsd1L: 0.38 },
+                'Al Jawf': { humidity: 35, coords: [29.7889, 39.8789], waterPriceUsd1L: 0.35 },
+                'Northern Borders': { humidity: 40, coords: [31.1728, 37.9888], waterPriceUsd1L: 0.35 },
+                'Hail': { humidity: 35, coords: [27.5219, 41.6906], waterPriceUsd1L: 0.35 },
+                'Al Qassim': { humidity: 40, coords: [26.2076, 43.4839], waterPriceUsd1L: 0.35 }
             }
         },
         'Senegal': {
@@ -2108,6 +2141,13 @@ const locationsData = {
         'United Arab Emirates': {
             coords: [23.4241, 53.8478],
             regions: {
+                'Abu Dhabi': { humidity: 60, coords: [24.4539, 54.3773], waterPriceUsd1L: 0.35 },
+                'Dubai': { humidity: 55, coords: [25.2048, 55.2708], waterPriceUsd1L: 0.40 },
+                'Sharjah': { humidity: 55, coords: [25.3463, 55.4209], waterPriceUsd1L: 0.32 },
+                'Ajman': { humidity: 55, coords: [25.4052, 55.5136], waterPriceUsd1L: 0.30 },
+                'Umm Al Quwain': { humidity: 50, coords: [25.5647, 55.5552], waterPriceUsd1L: 0.30 },
+                'Ras Al Khaimah': { humidity: 55, coords: [25.7895, 55.9432], waterPriceUsd1L: 0.30 },
+                'Fujairah': { humidity: 65, coords: [25.1288, 56.3264], waterPriceUsd1L: 0.32 }
             }
         },
         'United Kingdom': {
@@ -2919,6 +2959,19 @@ const locationsData = {
         '沙特阿拉伯': {
             coords: [23.8859, 45.0792],
             regions: {
+                '利雅得': { humidity: 47, coords: [24.7136, 46.6753], waterPriceUsd1L: 0.40 },
+                '麦加': { humidity: 50, coords: [21.3891, 39.8579], waterPriceUsd1L: 0.45 },
+                '麦地那': { humidity: 40, coords: [24.5247, 39.5692], waterPriceUsd1L: 0.42 },
+                '东部省': { humidity: 65, coords: [26.4207, 50.0888], waterPriceUsd1L: 0.38 },
+                '阿西尔': { humidity: 55, coords: [18.2164, 42.5053], waterPriceUsd1L: 0.35 },
+                '吉赞': { humidity: 70, coords: [16.8892, 42.5611], waterPriceUsd1L: 0.35 },
+                '奈季兰': { humidity: 35, coords: [17.4933, 44.1277], waterPriceUsd1L: 0.35 },
+                '巴哈': { humidity: 45, coords: [19.8614, 41.4414], waterPriceUsd1L: 0.35 },
+                '塔布克': { humidity: 35, coords: [28.3838, 36.5550], waterPriceUsd1L: 0.38 },
+                '焦夫': { humidity: 35, coords: [29.7889, 39.8789], waterPriceUsd1L: 0.35 },
+                '北部边疆': { humidity: 40, coords: [31.1728, 37.9888], waterPriceUsd1L: 0.35 },
+                '哈伊勒': { humidity: 35, coords: [27.5219, 41.6906], waterPriceUsd1L: 0.35 },
+                '卡西姆': { humidity: 40, coords: [26.2076, 43.4839], waterPriceUsd1L: 0.35 }
             }
         },
         '法国': {
@@ -3194,6 +3247,13 @@ const locationsData = {
         '阿联酋': {
             coords: [23.4241, 53.8478],
             regions: {
+                '阿布扎比': { humidity: 60, coords: [24.4539, 54.3773], waterPriceUsd1L: 0.35 },
+                '迪拜': { humidity: 55, coords: [25.2048, 55.2708], waterPriceUsd1L: 0.40 },
+                '沙迦': { humidity: 55, coords: [25.3463, 55.4209], waterPriceUsd1L: 0.32 },
+                '阿治曼': { humidity: 55, coords: [25.4052, 55.5136], waterPriceUsd1L: 0.30 },
+                '乌姆盖万': { humidity: 50, coords: [25.5647, 55.5552], waterPriceUsd1L: 0.30 },
+                '哈伊马角': { humidity: 55, coords: [25.7895, 55.9432], waterPriceUsd1L: 0.30 },
+                '富查伊拉': { humidity: 65, coords: [25.1288, 56.3264], waterPriceUsd1L: 0.32 }
             }
         },
         '韩国': {
@@ -3281,6 +3341,19 @@ const locationsData = {
         'Arabia Saudí': {
             coords: [23.8859, 45.0792],
             regions: {
+                'Riad': { humidity: 47, coords: [24.7136, 46.6753], waterPriceUsd1L: 0.40 },
+                'La Meca': { humidity: 50, coords: [21.3891, 39.8579], waterPriceUsd1L: 0.45 },
+                'Medina': { humidity: 40, coords: [24.5247, 39.5692], waterPriceUsd1L: 0.42 },
+                'Provincia Oriental': { humidity: 65, coords: [26.4207, 50.0888], waterPriceUsd1L: 0.38 },
+                'Asir': { humidity: 55, coords: [18.2164, 42.5053], waterPriceUsd1L: 0.35 },
+                'Jizan': { humidity: 70, coords: [16.8892, 42.5611], waterPriceUsd1L: 0.35 },
+                'Najrán': { humidity: 35, coords: [17.4933, 44.1277], waterPriceUsd1L: 0.35 },
+                'Al Bahah': { humidity: 45, coords: [19.8614, 41.4414], waterPriceUsd1L: 0.35 },
+                'Tabuk': { humidity: 35, coords: [28.3838, 36.5550], waterPriceUsd1L: 0.38 },
+                'Al Yauf': { humidity: 35, coords: [29.7889, 39.8789], waterPriceUsd1L: 0.35 },
+                'Fronteras del Norte': { humidity: 40, coords: [31.1728, 37.9888], waterPriceUsd1L: 0.35 },
+                'Hail': { humidity: 35, coords: [27.5219, 41.6906], waterPriceUsd1L: 0.35 },
+                'Al Qasim': { humidity: 40, coords: [26.2076, 43.4839], waterPriceUsd1L: 0.35 }
             }
         },
         'Argelia': {
@@ -3511,6 +3584,13 @@ const locationsData = {
         'Emiratos Árabes Unidos': {
             coords: [23.4241, 53.8478],
             regions: {
+                'Abu Dabi': { humidity: 60, coords: [24.4539, 54.3773], waterPriceUsd1L: 0.35 },
+                'Dubái': { humidity: 55, coords: [25.2048, 55.2708], waterPriceUsd1L: 0.40 },
+                'Sharjah': { humidity: 55, coords: [25.3463, 55.4209], waterPriceUsd1L: 0.32 },
+                'Ajmán': { humidity: 55, coords: [25.4052, 55.5136], waterPriceUsd1L: 0.30 },
+                'Umm Al Qaywayn': { humidity: 50, coords: [25.5647, 55.5552], waterPriceUsd1L: 0.30 },
+                'Ras el Jaima': { humidity: 55, coords: [25.7895, 55.9432], waterPriceUsd1L: 0.30 },
+                'Fuyaira': { humidity: 65, coords: [25.1288, 56.3264], waterPriceUsd1L: 0.32 }
             }
         },
         'Eritrea': {

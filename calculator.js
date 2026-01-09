@@ -13,11 +13,22 @@ const COUNTRY_OPERATING_COSTS = {
     'Индонезия': 60,
     'Indonesia': 60,
     '印度尼西亚': 60,
+    'Indonesia': 60,
     // Россия - средние расходы
     'Россия': 75,
     'Russia': 75,
     '俄罗斯': 75,
-    'Rusia': 75
+    'Rusia': 75,
+    // ОАЭ - высокая стоимость электроэнергии, низкая влажность
+    'ОАЭ': 80,
+    'United Arab Emirates': 80,
+    '阿联酋': 80,
+    'Emiratos Árabes Unidos': 80,
+    // Саудовская Аравия - высокая стоимость электроэнергии, низкая влажность
+    'Саудовская Аравия': 80,
+    'Saudi Arabia': 80,
+    '沙特阿拉伯': 80,
+    'Arabia Saudí': 80
 };
 const DEFAULT_OPERATING_COSTS = 75;
 
