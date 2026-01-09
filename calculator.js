@@ -54,6 +54,7 @@ function calculateROI() {
     const investment = parseFloat(document.getElementById('investmentAmount').value) || 500000;
     const pricePerLiter = parseFloat(document.getElementById('pricePerLiter').value) || 0.50;
     const operatingCostsPercent = parseFloat(document.getElementById('operatingCosts').value) || 75;
+    const investorSharePercent = parseFloat(document.getElementById('investorShare').value) || 50;
     const period = parseFloat(document.getElementById('period').value) || 5;
     
     // Базовое производство из выбранной мощности
@@ -73,26 +74,30 @@ function calculateROI() {
         productionInput.value = Math.round(dailyProduction);
     }
     
-    // Годовые показатели
+    // Годовые показатели (общие по проекту)
     const daysPerYear = 365;
     const annualProduction = dailyProduction * daysPerYear;
     const annualRevenue = annualProduction * pricePerLiter;
     const operatingCosts = annualRevenue * (operatingCostsPercent / 100);
-    const annualProfit = annualRevenue - operatingCosts;
+    const totalAnnualProfit = annualRevenue - operatingCosts;
     
-    // ROI и окупаемость
-    const roiPercent = investment > 0 ? (annualProfit / investment) * 100 : 0;
-    const paybackYears = annualProfit > 0 ? investment / annualProfit : Infinity;
+    // Прибыль инвестора (его доля от общей прибыли)
+    const investorAnnualProfit = totalAnnualProfit * (investorSharePercent / 100);
     
-    // Общая прибыль за период
-    const totalProfit = annualProfit * period;
+    // ROI и окупаемость для инвестора
+    const roiPercent = investment > 0 ? (investorAnnualProfit / investment) * 100 : 0;
+    const paybackYears = investorAnnualProfit > 0 ? investment / investorAnnualProfit : Infinity;
     
-    // Точка безубыточности (литры и дни)
+    // Прибыль инвестора за период
+    const totalProfit = investorAnnualProfit * period;
+    
+    // Точка безубыточности для инвестора (литры и дни)
     let breakevenLiters = Infinity;
     let breakevenDays = Infinity;
-    if (pricePerLiter > 0 && operatingCostsPercent < 100) {
-        const profitPerLiter = pricePerLiter * (1 - operatingCostsPercent / 100);
-        breakevenLiters = investment / profitPerLiter;
+    if (pricePerLiter > 0 && operatingCostsPercent < 100 && investorSharePercent > 0) {
+        // Прибыль инвестора с литра = (цена - опер.расходы) * доля инвестора
+        const investorProfitPerLiter = pricePerLiter * (1 - operatingCostsPercent / 100) * (investorSharePercent / 100);
+        breakevenLiters = investment / investorProfitPerLiter;
         breakevenDays = dailyProduction > 0 ? breakevenLiters / dailyProduction : Infinity;
     }
     
@@ -105,7 +110,7 @@ function calculateROI() {
     
     if (roiEl) roiEl.textContent = formatNumber(roiPercent) + '%';
     if (revenueEl) revenueEl.textContent = formatCurrency(annualRevenue);
-    if (profitEl) profitEl.textContent = formatCurrency(annualProfit);
+    if (profitEl) profitEl.textContent = formatCurrency(investorAnnualProfit);
     
     if (paybackEl) {
         if (paybackYears === Infinity || paybackYears < 0) {
@@ -120,9 +125,9 @@ function calculateROI() {
     
     if (totalEl) totalEl.textContent = formatCurrency(totalProfit);
     
-    // Обновляем график
+    // Обновляем график (для инвестора)
     if (typeof updateBreakevenChart === 'function') {
-        updateBreakevenChart(investment, annualProfit, period, breakevenDays);
+        updateBreakevenChart(investment, investorAnnualProfit, period, breakevenDays);
     }
 }
 
@@ -263,6 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'investmentAmount',
         'pricePerLiter',
         'operatingCosts',
+        'investorShare',
         'period'
     ];
     
