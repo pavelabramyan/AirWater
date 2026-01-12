@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Аналитика - Фабрика участков{% endblock %}
+
+{% block content %}
+<header>
+    <h1>Аналитика системы</h1>
+</header>
+
+<section>
+    <h2>📊 Участки</h2>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ analytics.total_parcels }}</div>
+            <div class="stat-label">Всего участков</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ "{:,.0f}".format(analytics.total_area) }}</div>
+            <div class="stat-label">Общая площадь (кв.м)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ "{:,.0f}".format(analytics.avg_area) }}</div>
+            <div class="stat-label">Средняя площадь (кв.м)</div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>📝 Заявки</h2>
+    <p><strong>Всего заявок:</strong> {{ analytics.total_applications }}</p>
+    
+    {% if analytics.applications_by_status %}
+    <table>
+        <thead>
+            <tr>
+                <th>Статус</th>
+                <th>Количество</th>
+                <th>Процент</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for status, count in analytics.applications_by_status.items() %}
+            <tr>
+                <td>{{ status }}</td>
+                <td>{{ count }}</td>
+                <td>
+                    {% if analytics.total_applications > 0 %}
+                        {{ "{:.1f}".format(count / analytics.total_applications * 100) }}%
+                    {% else %}
+                        0%
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Заявок пока нет</p>
+    {% endif %}
+</section>
+
+<section>
+    <h2>💰 Сделки</h2>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ analytics.total_deals }}</div>
+            <div class="stat-label">Всего сделок</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ analytics.completed_deals }}</div>
+            <div class="stat-label">Завершено сделок</div>
+        </div>
+        {% if analytics.total_deals > 0 %}
+        <div class="stat-card">
+            <div class="stat-number">{{ "{:.0f}".format(analytics.completed_deals / analytics.total_deals * 100) }}%</div>
+            <div class="stat-label">Процент завершения</div>
+        </div>
+        {% endif %}
+    </div>
+    
+    {% if analytics.deals_by_status %}
+    <table>
+        <thead>
+            <tr>
+                <th>Статус</th>
+                <th>Количество</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for status, count in analytics.deals_by_status.items() %}
+            <tr>
+                <td>{{ status }}</td>
+                <td>{{ count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</section>
+
+{% if analytics.total_revenue > 0 %}
+<section>
+    <h2>💵 Финансы</h2>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ "{:,.0f}".format(analytics.total_revenue) }} ₽</div>
+            <div class="stat-label">Общая выручка</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ "{:,.0f}".format(analytics.avg_deal_price) }} ₽</div>
+            <div class="stat-label">Средний чек</div>
+        </div>
+        {% if analytics.potential_profit > 0 %}
+        <div class="stat-card">
+            <div class="stat-number">{{ "{:,.0f}".format(analytics.potential_profit) }} ₽</div>
+            <div class="stat-label">Потенциальная прибыль</div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

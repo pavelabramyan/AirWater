@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактор районов</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f8f9fa; font-size: 14px; }
+        .table-container { background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        .table th { background: #667eea; color: #fff; position: sticky; top: 0; z-index: 10; }
+        .filter-row th { background: #f1f3f5; position: sticky; top: 42px; z-index: 9; padding: 5px; }
+        .form-control-sm { font-size: 13px; }
+        .filter-input { font-size: 12px; padding: 4px 8px; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-0"><i class="bi bi-geo-alt"></i> Редактор районов</h2>
+                <small class="text-muted">Показано: <span id="visibleCount">{{ districts|length }}</span> из {{ districts|length }}</small>
+            </div>
+            <a class="btn btn-secondary" href="/">
+                <i class="bi bi-arrow-left-circle"></i> К списку участков
+            </a>
+        </div>
+
+        <div class="table-container mb-4">
+            <h5>Добавить новый район</h5>
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <input type="text" class="form-control form-control-sm" id="newRegion" placeholder="Регион">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control form-control-sm" id="newQuarter" placeholder="Кадастровый квартал (например 16:06)">
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control form-control-sm" id="newDistrict" placeholder="Название района">
+                </div>
+                <div class="col-md-1 d-grid">
+                    <button class="btn btn-primary btn-sm" onclick="createDistrict()">Добавить</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="table-responsive" style="max-height: 70vh;">
+                <table class="table table-bordered align-middle">
+                    <thead>
+                        <tr>
+                            <th style="width: 12%;">Регион</th>
+                            <th style="width: 8%;">Квартал</th>
+                            <th style="width: 12%;">Район</th>
+                            <th style="width: 20%;">Ответственный орган</th>
+                            <th style="width: 15%;">Адрес организации</th>
+                            <th style="width: 12%;">Телефон</th>
+                            <th style="width: 15%;">Email</th>
+                            <th style="width: 6%;">Действия</th>
+                        </tr>
+                        <tr class="filter-row">
+                            <th>
+                                <input type="text" class="form-control filter-input" id="filterRegion" placeholder="Фильтр...">
+                            </th>
+                            <th>
+                                <input type="text" class="form-control filter-input" id="filterQuarter" placeholder="Фильтр...">
+                            </th>
+                            <th>
+                                <input type="text" class="form-control filter-input" id="filterDistrict" placeholder="Фильтр...">
+                            </th>
+                            <th>
+                                <input type="text" class="form-control filter-input" id="filterOrg" placeholder="Фильтр...">
+                            </th>
+                            <th>
+                                <input type="text" class="form-control filter-input" id="filterAddress" placeholder="Фильтр...">
+                            </th>
+                            <th>
+                                <input type="text" class="form-control filter-input" id="filterPhone" placeholder="Фильтр...">
+                            </th>
+                            <th>
+                                <input type="text" class="form-control filter-input" id="filterEmail" placeholder="Фильтр...">
+                            </th>
+                            <th class="text-center">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="clearFilters()" title="Очистить фильтры">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Данные загружаются через JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Данные из шаблона
+        const allDistricts = {{ districts|tojson }};
+        
+        // Функция экранирования HTML для безопасной вставки в атрибуты
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        
+        // Отрисовка таблицы
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            data.forEach(district => {
+                const tr = document.createElement('tr');
+                tr.setAttribute('data-id', district.id);
+                
+                // Создаём элементы через DOM API для безопасной вставки значений
+                const td1 = document.createElement('td');
+                const input1 = document.createElement('input');
+                input1.type = 'text';
+                input1.className = 'form-control form-control-sm region-input';
+                input1.value = district.region_name || '';
+                td1.appendChild(input1);
+                
+                const td2 = document.createElement('td');
+                const input2 = document.createElement('input');
+                input2.type = 'text';
+                input2.className = 'form-control form-control-sm quarter-input';
+                input2.value = district.quarter_code || '';
+                td2.appendChild(input2);
+                
+                const td3 = document.createElement('td');
+                const input3 = document.createElement('input');
+                input3.type = 'text';
+                input3.className = 'form-control form-control-sm name-input';
+                input3.value = district.district_name || '';
+                td3.appendChild(input3);
+                
+                const td4 = document.createElement('td');
+                const input4 = document.createElement('input');
+                input4.type = 'text';
+                input4.className = 'form-control form-control-sm org-input';
+                input4.value = district.responsible_org || '';
+                input4.placeholder = 'Не указан';
+                td4.appendChild(input4);
+                
+                const td5 = document.createElement('td');
+                const input5 = document.createElement('input');
+                input5.type = 'text';
+                input5.className = 'form-control form-control-sm address-input';
+                input5.value = district.org_address || '';
+                input5.placeholder = 'Не указан';
+                td5.appendChild(input5);
+                
+                const td6 = document.createElement('td');
+                const input6 = document.createElement('input');
+                input6.type = 'text';
+                input6.className = 'form-control form-control-sm phone-input';
+                input6.value = district.phone || '';
+                input6.placeholder = 'Телефон';
+                td6.appendChild(input6);
+                
+                const td7 = document.createElement('td');
+                const input7 = document.createElement('input');
+                input7.type = 'text';
+                input7.className = 'form-control form-control-sm email-input';
+                input7.value = district.email || '';
+                input7.placeholder = 'Email';
+                td7.appendChild(input7);
+                
+                const td8 = document.createElement('td');
+                td8.className = 'text-center';
+                const button = document.createElement('button');
+                button.className = 'btn btn-success btn-sm';
+                button.onclick = () => saveDistrict(district.id);
+                button.innerHTML = '<i class="bi bi-save"></i>';
+                td8.appendChild(button);
+                
+                tr.appendChild(td1);
+                tr.appendChild(td2);
+                tr.appendChild(td3);
+                tr.appendChild(td4);
+                tr.appendChild(td5);
+                tr.appendChild(td6);
+                tr.appendChild(td7);
+                tr.appendChild(td8);
+                
+                tbody.appendChild(tr);
+            });
+            
+            // Обновляем счётчик
+            document.getElementById('visibleCount').textContent = data.length;
+        }
+        
+        // Фильтрация
+        function applyFilters() {
+            const regionFilter = document.getElementById('filterRegion').value.toLowerCase().trim();
+            const quarterFilter = document.getElementById('filterQuarter').value.toLowerCase().trim();
+            const districtFilter = document.getElementById('filterDistrict').value.toLowerCase().trim();
+            const orgFilter = document.getElementById('filterOrg').value.toLowerCase().trim();
+            const addressFilter = document.getElementById('filterAddress').value.toLowerCase().trim();
+            const phoneFilter = document.getElementById('filterPhone').value.toLowerCase().trim();
+            const emailFilter = document.getElementById('filterEmail').value.toLowerCase().trim();
+            
+            const filtered = allDistricts.filter(d => {
+                const regionMatch = !regionFilter || d.region_name.toLowerCase().includes(regionFilter);
+                const quarterMatch = !quarterFilter || d.quarter_code.toLowerCase().includes(quarterFilter);
+                const districtMatch = !districtFilter || d.district_name.toLowerCase().includes(districtFilter);
+                const orgMatch = !orgFilter || (d.responsible_org && d.responsible_org.toLowerCase().includes(orgFilter));
+                const addressMatch = !addressFilter || (d.org_address && d.org_address.toLowerCase().includes(addressFilter));
+                const phoneMatch = !phoneFilter || (d.phone && d.phone.toLowerCase().includes(phoneFilter));
+                const emailMatch = !emailFilter || (d.email && d.email.toLowerCase().includes(emailFilter));
+                
+                return regionMatch && quarterMatch && districtMatch && orgMatch && addressMatch && phoneMatch && emailMatch;
+            });
+            
+            renderTable(filtered);
+        }
+        
+        // Очистка фильтров
+        function clearFilters() {
+            document.getElementById('filterRegion').value = '';
+            document.getElementById('filterQuarter').value = '';
+            document.getElementById('filterDistrict').value = '';
+            document.getElementById('filterOrg').value = '';
+            document.getElementById('filterAddress').value = '';
+            document.getElementById('filterPhone').value = '';
+            document.getElementById('filterEmail').value = '';
+            renderTable(allDistricts);
+        }
+        
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable(allDistricts);
+            
+            // Привязываем события фильтрации
+            document.getElementById('filterRegion').addEventListener('input', applyFilters);
+            document.getElementById('filterQuarter').addEventListener('input', applyFilters);
+            document.getElementById('filterDistrict').addEventListener('input', applyFilters);
+            document.getElementById('filterOrg').addEventListener('input', applyFilters);
+            document.getElementById('filterAddress').addEventListener('input', applyFilters);
+            document.getElementById('filterPhone').addEventListener('input', applyFilters);
+            document.getElementById('filterEmail').addEventListener('input', applyFilters);
+        });
+
+        function showToast(message, type = 'success') {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 320px;';
+            alert.innerHTML = message;
+            document.body.appendChild(alert);
+            setTimeout(() => {
+                alert.style.transition = 'opacity 0.3s';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            }, 2500);
+        }
+
+        function saveDistrict(id) {
+            const row = document.querySelector(`tr[data-id="${id}"]`);
+            const region = row.querySelector('.region-input').value.trim();
+            const quarter = row.querySelector('.quarter-input').value.trim();
+            const district = row.querySelector('.name-input').value.trim();
+            const responsibleOrg = row.querySelector('.org-input').value.trim();
+            const orgAddress = row.querySelector('.address-input').value.trim();
+            const phone = row.querySelector('.phone-input').value.trim();
+            const email = row.querySelector('.email-input').value.trim();
+
+            fetch(`/api/districts/${id}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    region, 
+                    quarter, 
+                    district,
+                    responsible_org: responsibleOrg,
+                    org_address: orgAddress,
+                    phone: phone,
+                    email: email
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Изменения сохранены');
+                    // Обновляем данные в массиве
+                    const idx = allDistricts.findIndex(d => d.id === id);
+                    if (idx !== -1) {
+                        allDistricts[idx].region_name = region;
+                        allDistricts[idx].quarter_code = quarter;
+                        allDistricts[idx].district_name = district;
+                        allDistricts[idx].responsible_org = responsibleOrg;
+                        allDistricts[idx].org_address = orgAddress;
+                        allDistricts[idx].phone = phone;
+                        allDistricts[idx].email = email;
+                    }
+                } else {
+                    showToast(data.message || 'Ошибка сохранения', 'error');
+                }
+            })
+            .catch(() => showToast('Ошибка соединения', 'error'));
+        }
+
+        function createDistrict() {
+            const region = document.getElementById('newRegion').value.trim();
+            const quarter = document.getElementById('newQuarter').value.trim();
+            const district = document.getElementById('newDistrict').value.trim();
+
+            fetch('/api/districts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ region, quarter, district })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Район добавлен');
+                    location.reload();
+                } else {
+                    showToast(data.message || 'Ошибка добавления', 'error');
+                }
+            })
+            .catch(() => showToast('Ошибка соединения', 'error'));
+        }
+    </script>
+</body>
+</html>
+

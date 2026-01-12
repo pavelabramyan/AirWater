@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление ботом</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .status-card { border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        .status-running { background: #d4edda; border: 1px solid #c3e6cb; }
+        .status-stopped { background: #f8d7da; border: 1px solid #f5c6cb; }
+        .config-card { background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        .log-container { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 12px; max-height: 400px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-robot"></i> Управление ботом</h2>
+            <div>
+                <a class="btn btn-info btn-sm me-2" href="/bot/screen" target="_blank">
+                    <i class="bi bi-display"></i> Экран бота
+                </a>
+                <a class="btn btn-secondary btn-sm" href="/">
+                    <i class="bi bi-arrow-left-circle"></i> К списку участков
+                </a>
+            </div>
+        </div>
+
+        <!-- Статус бота -->
+        <div class="status-card" id="statusCard">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-1">
+                        <span id="statusIcon"></span>
+                        <span id="statusText">Проверка...</span>
+                    </h5>
+                    <small id="statusDetails" class="text-muted"></small>
+                </div>
+                <div>
+                    <button class="btn btn-success btn-sm" id="startBtn" onclick="startBot()" style="display:none;">
+                        <i class="bi bi-play-fill"></i> Запустить
+                    </button>
+                    <button class="btn btn-danger btn-sm" id="stopBtn" onclick="stopBot()" style="display:none;">
+                        <i class="bi bi-stop-fill"></i> Остановить
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Настройки -->
+        <div class="config-card mb-4">
+            <h5 class="mb-3"><i class="bi bi-gear"></i> Настройки бота</h5>
+            
+            <div class="mb-3">
+                <label class="form-label">Регионы (коды через запятую, пусто = все)</label>
+                <input type="text" class="form-control" id="regionsInput" placeholder="74,66,77">
+                <small class="text-muted">Доступные регионы: 
+                    <span id="availableRegions"></span>
+                </small>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Минимальная стоимость (от)</label>
+                    <input type="number" class="form-control" id="costMinInput" value="0" step="0.01">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Максимальная стоимость (до, пусто = без ограничений)</label>
+                    <input type="number" class="form-control" id="costMaxInput" step="0.01">
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="saveConfig()">
+                <i class="bi bi-save"></i> Сохранить настройки
+            </button>
+        </div>
+
+        <!-- SMS код -->
+        <div class="config-card mb-4">
+            <h5 class="mb-3"><i class="bi bi-phone"></i> Ввод SMS кода</h5>
+            <div class="alert alert-info">
+                Когда бот запросит SMS код для входа в Госуслуги, введите его здесь
+            </div>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="smsCodeInput" placeholder="Введите SMS код" maxlength="10">
+                <button class="btn btn-success" onclick="submitSmsCode()">
+                    <i class="bi bi-send"></i> Отправить
+                </button>
+            </div>
+        </div>
+
+        <!-- Логи -->
+        <div class="config-card">
+            <h5 class="mb-3"><i class="bi bi-file-text"></i> Логи бота</h5>
+            <div class="log-container" id="logContainer">
+                Загрузка логов...
+            </div>
+            <button class="btn btn-sm btn-secondary mt-2" onclick="refreshLogs()">
+                <i class="bi bi-arrow-clockwise"></i> Обновить
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let statusInterval = null;
+
+        function updateStatus() {
+            fetch('/api/bot/status')
+                .then(res => res.json())
+                .then(data => {
+                    const card = document.getElementById('statusCard');
+                    const icon = document.getElementById('statusIcon');
+                    const text = document.getElementById('statusText');
+                    const details = document.getElementById('statusDetails');
+                    const startBtn = document.getElementById('startBtn');
+                    const stopBtn = document.getElementById('stopBtn');
+
+                    if (data.running) {
+                        card.className = 'status-card status-running';
+                        icon.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i>';
+                        text.textContent = 'Бот запущен';
+                        details.textContent = `PID: ${data.pid}`;
+                        startBtn.style.display = 'none';
+                        stopBtn.style.display = 'inline-block';
+                    } else {
+                        card.className = 'status-card status-stopped';
+                        icon.innerHTML = '<i class="bi bi-x-circle-fill text-danger"></i>';
+                        text.textContent = 'Бот остановлен';
+                        details.textContent = '';
+                        startBtn.style.display = 'inline-block';
+                        stopBtn.style.display = 'none';
+                    }
+                })
+                .catch(err => console.error('Ошибка получения статуса:', err));
+        }
+
+        function startBot() {
+            fetch('/api/bot/start', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Бот запущен', 'success');
+                        updateStatus();
+                    } else {
+                        showToast(data.message || 'Ошибка запуска', 'error');
+                    }
+                })
+                .catch(err => {
+                    showToast('Ошибка соединения', 'error');
+                    console.error(err);
+                });
+        }
+
+        function stopBot() {
+            if (!confirm('Остановить бота?')) return;
+            
+            fetch('/api/bot/stop', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Бот остановлен', 'success');
+                        updateStatus();
+                    } else {
+                        showToast(data.message || 'Ошибка остановки', 'error');
+                    }
+                })
+                .catch(err => {
+                    showToast('Ошибка соединения', 'error');
+                    console.error(err);
+                });
+        }
+
+        function loadConfig() {
+            fetch('/api/bot/config')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('regionsInput').value = data.regions ? data.regions.join(',') : '';
+                    document.getElementById('costMinInput').value = data.cost_min || 0;
+                    document.getElementById('costMaxInput').value = data.cost_max || '';
+                })
+                .catch(err => console.error('Ошибка загрузки настроек:', err));
+        }
+
+        function saveConfig() {
+            const regions = document.getElementById('regionsInput').value.split(',').map(r => r.trim()).filter(r => r);
+            const costMin = parseFloat(document.getElementById('costMinInput').value) || 0;
+            const costMax = document.getElementById('costMaxInput').value ? parseFloat(document.getElementById('costMaxInput').value) : null;
+
+            fetch('/api/bot/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    regions: regions,
+                    cost_min: costMin,
+                    cost_max: costMax
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Настройки сохранены', 'success');
+                } else {
+                    showToast('Ошибка сохранения', 'error');
+                }
+            })
+            .catch(err => {
+                showToast('Ошибка соединения', 'error');
+                console.error(err);
+            });
+        }
+
+        function submitSmsCode() {
+            const code = document.getElementById('smsCodeInput').value.trim();
+            if (!code) {
+                showToast('Введите SMS код', 'error');
+                return;
+            }
+
+            fetch('/api/bot/sms', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('SMS код отправлен боту', 'success');
+                    document.getElementById('smsCodeInput').value = '';
+                } else {
+                    showToast(data.message || 'Ошибка отправки', 'error');
+                }
+            })
+            .catch(err => {
+                showToast('Ошибка соединения', 'error');
+                console.error(err);
+            });
+        }
+
+        function refreshLogs() {
+            fetch('/api/bot/logs')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('logContainer').textContent = data.logs || 'Логи пусты';
+                    const container = document.getElementById('logContainer');
+                    container.scrollTop = container.scrollHeight;
+                })
+                .catch(err => {
+                    document.getElementById('logContainer').textContent = 'Ошибка загрузки логов';
+                });
+        }
+
+        function showToast(message, type = 'success') {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 320px;';
+            alert.innerHTML = message;
+            document.body.appendChild(alert);
+            setTimeout(() => {
+                alert.style.transition = 'opacity 0.3s';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            }, 2500);
+        }
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStatus();
+            loadConfig();
+            refreshLogs();
+            
+            // Обновляем статус каждые 5 секунд
+            statusInterval = setInterval(updateStatus, 5000);
+            
+            // Обновляем логи каждые 10 секунд
+            setInterval(refreshLogs, 10000);
+            
+            // Показываем доступные регионы
+            const regions = {{ available_regions|tojson|safe }};
+            if (regions && regions.length > 0) {
+                const regionCodes = regions.map(r => `${r.code} (${r.region})`).join(', ');
+                document.getElementById('availableRegions').textContent = regionCodes;
+            } else {
+                document.getElementById('availableRegions').textContent = 'нет данных';
+            }
+        });
+
+        // Обработка Enter для SMS кода
+        document.getElementById('smsCodeInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitSmsCode();
+            }
+        });
+    </script>
+</body>
+</html>
+

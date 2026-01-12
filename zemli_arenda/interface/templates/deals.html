@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Сделки - Фабрика участков{% endblock %}
+
+{% block content %}
+<header>
+    <h1>Сделки по продаже прав аренды</h1>
+    <a href="/deals/add" role="button">➕ Добавить сделку</a>
+</header>
+
+{% if deals %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Кадастровый номер</th>
+            <th>Покупатель</th>
+            <th>Контакт</th>
+            <th>Цена (руб)</th>
+            <th>Статус</th>
+            <th>Дата создания</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in deals %}
+        <tr>
+            <td>{{ item.deal.id }}</td>
+            <td>{{ item.parcel.cadastral_number if item.parcel else 'N/A' }}</td>
+            <td>{{ item.deal.buyer_name }}</td>
+            <td>{{ item.deal.buyer_contact }}</td>
+            <td><strong>{{ "{:,.0f}".format(item.deal.sale_price) }}</strong></td>
+            <td><mark>{{ item.deal.status.value }}</mark></td>
+            <td>{{ item.deal.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<article>
+    <p>Сделок пока нет. <a href="/deals/add">Добавить первую сделку</a></p>
+</article>
+{% endif %}
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

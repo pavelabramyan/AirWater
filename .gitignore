@@ -1,0 +1,33 @@
+.DS_Store
+.cursor/
+__pycache__/
+*.pyc
+*.log
+debug_*.png
+error_*.png
+nohup.out
+*.bak
+selenium_chrome_profile/
+chrome_profile/
+tests/
+test_*.py
+
+# Большие базы данных (не загружать на GitHub)
+*.db
+*.db.backup*
+*.db.server
+nspd_lands*.db
+land_records*.db
+
+# Виртуальное окружение
+.venv/
+.pytest_cache/
+
+# Эфемериды (большие файлы)
+de421.bsp
+
+# PDF бизнес-планы
+BUSINESS_PLAN*.pdf
+
+# Логи
+logs/

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить заявку - Фабрика участков{% endblock %}
+
+{% block content %}
+<header>
+    <h1>Создание заявки</h1>
+</header>
+
+<form method="POST">
+    <label for="parcel_id">
+        Участок
+        <select id="parcel_id" name="parcel_id" required>
+            <option value="">Выберите участок...</option>
+            {% for parcel in parcels %}
+            <option value="{{ parcel.id }}">
+                {{ parcel.cadastral_number }} - {{ parcel.address }}
+            </option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label for="status">
+        Статус
+        <select id="status" name="status" required>
+            {% for status in statuses %}
+            <option value="{{ status }}">{{ status }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label for="notes">
+        Примечания (необязательно)
+        <textarea id="notes" name="notes" rows="4" placeholder="Дополнительная информация..."></textarea>
+    </label>
+
+    <div class="grid">
+        <button type="submit">Создать заявку</button>
+        <a href="/applications" role="button" class="secondary">Отмена</a>
+    </div>
+</form>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

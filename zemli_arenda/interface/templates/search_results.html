@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Результаты поиска - Фабрика участков{% endblock %}
+
+{% block content %}
+<header>
+    <h1>📊 Результаты поиска</h1>
+    <p>Найдено участков: <strong>{{ result.total_found }}</strong>, подходящих: <strong>{{ result.filtered_count }}</strong></p>
+    <small>Время поиска: {{ "%.1f"|format(result.duration_seconds) }} сек</small>
+</header>
+
+{% if result.errors %}
+<article style="background: #ffeaa7;">
+    <h3>⚠️ Предупреждения</h3>
+    <ul>
+        {% for error in result.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+</article>
+{% endif %}
+
+<section>
+    <div class="grid">
+        <a href="/search" role="button" class="secondary">← Новый поиск</a>
+        <a href="/parcels" role="button">Посмотреть все участки</a>
+    </div>
+</section>
+
+{% if top_parcels %}
+<section>
+    <h2>🏆 Топ участков (по приоритету)</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Кадастровый №</th>
+                <th>Адрес</th>
+                <th>Площадь (кв.м)</th>
+                <th>Категория</th>
+                <th>Доступность</th>
+                <th>Приоритет</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for parcel in top_parcels %}
+            <tr>
+                <td><code>{{ parcel.cadastral_number }}</code></td>
+                <td>{{ parcel.address }}</td>
+                <td>{{ "{:,.0f}".format(parcel.area) }}</td>
+                <td>{{ parcel.category }}</td>
+                <td>
+                    {% if parcel.availability.value == "Свободен" %}
+                    <mark style="background: #55efc4;">{{ parcel.availability.value }}</mark>
+                    {% elif parcel.availability.value == "Госсобственность не разграничена" %}
+                    <mark style="background: #74b9ff;">{{ parcel.availability.value }}</mark>
+                    {% else %}
+                    <mark>{{ parcel.availability.value }}</mark>
+                    {% endif %}
+                </td>
+                <td><strong>{{ "{:.0f}".format(parcel.calculate_priority_score()) }}</strong></td>
+                <td>
+                    <details>
+                        <summary>Импорт</summary>
+                        <form method="POST" action="/search/import/{{ parcel.cadastral_number }}">
+                            <label for="rent_{{ loop.index }}">
+                                Аренда (руб/год)
+                                <input type="number" id="rent_{{ loop.index }}" name="rent" value="50000" step="1000">
+                            </label>
+                            <button type="submit">➕ Добавить</button>
+                        </form>
+                    </details>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h3>📍 Детали участков</h3>
+    
+    {% for parcel in top_parcels[:5] %}
+    <details>
+        <summary>
+            <strong>{{ parcel.cadastral_number }}</strong> — {{ parcel.address }} ({{ "{:,.0f}".format(parcel.area) }} кв.м)
+        </summary>
+        
+        <dl>
+            <dt>Категория:</dt>
+            <dd>{{ parcel.category }}</dd>
+            
+            <dt>Доступность:</dt>
+            <dd>{{ parcel.availability.value }}</dd>
+            
+            <dt>Разрешённое использование:</dt>
+            <dd>{{ parcel.purpose or "Не указано" }}</dd>
+            
+            <dt>Район:</dt>
+            <dd>{{ parcel.district or "Не указан" }}</dd>
+            
+            {% if parcel.coordinates %}
+            <dt>Координаты:</dt>
+            <dd>
+                Широта: {{ parcel.coordinates.lat }}, Долгота: {{ parcel.coordinates.lon }}
+                <br>
+                <a href="https://yandex.ru/maps/?ll={{ parcel.coordinates.lon }},{{ parcel.coordinates.lat }}&z=17" target="_blank">
+                    🗺️ Открыть на карте
+                </a>
+            </dd>
+            {% endif %}
+            
+            <dt>Правообладатель:</dt>
+            <dd>{{ "Есть" if parcel.has_owner else "Нет" }}</dd>
+            
+            <dt>Обременения:</dt>
+            <dd>{{ "Есть" if parcel.has_encumbrances else "Нет" }}</dd>
+            
+            <dt>Приоритет:</dt>
+            <dd><strong>{{ "{:.0f}".format(parcel.calculate_priority_score()) }}</strong> баллов</dd>
+            
+            <dt>Источник:</dt>
+            <dd>{{ parcel.source.value }}</dd>
+            
+            <dt>Найден:</dt>
+            <dd>{{ parcel.found_at.strftime('%Y-%m-%d %H:%M') }}</dd>
+        </dl>
+        
+        <form method="POST" action="/search/import/{{ parcel.cadastral_number }}">
+            <div class="grid">
+                <label for="rent_detail_{{ loop.index }}">
+                    Арендная ставка (руб/год)
+                    <input type="number" id="rent_detail_{{ loop.index }}" name="rent" value="50000" step="1000">
+                </label>
+                <div>
+                    <label>&nbsp;</label>
+                    <button type="submit">➕ Импортировать в систему</button>
+                </div>
+            </div>
+        </form>
+    </details>
+    {% endfor %}
+</section>
+
+{% else %}
+<article>
+    <p>😔 Участков, соответствующих критериям, не найдено.</p>
+    <p>Попробуйте изменить параметры поиска:</p>
+    <ul>
+        <li>Расширьте диапазон площади</li>
+        <li>Увеличьте географическую область (bbox)</li>
+        <li>Снимите фильтр "Только свободные"</li>
+    </ul>
+    <a href="/search" role="button">Новый поиск</a>
+</article>
+{% endif %}
+
+<section>
+    <h3>🔍 Параметры поиска</h3>
+    <dl>
+        <dt>Регион:</dt>
+        <dd>{{ result.criteria.region_code }}</dd>
+        
+        {% if result.criteria.min_area %}
+        <dt>Минимальная площадь:</dt>
+        <dd>{{ "{:,.0f}".format(result.criteria.min_area) }} кв.м</dd>
+        {% endif %}
+        
+        {% if result.criteria.max_area %}
+        <dt>Максимальная площадь:</dt>
+        <dd>{{ "{:,.0f}".format(result.criteria.max_area) }} кв.м</dd>
+        {% endif %}
+        
+        <dt>Только свободные:</dt>
+        <dd>{{ "Да" if result.criteria.only_free else "Нет" }}</dd>
+        
+        {% if result.criteria.bbox %}
+        <dt>Bbox:</dt>
+        <dd><code>{{ result.criteria.bbox }}</code></dd>
+        {% endif %}
+    </dl>
+</section>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

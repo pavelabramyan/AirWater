@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админка - База земельных участков</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-size: 14px;
+        }
+        .header-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .table thead {
+            background-color: #667eea;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .filter-input {
+            font-size: 12px;
+            padding: 4px 8px;
+        }
+        #dateRangePicker {
+            min-width: 220px !important;
+            width: auto !important;
+        }
+        /* Разделители столбцов для изменения ширины */
+        .table thead th {
+            position: relative;
+            user-select: none;
+        }
+        .column-resizer {
+            position: absolute;
+            top: 0;
+            right: -3px;
+            width: 8px;
+            height: 100%;
+            cursor: col-resize;
+            background: transparent;
+            z-index: 100;
+            touch-action: none;
+            pointer-events: auto;
+        }
+        .column-resizer:hover {
+            background: rgba(0, 123, 255, 0.4);
+        }
+        .column-resizer.active {
+            background: rgba(0, 123, 255, 0.6);
+        }
+        .table thead th {
+            position: relative;
+            user-select: none;
+            overflow: visible;
+        }
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            width: 100%;
+        }
+        .filter-select {
+            font-size: 12px;
+            padding: 4px 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            width: 100%;
+        }
+        .status-badge {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+        .status-отправлено {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+        .status-не-отправлена {
+            background-color: #fff3cd;
+            color: #664d03;
+        }
+        .pagination-container {
+            margin: 20px 0;
+        }
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .table td {
+            vertical-align: middle;
+            font-size: 13px;
+        }
+        .table th {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .btn-clear-filters {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .btn-clear-filters:hover {
+            background-color: #c82333;
+        }
+        .action-btn {
+            padding: 4px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header-section">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="mb-0"><i class="bi bi-database"></i> Админка - База земельных участков</h1>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="d-flex justify-content-end align-items-center gap-3">
+                        <a class="btn btn-light btn-sm" href="/districts">
+                            <i class="bi bi-geo-alt"></i> Районы
+                        </a>
+                        <a class="btn btn-light btn-sm" href="/bot">
+                            <i class="bi bi-robot"></i> Управление ботом
+                        </a>
+                        <a class="btn btn-light btn-sm" href="/districts">
+                            <i class="bi bi-geo-alt"></i> Районы
+                        </a>
+                        <h5 class="mb-0">Всего записей: <strong>{{ "{:,}".format(total_items).replace(',', ' ') }}</strong></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <!-- Статистика -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <h3 class="text-primary">{{ "{:,}".format(total_items).replace(',', ' ') }}</h3>
+                    <p class="text-muted mb-0">Всего записей</p>
+                </div>
+            </div>
+            {% for stat in status_stats %}
+                {% if stat['status'] == 'Отправлено' %}
+                    <div class="col-md-3">
+                        <div class="stats-card text-center">
+                            <h3 class="text-success">{{ "{:,}".format(stat['count']).replace(',', ' ') }}</h3>
+                            <p class="text-muted mb-0">{{ stat['status'] }}</p>
+                        </div>
+                    </div>
+                {% elif stat['status'] == 'Не отправлена' %}
+                    <div class="col-md-3">
+                        <div class="stats-card text-center">
+                            <h3 class="text-warning">{{ "{:,}".format(stat['count']).replace(',', ' ') }}</h3>
+                            <p class="text-muted mb-0">{{ stat['status'] }}</p>
+                        </div>
+                    </div>
+                {% elif stat['status'] == 'Ошибка' %}
+                    <div class="col-md-3">
+                        <div class="stats-card text-center">
+                            <h3 class="text-danger">{{ "{:,}".format(stat['count']).replace(',', ' ') }}</h3>
+                            <p class="text-muted mb-0">{{ stat['status'] }}</p>
+                        </div>
+                    </div>
+                {% elif stat['status'] == 'Район не определен' %}
+                    <div class="col-md-3">
+                        <div class="stats-card text-center">
+                            <h3 class="text-info">{{ "{:,}".format(stat['count']).replace(',', ' ') }}</h3>
+                            <p class="text-muted mb-0">{{ stat['status'] }}</p>
+                        </div>
+                    </div>
+                {% elif stat['status'] == 'Прервано' %}
+                    <div class="col-md-3">
+                        <div class="stats-card text-center">
+                            <h3 class="text-secondary">{{ "{:,}".format(stat['count']).replace(',', ' ') }}</h3>
+                            <p class="text-muted mb-0">{{ stat['status'] }}</p>
+                        </div>
+                    </div>
+                {% elif stat['status'] == 'Занят' %}
+                    <div class="col-md-3">
+                        <div class="stats-card text-center">
+                            <h3 class="text-danger">{{ "{:,}".format(stat['count']).replace(',', ' ') }}</h3>
+                            <p class="text-muted mb-0">{{ stat['status'] }}</p>
+                        </div>
+                    </div>
+                {% elif stat['status'] == 'Не найден на Росреестре' %}
+                    <div class="col-md-3">
+                        <div class="stats-card text-center">
+                            <h3 class="text-secondary">{{ "{:,}".format(stat['count']).replace(',', ' ') }}</h3>
+                            <p class="text-muted mb-0">{{ stat['status'] }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Пагинация сверху -->
+        <div class="pagination-container d-flex justify-content-between align-items-center">
+            <!-- Кнопка массового изменения статусов -->
+            <div>
+                <button class="btn btn-primary" onclick="showBulkUpdateModal()">
+                    <i class="bi bi-pencil-square"></i> Массовое изменение статуса
+                </button>
+            </div>
+            
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% for k, v in query_params.items() %}&{{ k }}={{ v }}{% endfor %}">
+                                <i class="bi bi-chevron-double-left"></i> Первая
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page - 1 }}{% for k, v in query_params.items() %}&{{ k }}={{ v }}{% endfor %}">
+                                <i class="bi bi-chevron-left"></i> Назад
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% for p in range(page_range_start, page_range_end) %}
+                        <li class="page-item {% if p == page %}active{% endif %}">
+                            <a class="page-link" href="?page={{ p }}{% for k, v in query_params.items() %}&{{ k }}={{ v }}{% endfor %}">
+                                {{ p }}
+                            </a>
+                        </li>
+                    {% endfor %}
+
+                    {% if page < total_pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page + 1 }}{% for k, v in query_params.items() %}&{{ k }}={{ v }}{% endfor %}">
+                                Вперед <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ total_pages }}{% for k, v in query_params.items() %}&{{ k }}={{ v }}{% endfor %}">
+                                Последняя <i class="bi bi-chevron-double-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Таблица -->
+        <div class="table-container">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0"><i class="bi bi-table"></i> Список участков (стр. {{ page }} из {{ total_pages }})</h4>
+                {% if filters %}
+                    <a href="/" class="btn btn-clear-filters">
+                        <i class="bi bi-x-circle"></i> Очистить фильтры
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="table-responsive">
+                <form method="GET" action="/" id="filterForm">
+                    <input type="hidden" name="page" value="1">
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">ID<div class="column-resizer" data-column="0"></div></th>
+                                <th style="width: 180px;">Кадастровый номер<div class="column-resizer" data-column="1"></div></th>
+                                <th style="width: 300px;">Адрес<div class="column-resizer" data-column="2"></div></th>
+                                <th style="width: 150px;">Район<div class="column-resizer" data-column="3"></div></th>
+                                <th style="width: 150px;">Регион<div class="column-resizer" data-column="4"></div></th>
+                                <th style="width: 180px;">Статус<div class="column-resizer" data-column="5"></div></th>
+                                <th style="width: 150px;">Дата отправки<div class="column-resizer" data-column="6"></div></th>
+                                <th style="width: 150px;">№ заявления<div class="column-resizer" data-column="7"></div></th>
+                                <th style="width: 180px;">Категория земли<div class="column-resizer" data-column="8"></div></th>
+                                <th style="width: 140px;">Площадь<div class="column-resizer" data-column="9"></div></th>
+                                <th style="width: 140px;">Стоимость<div class="column-resizer" data-column="10"></div></th>
+                            </tr>
+                            <tr class="bg-light">
+                                <th>
+                                    <input type="number" name="filter_id" class="filter-input" 
+                                           placeholder="ID..." value="{{ filters.get('id', '') }}"
+                                           onchange="document.getElementById('filterForm').submit()">
+                                </th>
+                                <th>
+                                    <input type="text" name="filter_cadastral" class="filter-input" 
+                                           placeholder="Фильтр..." value="{{ filters.get('cadastral_number', '') }}"
+                                           onchange="document.getElementById('filterForm').submit()">
+                                </th>
+                                <th>
+                                    <input type="text" name="filter_address" class="filter-input" 
+                                           placeholder="Фильтр..." value="{{ filters.get('address', '') }}"
+                                           onchange="document.getElementById('filterForm').submit()">
+                                </th>
+                                <th>
+                                    <select name="filter_district" class="filter-select" 
+                                            onchange="document.getElementById('filterForm').submit()">
+                                        <option value="">Все</option>
+                                        {% for district in districts %}
+                                            <option value="{{ district }}" {% if filters.get('district') == district %}selected{% endif %}>
+                                                {{ district }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </th>
+                                <th>
+                                    <select name="filter_region" class="filter-select" 
+                                            onchange="document.getElementById('filterForm').submit()">
+                                        <option value="">Все</option>
+                                        {% for region in regions %}
+                                            <option value="{{ region }}" {% if filters.get('region') == region %}selected{% endif %}>
+                                                {{ region }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </th>
+                                <th>
+                                    <select name="filter_status" class="filter-select" 
+                                            onchange="document.getElementById('filterForm').submit()">
+                                        <option value="">Все</option>
+                                        {% for status in statuses %}
+                                            <option value="{{ status }}" {% if filters.get('submission_status') == status %}selected{% endif %}>
+                                                {{ status }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </th>
+                                <th>
+                                    <input type="text" id="dateRangePicker" class="filter-input" 
+                                           placeholder="Выберите даты..."
+                                           readonly
+                                           style="cursor: pointer; background: white; min-width: 200px;">
+                                    <input type="hidden" name="filter_date_from" id="hiddenDateFrom" value="{{ filters.get('date_from', '') }}">
+                                    <input type="hidden" name="filter_date_to" id="hiddenDateTo" value="{{ filters.get('date_to', '') }}">
+                                </th>
+                                <th>
+                                    <select name="filter_app_number" class="filter-select" 
+                                            onchange="handleAppNumberFilter(this)">
+                                        <option value="">Все</option>
+                                        <option value="NOT_EMPTY" {% if filters.get('application_number') == 'NOT_EMPTY' %}selected{% endif %}>Есть номер</option>
+                                        <option value="EMPTY" {% if filters.get('application_number') == 'EMPTY' %}selected{% endif %}>Пустые</option>
+                                        <option value="SEARCH" {% if filters.get('application_number') and filters.get('application_number') not in ['NOT_EMPTY', 'EMPTY'] %}selected{% endif %}>Поиск по номеру...</option>
+                                    </select>
+                                    <input type="text" 
+                                           name="filter_app_number_text" 
+                                           id="appNumberSearchInput"
+                                           class="filter-input mt-1" 
+                                           placeholder="Введите номер..." 
+                                           value="{{ filters.get('application_number') if filters.get('application_number') and filters.get('application_number') not in ['NOT_EMPTY', 'EMPTY'] else '' }}"
+                                           style="display: {% if filters.get('application_number') and filters.get('application_number') not in ['NOT_EMPTY', 'EMPTY'] %}block{% else %}none{% endif %};"
+                                           onchange="document.getElementById('filterForm').submit()">
+                                </th>
+                                <th>
+                                    <select name="filter_category" class="filter-select" 
+                                            onchange="document.getElementById('filterForm').submit()">
+                                        <option value="">Все</option>
+                                        {% for category in categories %}
+                                            <option value="{{ category }}" {% if filters.get('land_category') == category %}selected{% endif %}>
+                                                {{ category[:30] }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </th>
+                                <th>
+                                    <div class="d-flex gap-1">
+                                        <input type="number" name="filter_area_min" class="filter-input" 
+                                               placeholder="От" value="{{ filters.get('area_min', '') }}"
+                                               style="width: 50%;"
+                                               onchange="document.getElementById('filterForm').submit()"
+                                               title="Площадь от"
+                                               step="0.01">
+                                        <input type="number" name="filter_area_max" class="filter-input" 
+                                               placeholder="До" value="{{ filters.get('area_max', '') }}"
+                                               style="width: 50%;"
+                                               onchange="document.getElementById('filterForm').submit()"
+                                               title="Площадь до"
+                                               step="0.01">
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="dropdown">
+                                        <button class="btn btn-light btn-sm w-100 dropdown-toggle border d-flex justify-content-between align-items-center" 
+                                                type="button" id="costFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false" 
+                                                style="font-size: 12px; padding: 4px 8px;">
+                                            <span>Фильтр</span>
+                                        </button>
+                                        <div class="dropdown-menu p-3 shadow" aria-labelledby="costFilterDropdown" style="width: 250px; z-index: 1050;">
+                                            
+                                            <!-- Сортировка -->
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-bold text-muted mb-1">Сортировка</label>
+                                                <select id="ui_sort_cost" class="form-select form-select-sm">
+                                                    <option value="">Без сортировки</option>
+                                                    <option value="asc" {% if sort_by == 'cadastral_cost' and sort_order == 'asc' %}selected{% endif %}>Дешевле (А-Я)</option>
+                                                    <option value="desc" {% if sort_by == 'cadastral_cost' and sort_order == 'desc' %}selected{% endif %}>Дороже (Я-А)</option>
+                                                </select>
+                                            </div>
+
+                                            <!-- Диапазон -->
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-bold text-muted mb-1">Диапазон стоимости</label>
+                                                <div class="d-flex gap-2">
+                                                    <input type="number" id="ui_cost_min" class="form-control form-control-sm" placeholder="От" value="{{ filters.get('cost_min', '') }}">
+                                                    <input type="number" id="ui_cost_max" class="form-control form-control-sm" placeholder="До" value="{{ filters.get('cost_max', '') }}">
+                                                </div>
+                                            </div>
+
+                                            <!-- Точная сумма -->
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-bold text-muted mb-1">Точная сумма</label>
+                                                <input type="number" id="ui_cost_exact" class="form-control form-control-sm" placeholder="Сумма..." value="{{ filters.get('cost_exact', '') }}">
+                                            </div>
+
+                                            <!-- Кнопки -->
+                                            <div class="d-grid gap-2">
+                                                <button type="button" class="btn btn-primary btn-sm" onclick="applyCostFilter()">Применить</button>
+                                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearCostFilter()">Сбросить</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Скрытые поля для формы -->
+                                    <input type="hidden" name="filter_cost_min" id="h_cost_min" value="{{ filters.get('cost_min', '') }}">
+                                    <input type="hidden" name="filter_cost_max" id="h_cost_max" value="{{ filters.get('cost_max', '') }}">
+                                    <input type="hidden" name="filter_cost_exact" id="h_cost_exact" value="{{ filters.get('cost_exact', '') }}">
+                                    <input type="hidden" name="sort_by" id="h_sort_by" value="{{ sort_by }}">
+                                    <input type="hidden" name="sort_order" id="h_sort_order" value="{{ sort_order }}">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in records %}
+                                <tr>
+                                    <td class="text-center">{{ record['id'] }}</td>
+                                    <td><strong>{{ record['cadastral_number'] or '-' }}</strong></td>
+                                    <td><small>{{ record['address'][:80] if record['address'] else '-' }}</small></td>
+                                    <td>{{ record['district'] or '-' }}</td>
+                                    <td>{{ record['region'] or '-' }}</td>
+                                    <td>
+                                        <select class="form-select form-select-sm status-select" 
+                                                data-record-id="{{ record['id'] }}"
+                                                onchange="updateStatus(this)">
+                                            <option value="Не отправлена" {% if not record['submission_status'] or record['submission_status'] == 'Не отправлена' %}selected{% endif %}>Не отправлена</option>
+                                            <option value="Отправлено" {% if record['submission_status'] == 'Отправлено' %}selected{% endif %}>Отправлено</option>
+                                            <option value="Ошибка" {% if record['submission_status'] == 'Ошибка' %}selected{% endif %}>Ошибка</option>
+                                            <option value="Район не определен" {% if record['submission_status'] == 'Район не определен' %}selected{% endif %}>Район не определен</option>
+                                            <option value="Прервано" {% if record['submission_status'] == 'Прервано' %}selected{% endif %}>Прервано</option>
+                                            <option value="Занят" {% if record['submission_status'] == 'Занят' %}selected{% endif %}>Занят</option>
+                                            <option value="Не найден на Росреестре" {% if record['submission_status'] == 'Не найден на Росреестре' %}selected{% endif %}>Не найден на Росреестре</option>
+                                        </select>
+                                    </td>
+                                    <td><small>{{ record['submission_datetime'] or '-' }}</small></td>
+                                    <td><small>{{ record['application_number'] or '-' }}</small></td>
+                                    <td><small>{{ record['land_category'][:40] if record['land_category'] else '-' }}</small></td>
+                                    <td>{{ record['area'] or '-' }}</td>
+                                    <td>{{ record['cadastral_cost'] or '-' }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+        <!-- Пагинация снизу -->
+        <div class="pagination-container mb-5">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% for k, v in query_params.items() %}&{{ k }}={{ v }}{% endfor %}">
+                                <i class="bi bi-chevron-double-left"></i> Первая
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page - 1 }}{% for k, v in query_params.items() %}&{{ k }}={{ v }}{% endfor %}">
+                                <i class="bi bi-chevron-left"></i> Назад
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% for p in range(page_range_start, page_range_end) %}
+                        <li class="page-item {% if p == page %}active{% endif %}">
+                            <a class="page-link" href="?page={{ p }}{% for k, v in query_params.items() %}&{{ k }}={{ v }}{% endfor %}">
+                                {{ p }}
+                            </a>
+                        </li>
+                    {% endfor %}
+
+                    {% if page < total_pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page + 1 }}{% for k, v in query_params.items() %}&{{ k }}={{ v }}{% endfor %}">
+                                Вперед <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ total_pages }}{% for k, v in query_params.items() %}&{{ k }}={{ v }}{% endfor %}">
+                                Последняя <i class="bi bi-chevron-double-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+
+    </div>
+
+    <!-- Модальное окно для массового изменения статусов -->
+    <div class="modal fade" id="bulkUpdateModal" tabindex="-1" aria-labelledby="bulkUpdateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bulkUpdateModalLabel">
+                        <i class="bi bi-pencil-square"></i> Массовое изменение статуса
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> 
+                        Статус будет изменён для <strong>всех записей</strong>, соответствующих текущим фильтрам.
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="bulkNewStatus" class="form-label">Новый статус:</label>
+                        <select class="form-select" id="bulkNewStatus">
+                            <option value="">-- Выберите статус --</option>
+                            <option value="Отправлено">Отправлено</option>
+                            <option value="Не отправлена">Не отправлена</option>
+                            <option value="Ошибка">Ошибка</option>
+                            <option value="Район не определен">Район не определен</option>
+                            <option value="Прервано">Прервано</option>
+                        </select>
+                    </div>
+                    
+                    <div id="bulkUpdateInfo" class="alert alert-warning" style="display: none;">
+                        <strong>Будет обновлено записей:</strong> <span id="bulkUpdateCount">-</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" onclick="executeBulkUpdate()">
+                        <i class="bi bi-check-circle"></i> Применить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+    <script>
+        // Глобальная переменная для хранения модального окна
+        let bulkUpdateModalInstance;
+        
+        // Функция для показа модального окна
+        function showBulkUpdateModal() {
+            const modalElement = document.getElementById('bulkUpdateModal');
+            if (!bulkUpdateModalInstance) {
+                bulkUpdateModalInstance = new bootstrap.Modal(modalElement);
+            }
+            bulkUpdateModalInstance.show();
+        }
+        
+        // Функция для выполнения массового обновления
+        function executeBulkUpdate() {
+            const newStatus = document.getElementById('bulkNewStatus').value;
+            
+            if (!newStatus) {
+                showNotification('Выберите статус', 'error');
+                return;
+            }
+            
+            // Собираем текущие фильтры из URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const filters = {
+                cadastral_number: urlParams.get('filter_cadastral') || '',
+                address: urlParams.get('filter_address') || '',
+                district: urlParams.get('filter_district') || '',
+                region: urlParams.get('filter_region') || '',
+                submission_status: urlParams.get('filter_status') || '',
+                land_category: urlParams.get('filter_category') || '',
+                date_from: urlParams.get('filter_date_from') || '',
+                date_to: urlParams.get('filter_date_to') || ''
+            };
+            
+            // Очищаем пустые фильтры
+            Object.keys(filters).forEach(key => {
+                if (!filters[key]) delete filters[key];
+            });
+            
+            // Подтверждение
+            const confirmMessage = Object.keys(filters).length > 0
+                ? `Вы уверены? Статус будет изменён для всех записей, соответствующих текущим фильтрам.`
+                : `Вы уверены? Статус будет изменён для ВСЕХ записей в базе данных!`;
+            
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+            
+            // Отправляем запрос
+            fetch('/api/bulk_update_status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    status: newStatus,
+                    filters: filters
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(`Успешно обновлено ${data.count} записей`, 'success');
+                    bulkUpdateModalInstance.hide();
+                    
+                    // Перезагружаем страницу через 2 секунды
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    showNotification(data.message || 'Ошибка при обновлении', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Ошибка при обновлении статусов', 'error');
+            });
+        }
+        
+        function updateStatus(selectElement) {
+            const recordId = selectElement.getAttribute('data-record-id');
+            const newStatus = selectElement.value;
+            
+            // Визуально показываем что идет обновление
+            selectElement.disabled = true;
+            selectElement.style.opacity = '0.5';
+            
+            fetch(`/api/update_status/${recordId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Успешно обновлено
+                    selectElement.style.opacity = '1';
+                    selectElement.disabled = false;
+                    
+                    // Показываем уведомление
+                    showNotification(`Статус записи #${recordId} обновлен на "${newStatus}"`, 'success');
+                } else {
+                    throw new Error('Ошибка обновления');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                selectElement.style.opacity = '1';
+                selectElement.disabled = false;
+                showNotification('Ошибка при обновлении статуса', 'error');
+            });
+        }
+        
+        function showNotification(message, type) {
+            // Создаем уведомление
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
+            notification.innerHTML = `
+                <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Автоматически убираем через 3 секунды
+            setTimeout(() => {
+                notification.style.transition = 'opacity 0.3s';
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Функция для обработки фильтра по номеру заявления
+        function handleAppNumberFilter(selectElement) {
+            const value = selectElement.value;
+            const searchInput = document.getElementById('appNumberSearchInput');
+            
+            if (value === 'SEARCH') {
+                // Показываем поле для ввода номера
+                searchInput.style.display = 'block';
+                searchInput.focus();
+            } else {
+                // Скрываем поле ввода
+                searchInput.style.display = 'none';
+                searchInput.value = '';
+                
+                // Если выбрано "Все", "Есть номер" или "Пустые" - сразу отправляем форму
+                if (value !== 'SEARCH') {
+                    document.getElementById('filterForm').submit();
+                }
+            }
+        }
+
+        // Функции для фильтра стоимости
+        function applyCostFilter() {
+            // Получаем значения из UI
+            const min = document.getElementById('ui_cost_min').value;
+            const max = document.getElementById('ui_cost_max').value;
+            const exact = document.getElementById('ui_cost_exact').value;
+            const sort = document.getElementById('ui_sort_cost').value;
+            
+            // Устанавливаем в скрытые поля
+            document.getElementById('h_cost_min').value = min;
+            document.getElementById('h_cost_max').value = max;
+            document.getElementById('h_cost_exact').value = exact;
+            
+            // Обработка сортировки
+            if (sort) {
+                document.getElementById('h_sort_by').value = 'cadastral_cost';
+                document.getElementById('h_sort_order').value = sort;
+            } else {
+                // Если сортировка по цене убрана, сбрасываем на дефолт (id desc) или оставляем как есть, 
+                // если сортировка была не по цене
+                const currentSort = document.getElementById('h_sort_by').value;
+                if (currentSort === 'cadastral_cost') {
+                    document.getElementById('h_sort_by').value = 'id';
+                    document.getElementById('h_sort_order').value = 'desc';
+                }
+            }
+            
+            // Сабмитим форму
+            document.getElementById('filterForm').submit();
+        }
+        
+        function clearCostFilter() {
+            document.getElementById('ui_cost_min').value = '';
+            document.getElementById('ui_cost_max').value = '';
+            document.getElementById('ui_cost_exact').value = '';
+            document.getElementById('ui_sort_cost').value = '';
+            
+            applyCostFilter();
+        }
+
+        // Инициализация Flatpickr для выбора диапазона дат
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateFromValue = document.getElementById('hiddenDateFrom').value;
+            const dateToValue = document.getElementById('hiddenDateTo').value;
+            
+            // Формируем начальное значение для отображения
+            let defaultDates = [];
+            if (dateFromValue) {
+                // Преобразуем Y-m-d в объект Date
+                const fromDate = new Date(dateFromValue + 'T00:00:00');
+                if (!isNaN(fromDate.getTime())) {
+                    defaultDates.push(fromDate);
+                }
+            }
+            if (dateToValue && dateToValue !== dateFromValue) {
+                // Преобразуем Y-m-d в объект Date
+                const toDate = new Date(dateToValue + 'T00:00:00');
+                if (!isNaN(toDate.getTime())) {
+                    defaultDates.push(toDate);
+                }
+            }
+            
+            const fp = flatpickr("#dateRangePicker", {
+                mode: "range",
+                dateFormat: "d.m.Y",
+                locale: "ru",
+                allowInput: false,
+                defaultDate: defaultDates.length > 0 ? defaultDates : null,
+                onChange: function(selectedDates, dateStr, instance) {
+                    // Функция для преобразования Date в строку YYYY-MM-DD в локальном времени
+                    const formatDateLocal = (date) => {
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                    };
+                    
+                    // Функция для форматирования даты в d.m.Y для отображения
+                    const formatDateDisplay = (date) => {
+                        const day = String(date.getDate()).padStart(2, '0');
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const year = date.getFullYear();
+                        return `${day}.${month}.${year}`;
+                    };
+                    
+                    if (selectedDates.length === 2) {
+                        // Обе даты выбраны
+                        const fromDate = formatDateLocal(selectedDates[0]);
+                        const toDate = formatDateLocal(selectedDates[1]);
+                        
+                        document.getElementById('hiddenDateFrom').value = fromDate;
+                        document.getElementById('hiddenDateTo').value = toDate;
+                        
+                        // Если даты одинаковые - показываем "25.12.2025-25.12.2025"
+                        if (fromDate === toDate) {
+                            const displayDate = formatDateDisplay(selectedDates[0]);
+                            instance.input.value = displayDate + ' — ' + displayDate;
+                        }
+                        
+                        document.getElementById('filterForm').submit();
+                    } else if (selectedDates.length === 1) {
+                        // Только одна дата - фильтруем по конкретной дате (от и до = одна дата)
+                        const fromDate = formatDateLocal(selectedDates[0]);
+                        document.getElementById('hiddenDateFrom').value = fromDate;
+                        document.getElementById('hiddenDateTo').value = fromDate;
+                        // Не отправляем сразу, ждем выбора второй даты
+                    }
+                },
+                onClose: function(selectedDates, dateStr, instance) {
+                    // Функция для преобразования Date в строку YYYY-MM-DD в локальном времени
+                    const formatDateLocal = (date) => {
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                    };
+                    
+                    // При закрытии календаря, если выбрана одна дата - применяем фильтр
+                    if (selectedDates && selectedDates.length === 1) {
+                        const fromDate = formatDateLocal(selectedDates[0]);
+                        document.getElementById('hiddenDateFrom').value = fromDate;
+                        document.getElementById('hiddenDateTo').value = fromDate;
+                        document.getElementById('filterForm').submit();
+                    }
+                },
+                onReady: function(selectedDates, dateStr, instance) {
+                    // Добавляем кнопку очистки
+                    const clearBtn = document.createElement('button');
+                    clearBtn.innerHTML = '✕ Сбросить';
+                    clearBtn.className = 'btn btn-sm btn-outline-secondary w-100 mt-1';
+                    clearBtn.type = 'button';
+                    clearBtn.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        instance.clear();
+                        document.getElementById('hiddenDateFrom').value = '';
+                        document.getElementById('hiddenDateTo').value = '';
+                        document.getElementById('filterForm').submit();
+                    };
+                    instance.calendarContainer.appendChild(clearBtn);
+                    
+                    // Устанавливаем правильное отображение при загрузке страницы
+                    const dateFromValue = document.getElementById('hiddenDateFrom').value;
+                    const dateToValue = document.getElementById('hiddenDateTo').value;
+                    
+                    if (dateFromValue && dateToValue) {
+                        // Функция для форматирования даты в d.m.Y для отображения
+                        const formatDateDisplay = (dateStr) => {
+                            const parts = dateStr.split('-');
+                            if (parts.length === 3) {
+                                return `${parts[2]}.${parts[1]}.${parts[0]}`;
+                            }
+                            return dateStr;
+                        };
+                        
+                        if (dateFromValue === dateToValue) {
+                            // Одна дата - показываем "25.12.2025-25.12.2025"
+                            const displayDate = formatDateDisplay(dateFromValue);
+                            instance.input.value = displayDate + ' — ' + displayDate;
+                        } else {
+                            // Две разные даты - показываем диапазон
+                            instance.input.value = formatDateDisplay(dateFromValue) + ' — ' + formatDateDisplay(dateToValue);
+                        }
+                    }
+                }
+            });
+        });
+
+        // Автоматическая подгонка ширины столбцов при двойном клике на разделитель
+        (function() {
+            // Глобальные переменные для перетаскивания
+            let isResizing = false;
+            let currentResizer = null;
+            let startX = 0;
+            let startWidth = 0;
+            let doubleClickTimer = null;
+            
+            function initColumnResizers() {
+                const resizers = document.querySelectorAll('.column-resizer');
+                const table = document.querySelector('.table');
+                
+                if (!resizers.length || !table) {
+                    // Повторная попытка через небольшую задержку
+                    setTimeout(initColumnResizers, 100);
+                    return;
+                }
+                
+                console.log('Инициализация разделителей столбцов:', resizers.length);
+                
+                resizers.forEach((resizer, index) => {
+                    // Обработчик двойного клика для автоматической подгонки
+                    resizer.addEventListener('dblclick', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        
+                        console.log('Двойной клик на разделитель столбца', index);
+                        
+                        const columnIndex = parseInt(this.getAttribute('data-column'));
+                        const headerCell = this.parentElement;
+                        const columnCells = Array.from(table.querySelectorAll(`tbody tr td:nth-child(${columnIndex + 1})`));
+                        
+                        // Добавляем заголовок в массив для расчета
+                        const allCells = [headerCell, ...columnCells];
+                        
+                        // Вычисляем максимальную ширину содержимого
+                        let maxWidth = 0;
+                        
+                        // Создаем временный элемент для измерения
+                        const measureEl = document.createElement('div');
+                        measureEl.style.position = 'absolute';
+                        measureEl.style.visibility = 'hidden';
+                        measureEl.style.height = 'auto';
+                        measureEl.style.width = 'auto';
+                        measureEl.style.whiteSpace = 'nowrap';
+                        measureEl.style.padding = '8px';
+                        measureEl.style.font = window.getComputedStyle(headerCell).font;
+                        measureEl.style.fontSize = window.getComputedStyle(headerCell).fontSize;
+                        document.body.appendChild(measureEl);
+                        
+                        allCells.forEach(cell => {
+                            // Клонируем содержимое ячейки для измерения
+                            const cellText = cell.textContent || cell.innerText || '';
+                            
+                            // Измеряем текстовое содержимое
+                            measureEl.textContent = cellText.trim();
+                            let textWidth = measureEl.offsetWidth;
+                            
+                            // Если есть select или другие элементы - измеряем их ширину
+                            const select = cell.querySelector('select');
+                            if (select) {
+                                const selectClone = select.cloneNode(true);
+                                selectClone.style.position = 'absolute';
+                                selectClone.style.visibility = 'hidden';
+                                measureEl.innerHTML = '';
+                                measureEl.appendChild(selectClone);
+                                textWidth = Math.max(textWidth, selectClone.offsetWidth);
+                            }
+                            
+                            // Учитываем padding и border ячейки
+                            const computedStyle = window.getComputedStyle(cell);
+                            const padding = parseFloat(computedStyle.paddingLeft) + parseFloat(computedStyle.paddingRight) || 16;
+                            const border = parseFloat(computedStyle.borderLeftWidth) + parseFloat(computedStyle.borderRightWidth) || 2;
+                            const totalWidth = textWidth + padding + border + 20; // +20 для отступа
+                            
+                            if (totalWidth > maxWidth) {
+                                maxWidth = totalWidth;
+                            }
+                        });
+                        
+                        document.body.removeChild(measureEl);
+                        
+                        // Устанавливаем новую ширину для всех ячеек столбца
+                        maxWidth = Math.max(maxWidth, 50); // Минимум 50px
+                        headerCell.style.width = maxWidth + 'px';
+                        headerCell.style.minWidth = maxWidth + 'px';
+                        columnCells.forEach(cell => {
+                            cell.style.width = maxWidth + 'px';
+                            cell.style.minWidth = maxWidth + 'px';
+                        });
+                        
+                        console.log('Ширина столбца установлена:', maxWidth);
+                    });
+                    
+                    // Обработчик для перетаскивания
+                    resizer.addEventListener('mousedown', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Очищаем таймер двойного клика
+                        if (doubleClickTimer) {
+                            clearTimeout(doubleClickTimer);
+                            doubleClickTimer = null;
+                        }
+                        
+                        // Небольшая задержка для определения двойного клика
+                        doubleClickTimer = setTimeout(function() {
+                            if (!isResizing) {
+                                isResizing = true;
+                                currentResizer = resizer;
+                                startX = e.pageX;
+                                const headerCell = resizer.parentElement;
+                                startWidth = parseInt(window.getComputedStyle(headerCell).width, 10);
+                                resizer.classList.add('active');
+                                document.body.style.cursor = 'col-resize';
+                                document.body.style.userSelect = 'none';
+                            }
+                        }, 200);
+                    });
+                });
+                
+                // Глобальные обработчики для перетаскивания
+                document.addEventListener('mousemove', function(e) {
+                    if (!isResizing || !currentResizer) return;
+                    
+                    const columnIndex = parseInt(currentResizer.getAttribute('data-column'));
+                    const headerCell = currentResizer.parentElement;
+                    const columnCells = Array.from(table.querySelectorAll(`tbody tr td:nth-child(${columnIndex + 1})`));
+                    
+                    const diff = e.pageX - startX;
+                    const newWidth = Math.max(50, startWidth + diff); // Минимальная ширина 50px
+                    
+                    headerCell.style.width = newWidth + 'px';
+                    headerCell.style.minWidth = newWidth + 'px';
+                    columnCells.forEach(cell => {
+                        cell.style.width = newWidth + 'px';
+                        cell.style.minWidth = newWidth + 'px';
+                    });
+                });
+                
+                document.addEventListener('mouseup', function() {
+                    if (doubleClickTimer) {
+                        clearTimeout(doubleClickTimer);
+                        doubleClickTimer = null;
+                    }
+                    if (isResizing && currentResizer) {
+                        isResizing = false;
+                        currentResizer.classList.remove('active');
+                        currentResizer = null;
+                        document.body.style.cursor = '';
+                        document.body.style.userSelect = '';
+                    }
+                });
+            }
+            
+            // Инициализация при загрузке DOM
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initColumnResizers);
+            } else {
+                initColumnResizers();
+            }
+        })();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить участок - Фабрика участков{% endblock %}
+
+{% block content %}
+<header>
+    <h1>Добавление участка</h1>
+</header>
+
+<form method="POST">
+    <label for="cadastral_number">
+        Кадастровый номер
+        <input type="text" id="cadastral_number" name="cadastral_number" placeholder="74:36:0123456:789" required>
+    </label>
+
+    <label for="address">
+        Адрес
+        <input type="text" id="address" name="address" placeholder="г. Челябинск, ул. ..." required>
+    </label>
+
+    <label for="area">
+        Площадь (кв.м)
+        <input type="number" id="area" name="area" step="0.01" placeholder="1000" required>
+    </label>
+
+    <label for="category">
+        Категория земли
+        <select id="category" name="category" required>
+            {% for cat in categories %}
+            <option value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label for="price">
+        Цена аренды/НСПД (руб/год)
+        <input type="number" id="price" name="price" step="0.01" placeholder="50000" required>
+    </label>
+
+    <div class="grid">
+        <button type="submit">Добавить участок</button>
+        <a href="/parcels" role="button" class="secondary">Отмена</a>
+    </div>
+</form>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

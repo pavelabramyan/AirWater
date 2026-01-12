@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Поиск участков - Фабрика участков{% endblock %}
+
+{% block content %}
+<header>
+    <h1>🔍 Автоматический поиск участков</h1>
+    <p>Поиск свободных земельных участков через Публичную кадастровую карту Росреестра</p>
+</header>
+
+<article>
+    <h2>Параметры поиска</h2>
+    
+    <form method="POST" action="/search/run">
+        <div class="grid">
+            <label for="region_code">
+                Регион
+                <select id="region_code" name="region_code" required>
+                    <optgroup label="⭐ Популярные">
+                        {% for code, name in popular_regions %}
+                        <option value="{{ code }}" {% if code == "74" %}selected{% endif %}>{{ code }} — {{ name }}</option>
+                        {% endfor %}
+                    </optgroup>
+                    <optgroup label="Все регионы России">
+                        {% for code, name in all_regions.items() %}
+                        <option value="{{ code }}">{{ code }} — {{ name }}</option>
+                        {% endfor %}
+                    </optgroup>
+                </select>
+                <small>Выберите регион для поиска (работает вся Россия)</small>
+            </label>
+            
+            <label for="only_free">
+                Только свободные
+                <select id="only_free" name="only_free">
+                    <option value="true" selected>Да (без владельцев и обременений)</option>
+                    <option value="false">Нет (все участки)</option>
+                </select>
+            </label>
+        </div>
+
+        <div class="grid">
+            <label for="min_area">
+                Минимальная площадь (кв.м)
+                <input type="number" id="min_area" name="min_area" step="1" placeholder="600">
+            </label>
+            
+            <label for="max_area">
+                Максимальная площадь (кв.м)
+                <input type="number" id="max_area" name="max_area" step="1" placeholder="2000">
+            </label>
+        </div>
+
+        <label for="bbox">
+            Географические границы (bbox)
+            <input type="text" id="bbox" name="bbox" placeholder="61.0,55.0,61.5,55.5">
+            <small>Формат: min_lon,min_lat,max_lon,max_lat (для Челябинска: примерно 61.0,55.0,61.5,55.5)</small>
+        </label>
+
+        <button type="submit">🚀 Запустить поиск</button>
+    </form>
+</article>
+
+<article>
+    <h2>💡 Как это работает</h2>
+    
+    <details>
+        <summary>Источники данных</summary>
+        <ul>
+            <li><strong>Публичная кадастровая карта (PKK)</strong> — бесплатный доступ к данным Росреестра</li>
+            <li>Поиск участков по географическим координатам</li>
+            <li>Фильтрация по категории, площади, наличию правообладателей</li>
+        </ul>
+    </details>
+    
+    <details>
+        <summary>Что ищем</summary>
+        <ul>
+            <li>✅ Участки без правообладателей</li>
+            <li>✅ Государственная собственность (не разграничена)</li>
+            <li>✅ Категории: ИЖС, ЛПХ, Садоводство</li>
+            <li>✅ Площадь 600-2000 кв.м (оптимально для НСПД)</li>
+            <li>❌ Участки с обременениями</li>
+        </ul>
+    </details>
+    
+    <details>
+        <summary>Приоритизация</summary>
+        <p>Система автоматически рассчитывает приоритет каждого участка на основе:</p>
+        <ul>
+            <li>Доступности (свободен / госсобственность)</li>
+            <li>Категории земли (ИЖС — самый приоритетный)</li>
+            <li>Площади (оптимально 800-1500 кв.м)</li>
+            <li>Наличия координат и адреса</li>
+        </ul>
+    </details>
+</article>
+
+<article>
+    <h2>📍 Примеры координат для поиска</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Регион / Город</th>
+                <th>Bbox (min_lon,min_lat,max_lon,max_lat)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Москва</strong></td>
+                <td><code>37.3,55.5,37.9,56.0</code></td>
+            </tr>
+            <tr>
+                <td><strong>Московская область</strong></td>
+                <td><code>35.2,54.2,40.2,57.0</code></td>
+            </tr>
+            <tr>
+                <td><strong>Санкт-Петербург</strong></td>
+                <td><code>30.1,59.7,30.6,60.1</code></td>
+            </tr>
+            <tr>
+                <td><strong>Челябинск</strong></td>
+                <td><code>61.35,55.10,61.45,55.25</code></td>
+            </tr>
+            <tr>
+                <td><strong>Екатеринбург</strong></td>
+                <td><code>60.4,56.7,60.9,57.0</code></td>
+            </tr>
+            <tr>
+                <td><strong>Краснодар</strong></td>
+                <td><code>38.8,45.0,39.2,45.2</code></td>
+            </tr>
+            <tr>
+                <td><strong>Новосибирск</strong></td>
+                <td><code>82.7,54.9,83.2,55.2</code></td>
+            </tr>
+            <tr>
+                <td>Широкий поиск (область)</td>
+                <td><small>Увеличьте диапазон на ±1-2 градуса от города</small></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <small>💡 Для точного определения координат используйте <a href="https://yandex.ru/maps" target="_blank">Яндекс.Карты</a> — нажмите правой кнопкой на карте → "Что здесь?"</small>
+</article>
+{% endblock %}
+

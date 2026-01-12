@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Экран бота - VNC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #1e1e1e; padding: 20px; }
+        .vnc-container { 
+            background: #000; 
+            border-radius: 10px; 
+            padding: 0; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            height: calc(100vh - 200px);
+            position: relative;
+            overflow: hidden;
+        }
+        #vncFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 5px;
+        }
+        .status-bar {
+            background: #2d2d2d;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .instructions {
+            background: #2d2d2d;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="text-white"><i class="bi bi-display"></i> Экран бота (VNC)</h2>
+            <div>
+                <a class="btn btn-secondary btn-sm" href="/bot">
+                    <i class="bi bi-arrow-left-circle"></i> Управление ботом
+                </a>
+                <a class="btn btn-secondary btn-sm" href="/">
+                    <i class="bi bi-list"></i> Список участков
+                </a>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <strong>📺 Подключение к экрану Chrome браузера через VNC</strong><br>
+            <small>Вы видите реальный экран браузера в реальном времени. Запустите бота на странице "Управление ботом" для просмотра работы.</small>
+        </div>
+
+        <div class="status-bar">
+            <span id="statusText">Загрузка VNC клиента...</span>
+        </div>
+
+        <div class="vnc-container">
+            <iframe id="vncFrame" src="http://185.222.161.186:6080/vnc.html?host=185.222.161.186&port=5900&password=zemli123&autoconnect=true&resize=scale" 
+                    allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <script>
+        const frame = document.getElementById('vncFrame');
+        const statusText = document.getElementById('statusText');
+
+        frame.addEventListener('load', () => {
+            statusText.textContent = '✅ VNC подключен - экран активен';
+        });
+
+        frame.addEventListener('error', () => {
+            statusText.textContent = '❌ Ошибка загрузки VNC клиента';
+        });
+    </script>
+</body>
+</html>

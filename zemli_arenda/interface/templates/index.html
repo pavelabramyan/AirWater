@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowlu – Online Work Management Software for Teams</title>
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    <style>
+        :root {
+            --flowlu-bg: #050816;
+            --flowlu-bg-soft: #0b1020;
+            --flowlu-card: #111827;
+            --flowlu-accent: #ff8a4a;
+            --flowlu-accent-soft: rgba(255, 138, 74, 0.1);
+            --flowlu-primary: #4f46e5;
+            --flowlu-primary-soft: rgba(79, 70, 229, 0.08);
+            --flowlu-text-main: #f9fafb;
+            --flowlu-text-muted: #9ca3af;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #111827 0, #020617 55%, #000 100%);
+            color: var(--flowlu-text-main);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+            margin: 0;
+        }
+
+        header.flowlu-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            backdrop-filter: blur(18px);
+            background: linear-gradient(to bottom, rgba(5, 8, 22, 0.96), rgba(5, 8, 22, 0.85) 60%, transparent);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+        }
+
+        .flowlu-nav {
+            max-width: 1120px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.9rem 1.25rem;
+        }
+
+        .flowlu-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .flowlu-logo-mark {
+            width: 28px;
+            height: 28px;
+            border-radius: 0.9rem;
+            background: radial-gradient(circle at 30% 20%, #f97316, #e11d48 40%, #4f46e5 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 32px rgba(79, 70, 229, 0.55);
+        }
+
+        .flowlu-logo-mark span {
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: #f9fafb;
+        }
+
+        .flowlu-logo-text {
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .flowlu-nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            font-size: 0.9rem;
+        }
+
+        .flowlu-nav-links a {
+            color: var(--flowlu-text-muted);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .flowlu-nav-links a:hover {
+            color: #e5e7eb;
+        }
+
+        .flowlu-header-cta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-ghost {
+            border-radius: 999px;
+            padding: 0.4rem 0.9rem;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            background: transparent;
+            color: #e5e7eb;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .btn-ghost:hover {
+            border-color: rgba(248, 250, 252, 0.7);
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .btn-primary {
+            border-radius: 999px;
+            padding: 0.5rem 1.3rem;
+            border: none;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: #f9fafb;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 18px 40px rgba(79, 70, 229, 0.55);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 20px 45px rgba(79, 70, 229, 0.65);
+        }
+
+        main.flowlu-main {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 2.5rem 1.25rem 3.5rem;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.3fr);
+            gap: 2.5rem;
+            align-items: center;
+            padding-top: 2.0rem;
+            padding-bottom: 3rem;
+        }
+
+        .hero-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.25rem 0.75rem 0.25rem 0.3rem;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            font-size: 0.78rem;
+            color: var(--flowlu-text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .hero-kicker span.badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.08rem 0.5rem;
+            border-radius: 999px;
+            background: rgba(34, 197, 94, 0.12);
+            color: #bbf7d0;
+            font-size: 0.7rem;
+        }
+
+        .hero-title {
+            font-size: clamp(2.4rem, 3.4vw + 1.2rem, 3.4rem);
+            line-height: 1.05;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            margin-bottom: 1rem;
+        }
+
+        .hero-title span.highlight {
+            background: linear-gradient(120deg, #f97316, #ec4899, #6366f1);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.02rem;
+            line-height: 1.6;
+            color: var(--flowlu-text-muted);
+            max-width: 30rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.9rem;
+            align-items: center;
+            margin-bottom: 1.4rem;
+        }
+
+        .hero-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.9rem;
+            color: var(--flowlu-text-muted);
+        }
+
+        .hero-rating-stars {
+            color: #facc15;
+        }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: var(--flowlu-text-muted);
+        }
+
+        .hero-meta span strong {
+            color: #e5e7eb;
+        }
+
+        .hero-right {
+            position: relative;
+        }
+
+        .hero-card {
+            position: relative;
+            border-radius: 1.5rem;
+            padding: 1.3rem 1.5rem;
+            background: radial-gradient(circle at top left, rgba(79, 70, 229, 0.2), transparent 55%),
+                        radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.18), transparent 55%),
+                        rgba(15, 23, 42, 0.96);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            box-shadow:
+                0 18px 45px rgba(15, 23, 42, 0.9),
+                0 0 0 1px rgba(15, 23, 42, 0.9);
+            overflow: hidden;
+        }
+
+        .hero-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .hero-card-badge {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.65rem;
+            border-radius: 999px;
+            background: rgba(55, 65, 81, 0.78);
+            color: #f9fafb;
+        }
+
+        .hero-card-pill {
+            font-size: 0.72rem;
+            padding: 0.18rem 0.6rem;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            color: var(--flowlu-text-muted);
+        }
+
+        .hero-card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .hero-mini-card {
+            border-radius: 0.9rem;
+            padding: 0.7rem 0.75rem;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(55, 65, 81, 0.9);
+        }
+
+        .hero-mini-card h4 {
+            font-size: 0.75rem;
+            margin: 0 0 0.25rem;
+        }
+
+        .hero-mini-card p {
+            font-size: 0.68rem;
+            margin: 0;
+            color: var(--flowlu-text-muted);
+        }
+
+        .hero-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.7rem;
+        }
+
+        .hero-card-footer-left {
+            font-size: 0.7rem;
+            color: var(--flowlu-text-muted);
+        }
+
+        .hero-card-footer-left strong {
+            color: #e5e7eb;
+        }
+
+        .hero-card-footer-right {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.32rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(22, 163, 74, 0.16);
+            color: #bbf7d0;
+            font-size: 0.7rem;
+        }
+
+        .hero-glow {
+            position: absolute;
+            inset: -40%;
+            background: radial-gradient(circle at 0 0, rgba(244, 114, 182, 0.2), transparent 60%),
+                        radial-gradient(circle at 100% 0, rgba(56, 189, 248, 0.25), transparent 55%),
+                        radial-gradient(circle at 50% 100%, rgba(129, 140, 248, 0.3), transparent 60%);
+            opacity: 0.16;
+            pointer-events: none;
+        }
+
+        .section {
+            padding: 2.6rem 0 0;
+        }
+
+        .section-header {
+            max-width: 40rem;
+            margin-bottom: 1.7rem;
+        }
+
+        .section-kicker {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--flowlu-text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+        }
+
+        .section-subtitle {
+            font-size: 0.96rem;
+            color: var(--flowlu-text-muted);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.25rem;
+        }
+
+        .feature-card {
+            border-radius: 1.1rem;
+            padding: 1rem 1.1rem;
+            background: radial-gradient(circle at top, rgba(79, 70, 229, 0.22), transparent 60%),
+                        rgba(15, 23, 42, 0.96);
+            border: 1px solid rgba(55, 65, 81, 0.95);
+            min-height: 150px;
+        }
+
+        .feature-card h3 {
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            color: var(--flowlu-text-muted);
+        }
+
+        .section-cta-strip {
+            margin-top: 2.2rem;
+            padding: 1.2rem 1.4rem;
+            border-radius: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            background: linear-gradient(120deg, rgba(79, 70, 229, 0.45), rgba(14, 165, 233, 0.45));
+        }
+
+        .section-cta-strip p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .awards-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1.2rem;
+            font-size: 0.76rem;
+            color: var(--flowlu-text-muted);
+        }
+
+        .awards-strip span {
+            padding: 0.32rem 0.55rem;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.1rem;
+            margin-top: 1.2rem;
+        }
+
+        .testimonial-card {
+            border-radius: 1.1rem;
+            padding: 1rem 1.1rem;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(55, 65, 81, 0.9);
+            font-size: 0.86rem;
+        }
+
+        .testimonial-name {
+            margin-top: 0.65rem;
+            font-weight: 600;
+        }
+
+        .testimonial-role {
+            font-size: 0.78rem;
+            color: var(--flowlu-text-muted);
+        }
+
+        .solutions-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0.9rem;
+            font-size: 0.86rem;
+            margin-top: 0.8rem;
+        }
+
+        .solution-pill {
+            padding: 0.65rem 0.7rem;
+            border-radius: 0.9rem;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(55, 65, 81, 0.9);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+            gap: 1.5rem;
+            margin-top: 1.2rem;
+        }
+
+        .calculator-card {
+            border-radius: 1.1rem;
+            padding: 1.2rem 1.1rem;
+            background: rgba(15, 23, 42, 0.96);
+            border: 1px solid rgba(55, 65, 81, 0.9);
+        }
+
+        .calculator-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .calculator-row strong {
+            font-size: 1.1rem;
+        }
+
+        .slider-label {
+            font-size: 0.8rem;
+            color: var(--flowlu-text-muted);
+            margin-bottom: 0.2rem;
+        }
+
+        .app-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            margin-top: 0.6rem;
+            font-size: 0.78rem;
+        }
+
+        .app-badge {
+            padding: 0.35rem 0.55rem;
+            border-radius: 999px;
+            border: 1px solid rgba(75, 85, 99, 0.9);
+            cursor: pointer;
+        }
+
+        .app-badge.selected {
+            background: rgba(79, 70, 229, 0.16);
+            border-color: rgba(129, 140, 248, 0.9);
+            color: #e5e7eb;
+        }
+
+        .integrations-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            font-size: 0.82rem;
+            color: var(--flowlu-text-muted);
+            margin-top: 0.6rem;
+        }
+
+        .integrations-row span {
+            padding: 0.3rem 0.5rem;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(55, 65, 81, 0.9);
+        }
+
+        .mobile-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+            gap: 1.5rem;
+            margin-top: 1.2rem;
+        }
+
+        .mobile-phone {
+            border-radius: 1.5rem;
+            background: radial-gradient(circle at top, rgba(79, 70, 229, 0.35), transparent 65%),
+                        rgba(15, 23, 42, 0.96);
+            border: 1px solid rgba(55, 65, 81, 0.9);
+            height: 260px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mobile-phone-inner {
+            position: absolute;
+            inset: 10px;
+            border-radius: 1.1rem;
+            background: rgba(15, 23, 42, 0.98);
+            padding: 0.7rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+        }
+
+        .mobile-pill {
+            padding: 0.35rem 0.5rem;
+            border-radius: 0.7rem;
+            background: rgba(30, 64, 175, 0.9);
+            align-self: flex-start;
+        }
+
+        .mobile-task {
+            border-radius: 0.7rem;
+            padding: 0.4rem 0.5rem;
+            background: rgba(15, 23, 42, 0.97);
+            border: 1px solid rgba(55, 65, 81, 0.95);
+        }
+
+        .mobile-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--flowlu-text-muted);
+        }
+
+        .cta-final {
+            margin-top: 3rem;
+            margin-bottom: 0.5rem;
+            border-radius: 1.5rem;
+            padding: 1.6rem 1.7rem;
+            background: radial-gradient(circle at top left, rgba(96, 165, 250, 0.3), transparent 60%),
+                        radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.35), transparent 65%),
+                        rgba(15, 23, 42, 0.96);
+            border: 1px solid rgba(129, 140, 248, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .cta-final-text h2 {
+            margin: 0 0 0.4rem;
+            font-size: 1.4rem;
+        }
+
+        .cta-final-text p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--flowlu-text-muted);
+        }
+
+        .cta-final-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            align-items: flex-end;
+        }
+
+        .cta-final-note {
+            font-size: 0.78rem;
+            color: var(--flowlu-text-muted);
+        }
+
+        footer.flowlu-footer {
+            border-top: 1px solid rgba(30, 64, 175, 0.6);
+            background: radial-gradient(circle at top, #020617, #000 82%);
+            padding: 2rem 1.25rem 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .footer-inner {
+            max-width: 1120px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.2fr repeat(4, minmax(0, 1fr));
+            gap: 1.4rem;
+            font-size: 0.82rem;
+        }
+
+        .footer-column h4 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--flowlu-text-muted);
+            margin-bottom: 0.6rem;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            gap: 0.25rem;
+        }
+
+        .footer-column a {
+            color: var(--flowlu-text-muted);
+            text-decoration: none;
+        }
+
+        .footer-column a:hover {
+            color: #e5e7eb;
+        }
+
+        .footer-bottom {
+            max-width: 1120px;
+            margin: 1.3rem auto 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78rem;
+            color: var(--flowlu-text-muted);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .footer-social span {
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            border: 1px solid rgba(55, 65, 81, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.78rem;
+        }
+
+        @media (max-width: 960px) {
+            .hero {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .hero-right {
+                order: -1;
+            }
+            .features-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .solutions-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .testimonials-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .pricing-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .mobile-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .footer-inner {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 720px) {
+            .flowlu-nav {
+                justify-content: space-between;
+            }
+            .flowlu-nav-links {
+                display: none;
+            }
+            .hero-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .features-grid,
+            .solutions-grid,
+            .testimonials-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .footer-inner {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .footer-bottom {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.6rem;
+            }
+            .cta-final {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .cta-final-actions {
+                align-items: flex-start;
+            }
+        }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <header class="flowlu-header">
+        <nav class="flowlu-nav">
+            <div class="flowlu-logo">
+                <div class="flowlu-logo-mark"><span>F</span></div>
+                <div class="flowlu-logo-text">Flowlu</div>
+            </div>
+            <div class="flowlu-nav-links">
+                <a href="#features">Features</a>
+                <a href="#solutions">Solutions</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#resources">Resources</a>
+            </div>
+            <div class="flowlu-header-cta">
+                <button class="btn-ghost" type="button">Log In</button>
+                <button class="btn-primary" type="button">Sign Up</button>
+            </div>
+        </nav>
+</header>
+
+    <main class="flowlu-main">
+        <section class="hero">
+            <div class="hero-left fade-up">
+                <div class="hero-kicker">
+                    <span class="badge">4.8 ★ Rating</span>
+                    Unified platform for modern teams
+                </div>
+                <h1 class="hero-title">
+                    Unified business platform for
+                    <span class="highlight">simple work management</span>
+                </h1>
+                <p class="hero-subtitle">
+                    From client projects to internal processes, manage it all in one affordable, award‑winning software.
+                    Replace scattered tools with a single, powerful workspace.
+                </p>
+                <div class="hero-actions">
+                    <button class="btn-primary" type="button">Get Started For Free</button>
+                    <button class="btn-ghost" type="button">Book a Demo</button>
+                </div>
+                <div class="hero-rating">
+                    <span class="hero-rating-stars">★★★★★</span>
+                    <span>Rating: 4.8 (326 reviews)</span>
+                </div>
+                <div class="hero-meta">
+                    <span><strong>25,000+</strong> companies</span>
+                    <span><strong>150+</strong> industry awards</span>
+                    <span><strong>All‑in‑one</strong> CRM, Projects, Finance &amp; more</span>
+                </div>
+            </div>
+            <div class="hero-right fade-up">
+                <div class="hero-glow"></div>
+                <div class="hero-card">
+                    <div class="hero-card-header">
+                        <span class="hero-card-badge">Live workspace</span>
+                        <span class="hero-card-pill">Today · All modules</span>
+                    </div>
+                    <div class="hero-card-grid">
+                        <div class="hero-mini-card">
+                            <h4>CRM &amp; Sales</h4>
+                            <p>New deals: 18 this week · Win rate 42%</p>
+                        </div>
+                        <div class="hero-mini-card">
+                            <h4>Projects</h4>
+                            <p>7 active · 3 at risk · 92% on time</p>
+                        </div>
+                        <div class="hero-mini-card">
+                            <h4>Finance</h4>
+                            <p>Revenue forecast ↑ 27% · Paid invoices 86%</p>
+                        </div>
+                    </div>
+                    <div class="hero-card-grid" style="margin-top:0.3rem;">
+                        <div class="hero-mini-card">
+                            <h4>Tasks</h4>
+                            <p>1,132 tasks executed through Flowlu</p>
+                        </div>
+                        <div class="hero-mini-card">
+                            <h4>Automation</h4>
+                            <p>100% key business processes automated</p>
+                        </div>
+                        <div class="hero-mini-card">
+                            <h4>Collaboration</h4>
+                            <p>Team chat, comments &amp; client portal</p>
+                        </div>
+                    </div>
+                    <div class="hero-card-footer">
+                        <div class="hero-card-footer-left">
+                            Replaced <strong>12+</strong> apps and saved
+                            <strong>$4k+</strong> per year by switching to Flowlu.
+                        </div>
+                        <div class="hero-card-footer-right">
+                            ✓ All‑in‑one
+                            <span style="opacity:0.7;">·</span>
+                            No credit card
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="section fade-up">
+            <div class="section-header">
+                <div class="section-kicker">Everything in one place</div>
+                <h2 class="section-title">All tools your team needs, perfectly connected</h2>
+                <p class="section-subtitle">
+                    Flowlu helps small and medium businesses keep things efficient, simple and organized.
+                    Manage CRM, projects, tasks, finance, knowledge base and more in a single workspace.
+                </p>
+            </div>
+            <div class="features-grid">
+                <article class="feature-card">
+                    <h3>All‑in‑One</h3>
+                    <p>
+                        Seamlessly manage your entire workflow with interconnected modules for every task,
+                        keeping everything in one place.
+                    </p>
+                </article>
+                <article class="feature-card">
+                    <h3>Flexible Views</h3>
+                    <p>
+                        Visualize your tasks, projects and deals your way—Kanban boards, Gantt charts,
+                        lists, calendars and more at your fingertips.
+                    </p>
+                </article>
+                <article class="feature-card">
+                    <h3>Smart Automation</h3>
+                    <p>
+                        Save time with powerful automation rules available in almost every module
+                        to handle repetitive tasks and notifications.
+                    </p>
+                </article>
+            </div>
+            <div class="section-cta-strip">
+                <p>
+                    <strong>Start your 7‑day free trial.</strong> No credit card required. Get a guided tour or
+                    jump straight into templates.
+                </p>
+                <button class="btn-primary" type="button">Start for Free</button>
+            </div>
+            <div class="awards-strip">
+                <span>GetApp Category Leaders 2024</span>
+                <span>Sourceforge Top Performer</span>
+                <span>Software Advice Front Runners</span>
+                <span>Capterra Best Value 2024</span>
+                <span>G2 Leader in CRM &amp; Project Collaboration</span>
+        </div>
+        </section>
+
+        <section class="section fade-up">
+            <div class="section-header">
+                <div class="section-kicker">Customer reviews</div>
+                <h2 class="section-title">Why businesses love Flowlu</h2>
+                <p class="section-subtitle">
+                    Thousands of teams around the world rely on Flowlu to deliver projects on time,
+                    keep clients happy and grow revenue.
+                </p>
+            </div>
+            <div class="testimonials-grid">
+                <article class="testimonial-card">
+                    “We were able to replace 12 different apps partially or in full from our day‑to‑day
+                    routine by completely switching to Flowlu and save hundreds of dollars monthly.”
+                    <div class="testimonial-name">Shaiq Uddin</div>
+                    <div class="testimonial-role">Director, Sales &amp; Marketing Operations</div>
+                </article>
+                <article class="testimonial-card">
+                    “Flowlu is a comprehensive solution for project management and CRM. Instead of juggling
+                    a dozen tools and integrations, we run everything from one place.”
+                    <div class="testimonial-name">Tomas V.</div>
+                    <div class="testimonial-role">CEO</div>
+                </article>
+                <article class="testimonial-card">
+                    “Flowlu has replaced five applications and made life better for me and 350 employees.
+                    It’s like a full‑fledged business operating system for our company.”
+                    <div class="testimonial-name">Antonio Thornton</div>
+                    <div class="testimonial-role">CEO</div>
+                </article>
+        </div>
+        </section>
+
+        <section id="solutions" class="section fade-up">
+            <div class="section-header">
+                <div class="section-kicker">Works for any team, any industry</div>
+                <h2 class="section-title">Tailored workflows for every business</h2>
+                <p class="section-subtitle">
+                    Flowlu helps businesses handle everyday challenges, no matter their size or field.
+                    Choose a template and adapt it to your processes.
+                </p>
+            </div>
+            <div class="solutions-grid">
+                <div class="solution-pill">Marketing Agencies</div>
+                <div class="solution-pill">IT Departments</div>
+                <div class="solution-pill">Legal Professionals</div>
+                <div class="solution-pill">Business Consultants</div>
+                <div class="solution-pill">Educational Institutions</div>
+                <div class="solution-pill">Manufacturing Sector</div>
+                <div class="solution-pill">Event Planners</div>
+                <div class="solution-pill">Small Business</div>
+        </div>
+        </section>
+
+        <section id="pricing" class="section fade-up">
+            <div class="section-header">
+                <div class="section-kicker">Are your tools costing too much?</div>
+                <h2 class="section-title">See how much you save with Flowlu</h2>
+                <p class="section-subtitle">
+                    Flowlu brings everything you need into one app, helping you save money by cutting
+                    down on the need for multiple tools.
+                </p>
+            </div>
+            <div class="pricing-grid">
+                <div class="calculator-card" id="cost-calculator">
+                    <div class="slider-label">How large is your company?</div>
+                    <input id="companySize" type="range" min="1" max="250" step="1" value="10" />
+                    <div class="calculator-row">
+                        <span>Team size</span>
+                        <strong><span id="companySizeValue">10</span> users</strong>
+                    </div>
+                    <div class="slider-label">Which apps do you use?</div>
+                    <div class="app-badges" id="appsList">
+                        <span class="app-badge selected" data-price="134">Slack</span>
+                        <span class="app-badge selected" data-price="216">Asana</span>
+                        <span class="app-badge" data-price="160">Monday.com</span>
+                        <span class="app-badge" data-price="150">Notion</span>
+                        <span class="app-badge" data-price="636">Pipedrive</span>
+                        <span class="app-badge" data-price="112">Confluence</span>
+                        <span class="app-badge" data-price="154">Jira</span>
+                        <span class="app-badge" data-price="390">Airtable</span>
+                        <span class="app-badge" data-price="1302">QuickBooks</span>
+                    </div>
+                    <hr style="margin: 1rem 0; border-color: rgba(55, 65, 81, 0.9);" />
+                    <div class="calculator-row">
+                        <span>Current app costs</span>
+                        <div style="text-align:right;">
+                            <strong>$<span id="currentCost">3500</span></strong>
+                            <div style="font-size:0.76rem;color:var(--flowlu-text-muted);">
+                                <span id="appsSummary">2 apps / 10 users</span><br />
+                                your annual expenses
+                            </div>
+                        </div>
+                    </div>
+                    <div class="calculator-row">
+                        <span>All‑in‑One Flowlu</span>
+                        <div style="text-align:right;">
+                            <strong>$<span id="flowluCost">1080</span></strong>
+                            <div style="font-size:0.76rem;color:var(--flowlu-text-muted);">
+                                per team / yearly<br />billed yearly
+                            </div>
+                        </div>
+                    </div>
+                    <div class="calculator-row" style="margin-top:0.7rem;">
+                        <span></span>
+                        <div style="text-align:right;font-size:0.86rem;">
+                            Save <strong>$<span id="savingsValue">2420</span></strong> a year with Flowlu
+                        </div>
+                    </div>
+                    <p style="margin-top:0.7rem;font-size:0.76rem;color:var(--flowlu-text-muted);">
+                        We calculate cost savings based on the average monthly price per user for each app.
+                    </p>
+                </div>
+                <div class="calculator-card">
+                    <h3 style="margin-top:0;">Integrate with your favorite tools</h3>
+                    <p style="font-size:0.9rem;color:var(--flowlu-text-muted);margin-bottom:0.9rem;">
+                        Connect your Flowlu account with other apps via native and third‑party integrations.
+                        Keep your data in sync without switching between tools.
+                    </p>
+                    <div class="integrations-row">
+                        <span>Google Calendar</span>
+                        <span>PayPal</span>
+                        <span>Jira</span>
+                        <span>Calendly</span>
+                        <span>Square</span>
+                        <span>Zendesk</span>
+                        <span>IMAP</span>
+                        <span>JivoChat</span>
+                    </div>
+                    <hr style="margin: 1.1rem 0; border-color: rgba(55, 65, 81, 0.9);" />
+                    <h3 style="margin-top:0;">Whole office at your fingertips</h3>
+                    <p style="font-size:0.9rem;color:var(--flowlu-text-muted);margin-bottom:0.9rem;">
+                        Install Flowlu mobile app for iOS and Android and keep an eye on your projects,
+                        sales opportunities and tasks from anywhere.
+                    </p>
+                    <div class="mobile-grid">
+                        <div class="mobile-phone">
+                            <div class="mobile-phone-inner">
+                                <div class="mobile-pill">Today · My workspace</div>
+                                <div class="mobile-task">
+                                    New deal · “Website redesign”
+                                    <div style="font-size:0.68rem;color:var(--flowlu-text-muted);">
+                                        Due today · Owner: Sarah
+                                    </div>
+                                </div>
+                                <div class="mobile-task">
+                                    Sprint review · Development
+                                    <div style="font-size:0.68rem;color:var(--flowlu-text-muted);">
+                                        7 tasks in progress · 2 blocked
+                                    </div>
+                                </div>
+                                <div class="mobile-task">
+                                    Invoice #4321 · Sent
+                                    <div style="font-size:0.68rem;color:var(--flowlu-text-muted);">
+                                        $2,430 · Awaiting payment
+                                    </div>
+                                </div>
+                                <div class="mobile-footer">
+                                    <span>All modules</span>
+                                    <span>CRM · Projects · Finance</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <p style="font-size:0.86rem;color:var(--flowlu-text-muted);">
+                                Check project status, respond to clients and track tasks without opening your laptop.
+                                Flowlu keeps your team aligned—even on the go.
+                            </p>
+                            <p style="font-size:0.8rem;color:var(--flowlu-text-muted);margin-top:0.7rem;">
+                                Download Flowlu app from App Store and Google Play.
+                            </p>
+                        </div>
+        </div>
+        </div>
+    </div>
+</section>
+
+        <section id="resources" class="section fade-up">
+            <div class="section-header">
+                <div class="section-kicker">Get started with Flowlu</div>
+                <h2 class="section-title">Guided onboarding and helpful resources</h2>
+                <p class="section-subtitle">
+                    We’ll help you set up your account, migrate from other tools and build workflows
+                    tailored to your business.
+                </p>
+            </div>
+            <div class="features-grid">
+                <article class="feature-card">
+                    <h3>Implementation</h3>
+                    <p>
+                        Our team will help you configure workspaces, pipelines and automations,
+                        so you can start using Flowlu without friction.
+                    </p>
+                </article>
+                <article class="feature-card">
+                    <h3>Templates</h3>
+                    <p>
+                        Jumpstart your projects with ready‑made templates for CRM, projects,
+                        tasks, finance and more.
+                    </p>
+                </article>
+                <article class="feature-card">
+                    <h3>Help Center &amp; Guides</h3>
+                    <p>
+                        Explore step‑by‑step articles, video tutorials and best practices to get the most out of Flowlu.
+                    </p>
+                </article>
+    </div>
+</section>
+
+        <section class="cta-final fade-up">
+            <div class="cta-final-text">
+                <h2>See how Flowlu works for your business</h2>
+                <p>
+                    Start your free trial or book a live demo with our team.
+                    No credit card required.
+                </p>
+            </div>
+            <div class="cta-final-actions">
+                <div style="display:flex;gap:0.6rem;">
+                    <button class="btn-primary" type="button">Sign Up For Free</button>
+                    <button class="btn-ghost" type="button">Get a Demo</button>
+                </div>
+                <div class="cta-final-note">
+                    Try all modules · Cancel anytime
+                </div>
+            </div>
+</section>
+    </main>
+
+    <footer class="flowlu-footer">
+        <div class="footer-inner">
+            <div class="footer-column">
+                <div class="flowlu-logo">
+                    <div class="flowlu-logo-mark"><span>F</span></div>
+                    <div class="flowlu-logo-text">Flowlu</div>
+                </div>
+                <p style="margin-top:0.7rem;font-size:0.82rem;color:var(--flowlu-text-muted);">
+                    Unified business platform for simple work management. CRM, projects, tasks,
+                    finance, knowledge base and more—together in one workspace.
+                </p>
+            </div>
+            <div class="footer-column">
+                <h4>Features</h4>
+                <ul>
+                    <li><a href="#features">Online CRM</a></li>
+                    <li><a href="#features">Project Management</a></li>
+                    <li><a href="#features">Task Management</a></li>
+                    <li><a href="#features">Financial Management</a></li>
+                    <li><a href="#features">Online Invoicing</a></li>
+                    <li><a href="#features">Knowledge Base</a></li>
+                    <li><a href="#features">Agile &amp; Issue Tracker</a></li>
+                    <li><a href="#features">Collaboration Tools</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Solutions</h4>
+                <ul>
+                    <li><a href="#solutions">Marketing Agencies</a></li>
+                    <li><a href="#solutions">IT Departments</a></li>
+                    <li><a href="#solutions">Business Consultants</a></li>
+                    <li><a href="#solutions">Legal Professionals</a></li>
+                    <li><a href="#solutions">Educational Institutions</a></li>
+                    <li><a href="#solutions">Manufacturing Sector</a></li>
+                    <li><a href="#solutions">Small Business</a></li>
+                    <li><a href="#solutions">Event Planners</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="#resources">Help Center</a></li>
+                    <li><a href="#resources">Flowlu Blog</a></li>
+                    <li><a href="#resources">Customer Stories</a></li>
+                    <li><a href="#resources">Guides</a></li>
+                    <li><a href="#pricing">Compare Plans</a></li>
+                    <li><a href="#pricing">Project Templates</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#resources">Become a Partner</a></li>
+                    <li><a href="#resources">Contact Us</a></li>
+                    <li><a href="#resources">Terms of Service</a></li>
+                    <li><a href="#resources">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>© 2016 – 2025 Flowlu. All rights reserved.</div>
+            <div class="footer-social">
+                <span>in</span>
+                <span>F</span>
+                <span>X</span>
+                <span>▶</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function () {
+            const sizeInput = document.getElementById("companySize");
+            const sizeValue = document.getElementById("companySizeValue");
+            const currentCostEl = document.getElementById("currentCost");
+            const flowluCostEl = document.getElementById("flowluCost");
+            const savingsValueEl = document.getElementById("savingsValue");
+            const appsList = document.getElementById("appsList");
+            const appsSummaryEl = document.getElementById("appsSummary");
+
+            if (!sizeInput || !appsList) return;
+
+            const flowluPerUser = 9; // approx per user / month, yearly billing
+
+            function getSelectedApps() {
+                const selected = appsList.querySelectorAll(".app-badge.selected");
+                return Array.from(selected).map(function (el) {
+                    return {
+                        price: Number(el.getAttribute("data-price")) || 0
+                    };
+                });
+            }
+
+            function recalc() {
+                const size = Number(sizeInput.value) || 1;
+                sizeValue.textContent = size;
+
+                const apps = getSelectedApps();
+                const appsCount = apps.length || 1;
+
+                const sumPerUserYear =
+                    apps.reduce(function (acc, app) { return acc + app.price; }, 0);
+
+                const currentAnnual = Math.round((sumPerUserYear / 1) * size);
+                const flowluAnnual = Math.round(flowluPerUser * 12 * size);
+                const savings = Math.max(currentAnnual - flowluAnnual, 0);
+
+                currentCostEl.textContent = currentAnnual.toLocaleString("en-US");
+                flowluCostEl.textContent = flowluAnnual.toLocaleString("en-US");
+                savingsValueEl.textContent = savings.toLocaleString("en-US");
+                appsSummaryEl.textContent = appsCount + " apps / " + size + " users";
+            }
+
+            sizeInput.addEventListener("input", recalc);
+
+            appsList.addEventListener("click", function (event) {
+                const badge = event.target.closest(".app-badge");
+                if (!badge) return;
+                badge.classList.toggle("selected");
+                recalc();
+            });
+
+            recalc();
+        })();
+
+        (function () {
+            const observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            document.querySelectorAll(".fade-up").forEach(function (el) {
+                observer.observe(el);
+            });
+        })();
+    </script>
+</body>
+</html>
+

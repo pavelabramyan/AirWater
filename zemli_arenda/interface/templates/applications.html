@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Заявки - Фабрика участков{% endblock %}
+
+{% block content %}
+<header>
+    <h1>Заявки на получение аренды</h1>
+    <a href="/applications/add" role="button">➕ Добавить заявку</a>
+</header>
+
+{% if applications %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Кадастровый номер</th>
+            <th>Адрес</th>
+            <th>Статус</th>
+            <th>Дата подачи</th>
+            <th>Примечания</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in applications %}
+        <tr>
+            <td>{{ item.application.id }}</td>
+            <td>{{ item.parcel.cadastral_number if item.parcel else 'N/A' }}</td>
+            <td>{{ item.parcel.address if item.parcel else 'N/A' }}</td>
+            <td><mark>{{ item.application.status.value }}</mark></td>
+            <td>{{ item.application.submitted_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>{{ item.application.notes or '-' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<article>
+    <p>Заявок пока нет. <a href="/applications/add">Создать первую заявку</a></p>
+</article>
+{% endif %}
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

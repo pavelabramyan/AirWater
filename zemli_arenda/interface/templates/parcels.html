@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Участки - Фабрика участков{% endblock %}
+
+{% block content %}
+<header>
+    <h1>Земельные участки</h1>
+    <a href="/parcels/add" role="button">➕ Добавить участок</a>
+</header>
+
+{% if parcels %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Кадастровый номер</th>
+            <th>Адрес</th>
+            <th>Площадь (кв.м)</th>
+            <th>Категория</th>
+            <th>Цена (руб/год)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for parcel in parcels %}
+        <tr>
+            <td>{{ parcel.id }}</td>
+            <td><strong>{{ parcel.cadastral_number }}</strong></td>
+            <td>{{ parcel.address }}</td>
+            <td>{{ "{:,.0f}".format(parcel.area) }}</td>
+            <td>{{ parcel.category.value }}</td>
+            <td>{{ "{:,.0f}".format(parcel.price) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<article>
+    <p>Участков пока нет. <a href="/parcels/add">Добавить первый участок</a></p>
+</article>
+{% endif %}
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

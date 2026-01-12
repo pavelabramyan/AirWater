@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить сделку - Фабрика участков{% endblock %}
+
+{% block content %}
+<header>
+    <h1>Добавление сделки</h1>
+</header>
+
+<form method="POST">
+    <label for="parcel_id">
+        Участок
+        <select id="parcel_id" name="parcel_id" required>
+            <option value="">Выберите участок...</option>
+            {% for parcel in parcels %}
+            <option value="{{ parcel.id }}">
+                {{ parcel.cadastral_number }} - {{ parcel.address }}
+            </option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label for="buyer_name">
+        Имя покупателя
+        <input type="text" id="buyer_name" name="buyer_name" placeholder="Иванов Иван Иванович" required>
+    </label>
+
+    <label for="buyer_contact">
+        Контакт покупателя
+        <input type="text" id="buyer_contact" name="buyer_contact" placeholder="+7 900 123-45-67 или email" required>
+    </label>
+
+    <label for="sale_price">
+        Цена продажи (руб)
+        <input type="number" id="sale_price" name="sale_price" step="0.01" placeholder="500000" required>
+    </label>
+
+    <label for="status">
+        Статус сделки
+        <select id="status" name="status" required>
+            {% for status in statuses %}
+            <option value="{{ status }}">{{ status }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <div class="grid">
+        <button type="submit">Добавить сделку</button>
+        <a href="/deals" role="button" class="secondary">Отмена</a>
+    </div>
+</form>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
