@@ -5,55 +5,33 @@ class NatalChart {
         this.cx = size / 2;
         this.cy = size / 2;
         this.ns = "http://www.w3.org/2000/svg";
+        this.isMobile = size < 400;
 
-        // Радиусы для одиночной карты
-        this.rOuter = size / 2 - 5;
-        this.rOuterAccent = this.rOuter - 15;
-        this.rRulerOuter = this.rOuterAccent - 12;
-        this.rRulerInner = this.rRulerOuter - 18;
-        this.rZodiacOuter = this.rRulerInner - 12;
-        this.rZodiacInner = this.rZodiacOuter - 35;
-        this.rPlanetBase = this.rZodiacInner - 15;
-        this.rAspect = this.rPlanetBase - 55;
-        this.rHouseText = this.rAspect - 15;
-
-        // Радиусы для двойной карты (транзиты снаружи)
-        this.rOuterRing = size / 2 - 5;           // Внешний ореол
-        this.rTransitOuter = this.rOuterRing - 10; // Внешнее кольцо транзитов
-        this.rTransitInner = this.rTransitOuter - 40; // Внутренняя граница транзитов
-        
         this.svg = document.createElementNS(this.ns, "svg");
-        this.safeSetAttr(this.svg, "width", size);
-        this.safeSetAttr(this.svg, "height", size);
-        this.svg.style.background = "transparent";
-        this.svg.style.display = "block";
+        this.svg.setAttribute("width", size);
+        this.svg.setAttribute("height", size);
+        this.svg.setAttribute("viewBox", "0 0 " + size + " " + size);
         this.container.innerHTML = "";
         this.container.appendChild(this.svg);
 
         this.signs = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
-        this.signColors = ["#f26d50","#4caf50","#ffeb3b","#26c6da",
-                           "#ef5350","#66bb6a","#ffee58","#26c6da",
-                           "#ef5350","#66bb6a","#ffee58","#26c6da"];
-        this.glyphColors = {
-            Sun: "#ff6d00",
-            Moon: "#444",
-            Mercury: "#111",
-            Venus: "#4caf50",
-            Mars: "#e53935",
-            Jupiter: "#1565c0",
-            Saturn: "#6d4c41",
-            Uranus: "#00acc1",
-            Neptune: "#3f51b5",
-            Pluto: "#6a1b9a",
-            North_node: "#000",
-            South_node: "#000",
-            Lilith: "#000",
-            Chiron: "#7b1fa2",
-            ASC: "#c62828",
-            MC: "#1565c0"
+        
+        // Цвета знаков по стихиям (как у Geocult)
+        this.signColors = [
+            "#c62828", "#4e342e", "#2e7d32", "#1565c0",  // Овен,Телец,Близнецы,Рак
+            "#c62828", "#4e342e", "#2e7d32", "#1565c0",  // Лев,Дева,Весы,Скорпион
+            "#c62828", "#4e342e", "#2e7d32", "#1565c0"   // Стрелец,Козерог,Водолей,Рыбы
+        ];
+        
+        this.planetColors = {
+            Sun: "#ff6f00", Moon: "#5d4037", Mercury: "#795548", Venus: "#2e7d32",
+            Mars: "#c62828", Jupiter: "#1565c0", Saturn: "#37474f",
+            Uranus: "#00838f", Neptune: "#4527a0", Pluto: "#6a1b9a",
+            North_node: "#455a64", South_node: "#455a64", Lilith: "#c62828",
+            Chiron: "#6a1b9a", ASC: "#1565c0", MC: "#1565c0"
         };
         
-        this.planetIcons = {
+        this.planetSymbols = {
             Sun: "☉", Moon: "☽", Mercury: "☿", Venus: "♀", Mars: "♂",
             Jupiter: "♃", Saturn: "♄", Uranus: "♅", Neptune: "♆", Pluto: "♇",
             North_node: "☊", South_node: "☋", Lilith: "⚸", Chiron: "⚷",
@@ -61,447 +39,332 @@ class NatalChart {
         };
     }
 
+    attr(el, a) { for(let k in a) el.setAttribute(k, a[k]); return el; }
+    circle(cx, cy, r, fill, stroke, sw) {
+        const c = document.createElementNS(this.ns, "circle");
+        return this.attr(c, {cx, cy, r, fill: fill||"none", stroke: stroke||"none", "stroke-width": sw||1});
+    }
+    line(x1, y1, x2, y2, stroke, sw) {
+        const l = document.createElementNS(this.ns, "line");
+        return this.attr(l, {x1, y1, x2, y2, stroke, "stroke-width": sw||1});
+    }
+    text(x, y, txt, size, fill, anchor, weight) {
+        const t = document.createElementNS(this.ns, "text");
+        this.attr(t, {x, y, "text-anchor": anchor||"middle", "dominant-baseline": "central", 
+            "font-size": size, "font-family": "Arial, sans-serif", fill: fill||"#000", "font-weight": weight||"normal"});
+        t.textContent = txt;
+        return t;
+    }
+
     draw(data) {
         if (!data || !data.houses || data.houses.length < 12) return;
         this.svg.innerHTML = "";
-        this.rotationOffset = 180 - (data.houses[0] || 0);
+        this.rot = 180 - (data.houses[0] || 0);
+        this.houses = data.houses;
         
-        const hasOuter = data.outerPlanets && data.outerPlanets.length > 0;
+        const hasTransit = data.outerPlanets && data.outerPlanets.length > 0;
+        const s = this.size, m = this.isMobile;
         
-        if (hasOuter) {
-            this.drawDualChart(data);
+        // Радиусы как у Geocult
+        if (hasTransit) {
+            this.R = s/2 - 2;                              // внешний край
+            this.rTransitO = this.R;                       // транзитное кольцо внешнее
+            this.rTransitI = this.R - (m ? 38 : 60);       // транзитное кольцо внутреннее
+            this.rTickO = this.rTransitI;                  // риски внешние
+            this.rTickI = this.rTransitI - (m ? 14 : 22);  // риски внутренние
+            this.rSignO = this.rTickI;                     // знаки внешние
+            this.rSignI = this.rSignO - (m ? 30 : 48);     // знаки внутренние
+            this.rPlanetO = this.rSignI;                   // натальные планеты внешние
+            this.rPlanetI = this.rPlanetO - (m ? 28 : 44); // натальные планеты внутренние
+            this.rHouseO = this.rPlanetI;                  // дома внешние
+            this.rCenter = this.rHouseO - (m ? 20 : 32);   // центральный круг
         } else {
-            this.drawSingleChart(data);
+            this.R = s/2 - 2;
+            this.rTickO = this.R;
+            this.rTickI = this.R - (m ? 14 : 22);
+            this.rSignO = this.rTickI;
+            this.rSignI = this.rSignO - (m ? 35 : 55);
+            this.rPlanetO = this.rSignI;
+            this.rPlanetI = this.rPlanetO - (m ? 32 : 50);
+            this.rHouseO = this.rPlanetI;
+            this.rCenter = this.rHouseO - (m ? 22 : 35);
         }
-    }
 
-    // === SINGLE CHART (natal only) ===
-    drawSingleChart(data) {
-        this.drawBackground();
-        this.drawOuterRuler();
+        // Рисуем слои
+        if (hasTransit) this.drawTransitRing(data.outerPlanets);
+        this.drawTicksRing();
         this.drawZodiacRing();
-        this.drawHouses(data.houses);
+        this.drawHouseSectors();
+        this.drawNatalPlanets(data.planets);
+        this.drawHouseLines();
         if (data.aspects) this.drawAspects(data.aspects, data.planets);
-        if (data.planets) this.drawPlanets(data.planets);
-        this.drawInnerCircle();
+        this.drawCenterCircles();
+        this.drawHouseNumbers();
+        this.drawAxisLabels();
     }
 
-    // === DUAL CHART (natal + transit/solar/lunar) ===
-    drawDualChart(data) {
-        // Пересчитываем радиусы для двойной карты
-        const s = this.size;
-        this.rOuter = s / 2 - 5;
-        this.rTransitOuter = this.rOuter - 10;
-        this.rTransitInner = this.rTransitOuter - 45;
+    // Зелёное транзитное кольцо
+    drawTransitRing(planets) {
+        // Градиентный зелёный фон
+        const defs = document.createElementNS(this.ns, "defs");
+        const grad = document.createElementNS(this.ns, "radialGradient");
+        grad.id = "greenGrad";
+        grad.innerHTML = '<stop offset="0%" stop-color="#c8e6c9"/><stop offset="100%" stop-color="#a5d6a7"/>';
+        defs.appendChild(grad);
+        this.svg.appendChild(defs);
+
+        // Внешний зелёный круг
+        this.svg.appendChild(this.circle(this.cx, this.cy, this.rTransitO, "url(#greenGrad)", "#81c784", 1));
         
-        // Внутренняя натальная часть сжимается
-        this.rOuterAccent = this.rTransitInner - 5;
-        this.rRulerOuter = this.rOuterAccent - 8;
-        this.rRulerInner = this.rRulerOuter - 12;
-        this.rZodiacOuter = this.rRulerInner - 8;
-        this.rZodiacInner = this.rZodiacOuter - 28;
-        this.rPlanetBase = this.rZodiacInner - 12;
-        this.rAspect = this.rPlanetBase - 40;
-        this.rHouseText = this.rAspect - 10;
+        // Белый внутренний круг (граница транзитного кольца)
+        this.svg.appendChild(this.circle(this.cx, this.cy, this.rTransitI, "#fff", "#9e9e9e", 1));
 
-        // Рисуем
-        this.drawDualBackground();
-        this.drawOuterTransitRing(data.outerPlanets);
-        this.drawOuterRuler();
-        this.drawZodiacRing();
-        this.drawHouses(data.houses);
-        if (data.aspects) this.drawAspects(data.aspects, data.planets);
-        if (data.planets) this.drawPlanets(data.planets);
-        this.drawInnerCircle();
-    }
-
-    drawDualBackground() {
-        // Внешний ореол (светло-бирюзовый для транзитов)
-        const halo = document.createElementNS(this.ns, "circle");
-        this.safeSetAttr(halo, "cx", this.cx);
-        this.safeSetAttr(halo, "cy", this.cy);
-        this.safeSetAttr(halo, "r", this.rOuter);
-        this.safeSetAttr(halo, "fill", "#e0f7fa");
-        this.svg.appendChild(halo);
-
-        // Кольцо транзитов
-        const transitRing = document.createElementNS(this.ns, "circle");
-        this.safeSetAttr(transitRing, "cx", this.cx);
-        this.safeSetAttr(transitRing, "cy", this.cy);
-        this.safeSetAttr(transitRing, "r", this.rTransitOuter);
-        this.safeSetAttr(transitRing, "fill", "#fff");
-        this.safeSetAttr(transitRing, "stroke", "#4dd0e1");
-        this.safeSetAttr(transitRing, "stroke-width", "2");
-        this.svg.appendChild(transitRing);
-
-        // Внутренний круг для натала
-        const inner = document.createElementNS(this.ns, "circle");
-        this.safeSetAttr(inner, "cx", this.cx);
-        this.safeSetAttr(inner, "cy", this.cy);
-        this.safeSetAttr(inner, "r", this.rTransitInner);
-        this.safeSetAttr(inner, "fill", "#e6f6d6");
-        this.safeSetAttr(inner, "stroke", "#81c784");
-        this.safeSetAttr(inner, "stroke-width", "1");
-        this.svg.appendChild(inner);
-
-        // Белый фон натала
-        const white = document.createElementNS(this.ns, "circle");
-        this.safeSetAttr(white, "cx", this.cx);
-        this.safeSetAttr(white, "cy", this.cy);
-        this.safeSetAttr(white, "r", this.rOuterAccent);
-        this.safeSetAttr(white, "fill", "#fff");
-        this.safeSetAttr(white, "stroke", "#d1d5db");
-        this.svg.appendChild(white);
-    }
-
-    drawOuterTransitRing(outerPlanets) {
-        if (!outerPlanets || outerPlanets.length === 0) return;
-
-        const midRadius = (this.rTransitOuter + this.rTransitInner) / 2;
-        
-        // Сортируем и распределяем планеты
-        const sorted = [...outerPlanets].filter(p => p.abs_pos !== undefined);
-        sorted.sort((a, b) => a.abs_pos - b.abs_pos);
-        
-        // Предотвращаем наложение
-        const positions = this.spreadPlanets(sorted, 15);
-        
-        positions.forEach((p, i) => {
-            const angle = this.toSvgAngle(p.displayPos);
-            const pos = this.polarToCartesian(this.cx, this.cy, midRadius, angle);
+        // Транзитные планеты
+        const used = [];
+        (planets || []).forEach(p => {
+            if (p.abs_pos === undefined) return;
+            const ang = (p.abs_pos + this.rot) * Math.PI / 180;
+            let r = (this.rTransitO + this.rTransitI) / 2;
             
-            const icon = this.planetIcons[p.key] || p.icon || "?";
-            const color = this.glyphColors[p.key] || "#e53935"; // Красный для транзитов
+            for (let u of used) {
+                if (Math.abs(ang - u.a) < 0.15 || Math.abs(ang - u.a) > 6.13) r -= this.isMobile ? 11 : 15;
+            }
+            used.push({a: ang, r});
             
-            // Символ планеты
-            const text = document.createElementNS(this.ns, "text");
-            this.safeSetAttr(text, "x", pos.x);
-            this.safeSetAttr(text, "y", pos.y);
-            this.safeSetAttr(text, "text-anchor", "middle");
-            this.safeSetAttr(text, "dominant-baseline", "central");
-            this.safeSetAttr(text, "font-size", "14");
-            this.safeSetAttr(text, "font-weight", "bold");
-            this.safeSetAttr(text, "fill", "#e53935");
-            text.textContent = icon;
-            this.svg.appendChild(text);
+            const x = this.cx + r * Math.cos(ang);
+            const y = this.cy + r * Math.sin(ang);
             
-            // Ретроградность
+            this.svg.appendChild(this.text(x, y, this.planetSymbols[p.key] || "●", 
+                this.isMobile ? 12 : 16, "#37474f", "middle", "bold"));
+            
             if (p.is_retro) {
-                const retroPos = this.polarToCartesian(this.cx, this.cy, midRadius - 12, angle);
-                const retro = document.createElementNS(this.ns, "text");
-                this.safeSetAttr(retro, "x", retroPos.x);
-                this.safeSetAttr(retro, "y", retroPos.y);
-                this.safeSetAttr(retro, "text-anchor", "middle");
-                this.safeSetAttr(retro, "dominant-baseline", "central");
-                this.safeSetAttr(retro, "font-size", "8");
-                this.safeSetAttr(retro, "fill", "#ff5555");
-                retro.textContent = "R";
-                this.svg.appendChild(retro);
+                this.svg.appendChild(this.text(x + (this.isMobile?8:11), y - (this.isMobile?6:9), 
+                    "R", this.isMobile ? 7 : 9, "#c62828", "middle", "bold"));
             }
-
-            // Линия к точной позиции
-            const exactAngle = this.toSvgAngle(p.abs_pos);
-            const outerPoint = this.polarToCartesian(this.cx, this.cy, this.rTransitOuter - 2, exactAngle);
-            const innerPoint = this.polarToCartesian(this.cx, this.cy, this.rTransitInner + 2, exactAngle);
-            
-            const line = document.createElementNS(this.ns, "line");
-            this.safeSetAttr(line, "x1", outerPoint.x);
-            this.safeSetAttr(line, "y1", outerPoint.y);
-            this.safeSetAttr(line, "x2", innerPoint.x);
-            this.safeSetAttr(line, "y2", innerPoint.y);
-            this.safeSetAttr(line, "stroke", "#e57373");
-            this.safeSetAttr(line, "stroke-width", "1");
-            this.svg.appendChild(line);
         });
     }
 
-    spreadPlanets(planets, minGap) {
-        // Создаём копии с displayPos
-        const result = planets.map(p => ({ ...p, displayPos: p.abs_pos }));
+    // Красные риски градусов
+    drawTicksRing() {
+        // Белый фон под риски
+        this.svg.appendChild(this.circle(this.cx, this.cy, this.rTickO, "#fff", "#bdbdbd", 1));
         
-        // Несколько проходов для разделения
-        for (let pass = 0; pass < 5; pass++) {
-            for (let i = 0; i < result.length; i++) {
-                for (let j = i + 1; j < result.length; j++) {
-                    let diff = result[j].displayPos - result[i].displayPos;
-                    if (diff < 0) diff += 360;
-                    if (diff > 180) diff = 360 - diff;
-                    
-                    if (diff < minGap) {
-                        const push = (minGap - diff) / 2 + 1;
-                        result[i].displayPos = (result[i].displayPos - push + 360) % 360;
-                        result[j].displayPos = (result[j].displayPos + push) % 360;
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-    safeSetAttr(el, name, val) {
-        if (Number.isNaN(val) || val === undefined || val === null) return;
-        el.setAttribute(name, val);
-    }
-
-    toSvgAngle(deg) {
-        let chartDeg = deg + this.rotationOffset;
-        chartDeg = chartDeg % 360;
-        if (chartDeg < 0) chartDeg += 360;
-        return -chartDeg; 
-    }
-
-    drawBackground() {
-        const halo = document.createElementNS(this.ns, "circle");
-        this.safeSetAttr(halo, "cx", this.cx);
-        this.safeSetAttr(halo, "cy", this.cy);
-        this.safeSetAttr(halo, "r", this.rOuter);
-        this.safeSetAttr(halo, "fill", "#e6f6d6");
-        this.svg.appendChild(halo);
-
-        const white = document.createElementNS(this.ns, "circle");
-        this.safeSetAttr(white, "cx", this.cx);
-        this.safeSetAttr(white, "cy", this.cy);
-        this.safeSetAttr(white, "r", this.rOuterAccent);
-        this.safeSetAttr(white, "fill", "#fff");
-        this.safeSetAttr(white, "stroke", "#d1d5db");
-        this.svg.appendChild(white);
-    }
-
-    drawOuterRuler() {
-        for (let deg = 0; deg < 360; deg++) {
-            const angle = this.toSvgAngle(deg);
-            let len = 4;
-            if (deg % 5 === 0) len = 7;
-            if (deg % 10 === 0) len = 12;
-            if (deg % 30 === 0) len = 18;
-
-            const p1 = this.polarToCartesian(this.cx, this.cy, this.rRulerOuter, angle);
-            const p2 = this.polarToCartesian(this.cx, this.cy, this.rRulerOuter - len, angle);
-            const tick = document.createElementNS(this.ns, "line");
-            this.safeSetAttr(tick, "x1", p1.x);
-            this.safeSetAttr(tick, "y1", p1.y);
-            this.safeSetAttr(tick, "x2", p2.x);
-            this.safeSetAttr(tick, "y2", p2.y);
-            this.safeSetAttr(tick, "stroke", "#555");
-            this.safeSetAttr(tick, "stroke-width", deg % 30 === 0 ? 1.2 : 0.5);
-            this.svg.appendChild(tick);
+        for (let d = 0; d < 360; d++) {
+            const ang = (d + this.rot) * Math.PI / 180;
+            const isBig = d % 5 === 0;
+            const len = isBig ? (this.isMobile ? 8 : 12) : (this.isMobile ? 4 : 6);
+            
+            const x1 = this.cx + this.rTickO * Math.cos(ang);
+            const y1 = this.cy + this.rTickO * Math.sin(ang);
+            const x2 = this.cx + (this.rTickO - len) * Math.cos(ang);
+            const y2 = this.cy + (this.rTickO - len) * Math.sin(ang);
+            
+            this.svg.appendChild(this.line(x1, y1, x2, y2, "#c62828", isBig ? 1.2 : 0.6));
         }
     }
 
+    // Знаки зодиака (просто символы на белом фоне!)
     drawZodiacRing() {
+        // Белый фон
+        this.svg.appendChild(this.circle(this.cx, this.cy, this.rSignO, "#fff", "#bdbdbd", 1));
+        
+        // Разделительные линии между знаками (только в кольце!)
         for (let i = 0; i < 12; i++) {
-            const start = i * 30;
-            const end = start + 30;
-            const sector = this.createSector(this.cx, this.cy, this.rZodiacOuter, this.rZodiacInner, this.toSvgAngle(start), this.toSvgAngle(end));
-            this.safeSetAttr(sector, "fill", this.signColors[i]);
-            this.safeSetAttr(sector, "stroke", "#999");
-            this.safeSetAttr(sector, "stroke-width", "0.6");
-            this.svg.appendChild(sector);
+            const ang = (i * 30 + this.rot) * Math.PI / 180;
+            const x1 = this.cx + this.rSignO * Math.cos(ang);
+            const y1 = this.cy + this.rSignO * Math.sin(ang);
+            const x2 = this.cx + this.rSignI * Math.cos(ang);
+            const y2 = this.cy + this.rSignI * Math.sin(ang);
+            this.svg.appendChild(this.line(x1, y1, x2, y2, "#bdbdbd", 1));
+        }
 
-            const mid = start + 15;
-            const textPos = this.polarToCartesian(this.cx, this.cy, (this.rZodiacOuter + this.rZodiacInner) / 2, this.toSvgAngle(mid));
-            const glyph = document.createElementNS(this.ns, "text");
-            this.safeSetAttr(glyph, "x", textPos.x);
-            this.safeSetAttr(glyph, "y", textPos.y);
-            this.safeSetAttr(glyph, "text-anchor", "middle");
-            this.safeSetAttr(glyph, "dominant-baseline", "central");
-            this.safeSetAttr(glyph, "font-size", "16");
-            this.safeSetAttr(glyph, "font-weight", "bold");
-            glyph.textContent = this.signs[i];
-            this.svg.appendChild(glyph);
+        // Символы знаков (большие цветные)
+        for (let i = 0; i < 12; i++) {
+            const ang = ((i + 0.5) * 30 + this.rot) * Math.PI / 180;
+            const r = (this.rSignO + this.rSignI) / 2;
+            const x = this.cx + r * Math.cos(ang);
+            const y = this.cy + r * Math.sin(ang);
+            
+            this.svg.appendChild(this.text(x, y, this.signs[i], 
+                this.isMobile ? 18 : 28, this.signColors[i], "middle", "bold"));
+        }
+
+        // Внутренняя граница
+        this.svg.appendChild(this.circle(this.cx, this.cy, this.rSignI, "#fff", "#9e9e9e", 1.5));
+    }
+
+    // Секторы домов (светло-серый фон)
+    drawHouseSectors() {
+        for (let i = 0; i < 12; i++) {
+            const start = (this.houses[i] + this.rot) * Math.PI / 180;
+            const end = (this.houses[(i+1)%12] + this.rot) * Math.PI / 180;
+            
+            // Чередующийся серый фон
+            const fill = i % 2 === 0 ? "#f5f5f5" : "#fff";
+            
+            const path = document.createElementNS(this.ns, "path");
+            const x1 = this.cx + this.rPlanetO * Math.cos(start);
+            const y1 = this.cy + this.rPlanetO * Math.sin(start);
+            const x2 = this.cx + this.rPlanetO * Math.cos(end);
+            const y2 = this.cy + this.rPlanetO * Math.sin(end);
+            const x3 = this.cx + this.rCenter * Math.cos(end);
+            const y3 = this.cy + this.rCenter * Math.sin(end);
+            const x4 = this.cx + this.rCenter * Math.cos(start);
+            const y4 = this.cy + this.rCenter * Math.sin(start);
+            
+            // Определяем большую дугу
+            let sweep = end - start;
+            if (sweep < 0) sweep += Math.PI * 2;
+            const largeArc = sweep > Math.PI ? 1 : 0;
+            
+            const d = "M" + x1 + "," + y1 + 
+                      " A" + this.rPlanetO + "," + this.rPlanetO + " 0 " + largeArc + ",1 " + x2 + "," + y2 +
+                      " L" + x3 + "," + y3 +
+                      " A" + this.rCenter + "," + this.rCenter + " 0 " + largeArc + ",0 " + x4 + "," + y4 + " Z";
+            
+            this.attr(path, {d, fill, stroke: "none"});
+            this.svg.appendChild(path);
         }
     }
 
-    drawHouses(cusps) {
-        cusps.forEach((deg, i) => {
-            const angle = this.toSvgAngle(deg);
-            const outer = this.polarToCartesian(this.cx, this.cy, this.rRulerOuter - 8, angle);
-            const inner = this.polarToCartesian(this.cx, this.cy, this.rAspect, angle);
-            const line = document.createElementNS(this.ns, "line");
-            this.safeSetAttr(line, "x1", outer.x);
-            this.safeSetAttr(line, "y1", outer.y);
-            this.safeSetAttr(line, "x2", inner.x);
-            this.safeSetAttr(line, "y2", inner.y);
-            let color = "#444";
-            let width = "1";
-            if ([0,3,6,9].includes(i)) {
-                width = "2";
-                color = "#002e8a";
+    // Натальные планеты (цветные символы)
+    drawNatalPlanets(planets) {
+        const used = [];
+        (planets || []).forEach(p => {
+            if (p.abs_pos === undefined) return;
+            const ang = (p.abs_pos + this.rot) * Math.PI / 180;
+            let r = (this.rPlanetO + this.rPlanetI) / 2;
+            
+            for (let u of used) {
+                if (Math.abs(ang - u.a) < 0.18 || Math.abs(ang - u.a) > 6.10) r -= this.isMobile ? 13 : 18;
             }
-            this.safeSetAttr(line, "stroke", color);
-            this.safeSetAttr(line, "stroke-width", width);
-            this.svg.appendChild(line);
-
-            const next = cusps[(i+1)%12];
-            let mid = (deg + next) / 2;
-            if (Math.abs(next - deg) > 180) mid += 180;
-            const labelPos = this.polarToCartesian(this.cx, this.cy, this.rHouseText, this.toSvgAngle(mid));
-            const txt = document.createElementNS(this.ns, "text");
-            this.safeSetAttr(txt, "x", labelPos.x);
-            this.safeSetAttr(txt, "y", labelPos.y);
-            this.safeSetAttr(txt, "text-anchor", "middle");
-            this.safeSetAttr(txt, "dominant-baseline", "central");
-            this.safeSetAttr(txt, "font-size", "10");
-            this.safeSetAttr(txt, "fill", "#666");
-            txt.textContent = i + 1;
-            this.svg.appendChild(txt);
+            used.push({a: ang, r});
+            
+            const x = this.cx + r * Math.cos(ang);
+            const y = this.cy + r * Math.sin(ang);
+            
+            this.svg.appendChild(this.text(x, y, this.planetSymbols[p.key] || "●", 
+                this.isMobile ? 14 : 18, this.planetColors[p.key] || "#424242", "middle", "bold"));
+            
+            if (p.is_retro) {
+                this.svg.appendChild(this.text(x + (this.isMobile?9:12), y - (this.isMobile?7:10), 
+                    "R", this.isMobile ? 8 : 10, "#c62828", "middle", "bold"));
+            }
         });
     }
 
+    // Линии домов
+    drawHouseLines() {
+        for (let i = 0; i < 12; i++) {
+            const ang = (this.houses[i] + this.rot) * Math.PI / 180;
+            const isAngular = i % 3 === 0;
+            
+            const x1 = this.cx + this.rPlanetO * Math.cos(ang);
+            const y1 = this.cy + this.rPlanetO * Math.sin(ang);
+            const x2 = this.cx + this.rCenter * Math.cos(ang);
+            const y2 = this.cy + this.rCenter * Math.sin(ang);
+            
+            this.svg.appendChild(this.line(x1, y1, x2, y2, isAngular ? "#424242" : "#9e9e9e", isAngular ? 2 : 1));
+        }
+    }
+
+    // Аспекты (цветные линии)
     drawAspects(aspects, planets) {
-        const planetMap = {};
-        planets.forEach(p => { if (p.key) planetMap[p.key] = p; });
+        const pos = {};
+        (planets || []).forEach(p => {
+            if (p.abs_pos !== undefined) {
+                pos[p.key] = p.abs_pos;
+                if (p.name) pos[p.name] = p.abs_pos;
+            }
+        });
 
         const colors = {
-            Conjunction: "#29b6f6",
-            Sextile: "#4caf50",
-            Square: "#ff5252",
-            Trine: "#4caf50",
-            Opposition: "#ff9800",
-            Quincunx: "#26c6da"
+            Conjunction: "#42a5f5", Sextile: "#66bb6a", Square: "#e53935",
+            Trine: "#43a047", Opposition: "#c62828", Quincunx: "#26c6da"
         };
 
-        aspects.forEach(a => {
-            const p1 = planetMap[a.p1_key];
-            const p2 = planetMap[a.p2_key];
-            if (!p1 || !p2) return;
+        (aspects || []).forEach(a => {
+            const p1 = pos[a.p1_key] ?? pos[a.p1];
+            const p2 = pos[a.p2_key] ?? pos[a.p2];
+            if (p1 === undefined || p2 === undefined) return;
 
-            const angle1 = this.toSvgAngle(p1.abs_pos);
-            const angle2 = this.toSvgAngle(p2.abs_pos);
-            const point1 = this.polarToCartesian(this.cx, this.cy, this.rAspect, angle1);
-            const point2 = this.polarToCartesian(this.cx, this.cy, this.rAspect, angle2);
-
-            const line = document.createElementNS(this.ns, "line");
-            this.safeSetAttr(line, "x1", point1.x);
-            this.safeSetAttr(line, "y1", point1.y);
-            this.safeSetAttr(line, "x2", point2.x);
-            this.safeSetAttr(line, "y2", point2.y);
-            this.safeSetAttr(line, "stroke", colors[a.type] || "#888");
-            this.safeSetAttr(line, "stroke-width", "1.2");
-            this.safeSetAttr(line, "opacity", "0.7");
-            this.svg.appendChild(line);
-        });
-    }
-
-    drawPlanets(planets) {
-        const sorted = [...planets].filter(p => p.abs_pos !== undefined);
-        sorted.sort((a, b) => a.abs_pos - b.abs_pos);
-        
-        const positions = this.spreadPlanets(sorted, 12);
-
-        positions.forEach(p => {
-            const angle = this.toSvgAngle(p.displayPos);
-            const pos = this.polarToCartesian(this.cx, this.cy, this.rPlanetBase, angle);
-
-            const icon = this.planetIcons[p.key] || p.icon || "?";
-            const color = this.glyphColors[p.key] || "#333";
-
-            // Background circle
-            const bg = document.createElementNS(this.ns, "circle");
-            this.safeSetAttr(bg, "cx", pos.x);
-            this.safeSetAttr(bg, "cy", pos.y);
-            this.safeSetAttr(bg, "r", 10);
-            this.safeSetAttr(bg, "fill", "#fff");
-            this.svg.appendChild(bg);
-
-            // Planet symbol
-            const text = document.createElementNS(this.ns, "text");
-            this.safeSetAttr(text, "x", pos.x);
-            this.safeSetAttr(text, "y", pos.y);
-            this.safeSetAttr(text, "text-anchor", "middle");
-            this.safeSetAttr(text, "dominant-baseline", "central");
-            this.safeSetAttr(text, "font-size", p.key === 'ASC' || p.key === 'MC' ? "9" : "14");
-            this.safeSetAttr(text, "font-weight", "bold");
-            this.safeSetAttr(text, "fill", color);
-            text.textContent = icon;
-            this.svg.appendChild(text);
-
-            // Retrograde marker
-            if (p.is_retro) {
-                const retroPos = this.polarToCartesian(this.cx, this.cy, this.rPlanetBase - 14, angle);
-                const retro = document.createElementNS(this.ns, "text");
-                this.safeSetAttr(retro, "x", retroPos.x);
-                this.safeSetAttr(retro, "y", retroPos.y);
-                this.safeSetAttr(retro, "text-anchor", "middle");
-                this.safeSetAttr(retro, "dominant-baseline", "central");
-                this.safeSetAttr(retro, "font-size", "8");
-                this.safeSetAttr(retro, "fill", "#ff5555");
-                retro.textContent = "R";
-                this.svg.appendChild(retro);
-            }
-
-            // Line to exact position
-            const exactAngle = this.toSvgAngle(p.abs_pos);
-            const outerPoint = this.polarToCartesian(this.cx, this.cy, this.rZodiacInner - 2, exactAngle);
-            const innerPoint = this.polarToCartesian(this.cx, this.cy, this.rPlanetBase + 12, exactAngle);
+            const a1 = (p1 + this.rot) * Math.PI / 180;
+            const a2 = (p2 + this.rot) * Math.PI / 180;
+            const r = this.rCenter - 3;
             
-            const line = document.createElementNS(this.ns, "line");
-            this.safeSetAttr(line, "x1", outerPoint.x);
-            this.safeSetAttr(line, "y1", outerPoint.y);
-            this.safeSetAttr(line, "x2", innerPoint.x);
-            this.safeSetAttr(line, "y2", innerPoint.y);
-            this.safeSetAttr(line, "stroke", "#666");
-            this.safeSetAttr(line, "stroke-width", "1");
-            this.svg.appendChild(line);
-
-            // Degree label
-            const degPos = this.polarToCartesian(this.cx, this.cy, this.rPlanetBase - 22, angle);
-            const degText = document.createElementNS(this.ns, "text");
-            this.safeSetAttr(degText, "x", degPos.x);
-            this.safeSetAttr(degText, "y", degPos.y);
-            this.safeSetAttr(degText, "text-anchor", "middle");
-            this.safeSetAttr(degText, "dominant-baseline", "central");
-            this.safeSetAttr(degText, "font-size", "8");
-            this.safeSetAttr(degText, "fill", "#666");
-            degText.textContent = Math.floor(p.pos) + "°";
-            this.svg.appendChild(degText);
+            const orb = Math.abs(a.orb || 0);
+            const w = orb < 1 ? 2 : orb < 3 ? 1.5 : 1;
+            
+            this.svg.appendChild(this.line(
+                this.cx + r * Math.cos(a1), this.cy + r * Math.sin(a1),
+                this.cx + r * Math.cos(a2), this.cy + r * Math.sin(a2),
+                colors[a.type] || "#bdbdbd", w
+            ));
         });
     }
 
-    drawInnerCircle() {
-        const inner = document.createElementNS(this.ns, "circle");
-        this.safeSetAttr(inner, "cx", this.cx);
-        this.safeSetAttr(inner, "cy", this.cy);
-        this.safeSetAttr(inner, "r", this.rAspect);
-        this.safeSetAttr(inner, "fill", "none");
-        this.safeSetAttr(inner, "stroke", "#aaa");
-        this.safeSetAttr(inner, "stroke-width", "1");
-        this.svg.appendChild(inner);
+    // Двойной центральный круг
+    drawCenterCircles() {
+        this.svg.appendChild(this.circle(this.cx, this.cy, this.rCenter, "none", "#616161", 1.5));
+        this.svg.appendChild(this.circle(this.cx, this.cy, this.rCenter - (this.isMobile?5:8), "none", "#9e9e9e", 1));
     }
 
-    createSector(cx, cy, rOuter, rInner, startAngle, endAngle) {
-        const rad = Math.PI / 180;
-        const x1o = cx + rOuter * Math.cos(startAngle * rad);
-        const y1o = cy - rOuter * Math.sin(startAngle * rad);
-        const x2o = cx + rOuter * Math.cos(endAngle * rad);
-        const y2o = cy - rOuter * Math.sin(endAngle * rad);
-        const x1i = cx + rInner * Math.cos(endAngle * rad);
-        const y1i = cy - rInner * Math.sin(endAngle * rad);
-        const x2i = cx + rInner * Math.cos(startAngle * rad);
-        const y2i = cy - rInner * Math.sin(startAngle * rad);
-
-        const largeArc = Math.abs(endAngle - startAngle) > 180 ? 1 : 0;
-        const sweep = endAngle > startAngle ? 0 : 1;
-
-        const d = [
-            `M ${x1o} ${y1o}`,
-            `A ${rOuter} ${rOuter} 0 ${largeArc} ${sweep} ${x2o} ${y2o}`,
-            `L ${x1i} ${y1i}`,
-            `A ${rInner} ${rInner} 0 ${largeArc} ${1-sweep} ${x2i} ${y2i}`,
-            `Z`
-        ].join(" ");
-
-        const path = document.createElementNS(this.ns, "path");
-        path.setAttribute("d", d);
-        return path;
+    // Номера домов
+    drawHouseNumbers() {
+        for (let i = 0; i < 12; i++) {
+            let mid = (this.houses[i] + this.houses[(i+1)%12]) / 2;
+            if (this.houses[(i+1)%12] < this.houses[i]) mid = (this.houses[i] + this.houses[(i+1)%12] + 360) / 2;
+            const ang = (mid + this.rot) * Math.PI / 180;
+            const r = this.rCenter - (this.isMobile ? 15 : 22);
+            
+            this.svg.appendChild(this.text(
+                this.cx + r * Math.cos(ang), this.cy + r * Math.sin(ang),
+                (i+1).toString(), this.isMobile ? 9 : 12, "#616161", "middle", "normal"
+            ));
+        }
     }
 
-    polarToCartesian(cx, cy, r, angleDeg) {
-        const rad = angleDeg * Math.PI / 180;
-        return {
-            x: cx + r * Math.cos(rad),
-            y: cy - r * Math.sin(rad)
-        };
+    // Подписи осей AC/DC/MC/IC снаружи карты
+    drawAxisLabels() {
+        const m = this.isMobile;
+        const axes = [
+            {h: 0, lbl: "AC", arrow: true},
+            {h: 6, lbl: "DC"},
+            {h: 9, lbl: "MC"},
+            {h: 3, lbl: "IC"}
+        ];
+
+        axes.forEach(ax => {
+            const ang = (this.houses[ax.h] + this.rot) * Math.PI / 180;
+            const r = this.R + (m ? 14 : 22);
+            const x = this.cx + r * Math.cos(ang);
+            const y = this.cy + r * Math.sin(ang);
+            
+            this.svg.appendChild(this.text(x, y, ax.lbl, m ? 11 : 15, "#1565c0", "middle", "bold"));
+            
+            // Синяя стрелка для AC
+            if (ax.arrow) {
+                const len = m ? 20 : 30;
+                const ax1 = this.cx + this.R * Math.cos(ang);
+                const ay1 = this.cy + this.R * Math.sin(ang);
+                const ax2 = ax1 - len * Math.cos(ang);
+                const ay2 = ay1 - len * Math.sin(ang);
+                this.svg.appendChild(this.line(ax1, ay1, ax2, ay2, "#1565c0", 2));
+                
+                // Наконечник стрелки
+                const arrowSize = m ? 5 : 8;
+                const perpAng = ang + Math.PI/2;
+                const tipX = ax2;
+                const tipY = ay2;
+                const baseX1 = ax2 + arrowSize * Math.cos(ang) + arrowSize/2 * Math.cos(perpAng);
+                const baseY1 = ay2 + arrowSize * Math.sin(ang) + arrowSize/2 * Math.sin(perpAng);
+                const baseX2 = ax2 + arrowSize * Math.cos(ang) - arrowSize/2 * Math.cos(perpAng);
+                const baseY2 = ay2 + arrowSize * Math.sin(ang) - arrowSize/2 * Math.sin(perpAng);
+                
+                const arrow = document.createElementNS(this.ns, "polygon");
+                this.attr(arrow, {points: tipX+","+tipY+" "+baseX1+","+baseY1+" "+baseX2+","+baseY2, fill: "#1565c0"});
+                this.svg.appendChild(arrow);
+            }
+        });
     }
 }
-
