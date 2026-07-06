@@ -709,6 +709,7 @@ const locationsData = {
                 'Чувашская Республика': { humidity: 70, coords: [55.5, 47.0], waterPriceUsd1L: 0.51 },
                 'Алтайский край': { humidity: 60, coords: [52.69, 82.69], waterPriceUsd1L: 0.51 },
                 'Краснодарский край': { humidity: 75, coords: [45.0355, 38.9753], waterPriceUsd1L: 0.64 },
+                'Сочи': { humidity: 78, coords: [43.6028, 39.7342], waterPriceUsd1L: 0.68 },
                 'Красноярский край': { humidity: 60, coords: [64.25, 95.10], waterPriceUsd1L: 0.58 },
                 'Приморский край': { humidity: 78, coords: [43.1155, 131.8855], waterPriceUsd1L: 0.64 },
                 'Ставропольский край': { humidity: 68, coords: [44.67, 43.52], waterPriceUsd1L: 0.58 },
@@ -1872,6 +1873,7 @@ const locationsData = {
                 'Chuvash Republic': { humidity: 70, coords: [55.5, 47.0], waterPriceUsd1L: 0.51 },
                 'Altai Krai': { humidity: 60, coords: [52.69, 82.69], waterPriceUsd1L: 0.51 },
                 'Krasnodar Krai': { humidity: 75, coords: [45.0355, 38.9753], waterPriceUsd1L: 0.64 },
+                'Sochi': { humidity: 78, coords: [43.6028, 39.7342], waterPriceUsd1L: 0.68 },
                 'Krasnoyarsk Krai': { humidity: 60, coords: [64.25, 95.10], waterPriceUsd1L: 0.58 },
                 'Primorsky Krai': { humidity: 78, coords: [43.1155, 131.8855], waterPriceUsd1L: 0.64 },
                 'Stavropol Krai': { humidity: 68, coords: [44.67, 43.52], waterPriceUsd1L: 0.58 },
@@ -2319,6 +2321,7 @@ const locationsData = {
                 '楚瓦什共和国': { humidity: 70, coords: [55.5, 47.0], waterPriceUsd1L: 0.51 },
                 '阿尔泰边疆区': { humidity: 60, coords: [52.69, 82.69], waterPriceUsd1L: 0.51 },
                 '克拉斯诺达尔边疆区': { humidity: 75, coords: [45.0355, 38.9753], waterPriceUsd1L: 0.64 },
+                '索契': { humidity: 78, coords: [43.6028, 39.7342], waterPriceUsd1L: 0.68 },
                 '克拉斯诺亚尔斯克边疆区': { humidity: 60, coords: [64.25, 95.10], waterPriceUsd1L: 0.58 },
                 '滨海边疆区': { humidity: 78, coords: [43.1155, 131.8855], waterPriceUsd1L: 0.64 },
                 '斯塔夫罗波尔边疆区': { humidity: 68, coords: [44.67, 43.52], waterPriceUsd1L: 0.58 },
@@ -4134,6 +4137,7 @@ const locationsData = {
                 'República de Chuvasia': { humidity: 70, coords: [55.5, 47.0], waterPriceUsd1L: 0.51 },
                 'Krai de Altái': { humidity: 60, coords: [52.69, 82.69], waterPriceUsd1L: 0.51 },
                 'Krai de Krasnodar': { humidity: 75, coords: [45.0355, 38.9753], waterPriceUsd1L: 0.64 },
+                'Sochi': { humidity: 78, coords: [43.6028, 39.7342], waterPriceUsd1L: 0.68 },
                 'Krai de Krasnoyarsk': { humidity: 60, coords: [64.25, 95.10], waterPriceUsd1L: 0.58 },
                 'Krai de Primorie': { humidity: 78, coords: [43.1155, 131.8855], waterPriceUsd1L: 0.64 },
                 'Krai de Stávropol': { humidity: 68, coords: [44.67, 43.52], waterPriceUsd1L: 0.58 },
@@ -4413,8 +4417,15 @@ const locationsData = {
 // Функция для получения данных локаций на текущем языке
 function getLocationsData() {
     const lang = window.currentLang || 'ru';
+    let data;
     if (locationsData[lang]) {
-        return locationsData[lang];
+        data = locationsData[lang];
+    } else {
+        data = locationsData['ru'];
     }
-    return locationsData['ru'];
+    if (typeof applyRegionEnrichment === 'function') {
+        data = JSON.parse(JSON.stringify(data));
+        applyRegionEnrichment(data);
+    }
+    return data;
 }

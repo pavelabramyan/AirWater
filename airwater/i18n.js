@@ -111,7 +111,32 @@ const translations = {
         'contact.form.message': 'Ваше сообщение',
         'contact.form.submit': 'Отправить заявку',
         'footer.text': 'Производство премиальной воды из воздуха. Инвестиции в устойчивое будущее.',
-        'footer.copyright': '© 2025 AquaFuture. Все права защищены.'
+        'footer.copyright': '© 2025 AquaFuture. Все права защищены.',
+        'nav.compare': 'Сравнение', 'nav.bali': 'Бали', 'nav.trust': 'Надёжность',
+        'hero.stat2': 'ROI инвестора', 'hero.stat3': 'окупаемость',
+        'hero.dynamicHint': 'Выберите страну и регион в калькуляторе — здесь появится ваш расчёт',
+        'calculator.scenario.conservative': 'Консервативный', 'calculator.scenario.base': 'Базовый', 'calculator.scenario.optimistic': 'Оптимистичный',
+        'calculator.units': 'Кол-во установок', 'calculator.utilization': 'Загрузка мощности (%)',
+        'calculator.electricity': 'Электроэнергия ($/кВт·ч)', 'calculator.rampUp': 'Ramp-up (мес.)',
+        'calculator.inflation': 'Инфляция цены (%/год)', 'calculator.npv': 'NPV', 'calculator.irr': 'IRR', 'calculator.ebitda': 'EBITDA margin',
+        'wizard.step1': 'Локация', 'wizard.step2': 'Параметры', 'wizard.step3': 'Результат', 'wizard.back': 'Назад', 'wizard.next': 'Далее',
+        'map.legend': 'Карта влажности региона:',
+        'compare.title': 'Сравнение локаций', 'compare.subtitle': 'ОАЭ · Москва · Сочи · Бали — при одинаковых параметрах установки',
+        'bali.badge': '🌴 Флагманский проект', 'bali.title': 'Производство воды из воздуха на Бали',
+        'bali.subtitle': 'Премиальный рынок · 78% влажность · 6+ млн туристов в год',
+        'bali.stat1': 'средняя влажность', 'bali.stat2': 'цена воды/литр', 'bali.stat3': 'opex от выручки', 'bali.stat4': 'мес. до запуска',
+        'bali.f1': 'Отели 4-5★, виллы, рестораны, спа — готовый премиальный спрос',
+        'bali.f2': 'Экологичное позиционирование — тренд sustainability на курорте',
+        'bali.f3': 'Рынок $8.5 млрд, рост 7-8% — Индонезия, крупнейший рынок ASEAN',
+        'bali.f4': 'Дешёвая энергия и низкие зарплаты — opex всего 60%',
+        'bali.pdf': 'Скачать бизнес-план PDF', 'bali.calc': 'Рассчитать для Бали',
+        'trust.title': 'Почему нам доверяют',
+        'trust.c1.title': 'Проверенное оборудование', 'trust.c1.text': 'AWG-установки от китайских производителей с гарантией 2 года. Производительность 1000–10000 л/сутки.',
+        'trust.c2.title': 'Полная легализация', 'trust.c2.text': 'BPOM (Индонезия), Роспотребнадзор (РФ). Сертификация воды WHO/FDA. Регистрация бренда.',
+        'trust.c3.title': 'Прозрачная отчётность', 'trust.c3.text': 'Ежемесячный P&L инвестору. Доля прибыли 50/50. Структура инвестиций с резервом 27%.',
+        'trust.c4.title': '3-5 месяцев до запуска', 'trust.c4.text': '7 этапов: документы → площадка → оборудование → лицензии → запуск → продажи → автономность.',
+        'trust.c5.title': 'Партнёрская модель', 'trust.c5.text': 'Инвестор вкладывает 100%, получает 50% прибыли. Организатор берёт на себя операционку.',
+        'trust.c6.title': '192 страны в калькуляторе', 'trust.c6.text': 'Данные по влажности и ценам воды. Сравнение локаций. Расчёт под ваш регион.'
     },
     en: {
         'nav.logo': 'AquaFuture',
@@ -225,7 +250,32 @@ const translations = {
         'contact.form.message': 'Your Message',
         'contact.form.submit': 'Submit Application',
         'footer.text': 'Premium water production from air. Investing in a sustainable future.',
-        'footer.copyright': '© 2025 AquaFuture. All rights reserved.'
+        'footer.copyright': '© 2025 AquaFuture. All rights reserved.',
+        'nav.compare': 'Compare', 'nav.bali': 'Bali', 'nav.trust': 'Trust',
+        'hero.stat2': 'Investor ROI', 'hero.stat3': 'payback',
+        'hero.dynamicHint': 'Select country and region in calculator — your estimate appears here',
+        'calculator.scenario.conservative': 'Conservative', 'calculator.scenario.base': 'Base', 'calculator.scenario.optimistic': 'Optimistic',
+        'calculator.units': 'Number of units', 'calculator.utilization': 'Capacity utilization (%)',
+        'calculator.electricity': 'Electricity ($/kWh)', 'calculator.rampUp': 'Ramp-up (months)',
+        'calculator.inflation': 'Price inflation (%/yr)', 'calculator.npv': 'NPV', 'calculator.irr': 'IRR', 'calculator.ebitda': 'EBITDA margin',
+        'wizard.step1': 'Location', 'wizard.step2': 'Parameters', 'wizard.step3': 'Results', 'wizard.back': 'Back', 'wizard.next': 'Next',
+        'map.legend': 'Regional humidity map:',
+        'compare.title': 'Location Comparison', 'compare.subtitle': 'UAE · Moscow · Sochi · Bali — same plant parameters',
+        'bali.badge': '🌴 Flagship Project', 'bali.title': 'Air-to-Water Production in Bali',
+        'bali.subtitle': 'Premium market · 78% humidity · 6M+ tourists per year',
+        'bali.stat1': 'avg humidity', 'bali.stat2': 'water price/liter', 'bali.stat3': 'opex of revenue', 'bali.stat4': 'months to launch',
+        'bali.f1': '4-5★ hotels, villas, restaurants, spas — ready premium demand',
+        'bali.f2': 'Eco positioning — sustainability trend on the resort island',
+        'bali.f3': '$8.5B market, 7-8% growth — Indonesia, largest ASEAN market',
+        'bali.f4': 'Cheap energy and low wages — opex only 60%',
+        'bali.pdf': 'Download Business Plan PDF', 'bali.calc': 'Calculate for Bali',
+        'trust.title': 'Why Trust Us',
+        'trust.c1.title': 'Proven Equipment', 'trust.c1.text': 'AWG units from Chinese manufacturers with 2-year warranty. 1000–10000 L/day capacity.',
+        'trust.c2.title': 'Full Legalization', 'trust.c2.text': 'BPOM (Indonesia), Rospotrebnadzor (Russia). WHO/FDA water certification. Brand registration.',
+        'trust.c3.title': 'Transparent Reporting', 'trust.c3.text': 'Monthly P&L to investor. 50/50 profit share. Investment structure with 27% reserve.',
+        'trust.c4.title': '3-5 months to launch', 'trust.c4.text': '7 stages: docs → site → equipment → licenses → launch → sales → autonomy.',
+        'trust.c5.title': 'Partnership Model', 'trust.c5.text': 'Investor contributes 100%, receives 50% profit. Organizer handles operations.',
+        'trust.c6.title': '192 countries in calculator', 'trust.c6.text': 'Humidity and water price data. Location comparison. Calculation for your region.'
     },
     zh: {
         'nav.logo': 'AquaFuture',
@@ -339,7 +389,32 @@ const translations = {
         'contact.form.message': '您的消息',
         'contact.form.submit': '提交申请',
         'footer.text': '从空气中生产优质水。投资可持续的未来。',
-        'footer.copyright': '© 2025 AquaFuture。保留所有权利。'
+        'footer.copyright': '© 2025 AquaFuture。保留所有权利。',
+        'nav.compare': '对比', 'nav.bali': '巴厘岛', 'nav.trust': '可靠性',
+        'hero.stat2': '投资者ROI', 'hero.stat3': '回收期',
+        'hero.dynamicHint': '在计算器中选择国家和地区 — 此处显示您的估算',
+        'calculator.scenario.conservative': '保守', 'calculator.scenario.base': '基准', 'calculator.scenario.optimistic': '乐观',
+        'calculator.units': '设备数量', 'calculator.utilization': '产能利用率 (%)',
+        'calculator.electricity': '电费 ($/kWh)', 'calculator.rampUp': '爬坡期 (月)',
+        'calculator.inflation': '价格通胀 (%/年)', 'calculator.npv': 'NPV', 'calculator.irr': 'IRR', 'calculator.ebitda': 'EBITDA利润率',
+        'wizard.step1': '位置', 'wizard.step2': '参数', 'wizard.step3': '结果', 'wizard.back': '返回', 'wizard.next': '下一步',
+        'map.legend': '区域湿度地图：',
+        'compare.title': '地点对比', 'compare.subtitle': '阿联酋 · 莫斯科 · 索契 · 巴厘岛 — 相同设备参数',
+        'bali.badge': '🌴 旗舰项目', 'bali.title': '巴厘岛空气制水生产',
+        'bali.subtitle': '高端市场 · 78%湿度 · 年600万+游客',
+        'bali.stat1': '平均湿度', 'bali.stat2': '水价/升', 'bali.stat3': '运营费用占比', 'bali.stat4': '月启动',
+        'bali.f1': '4-5星级酒店、别墅、餐厅、水疗 — 现成的高端需求',
+        'bali.f2': '环保定位 — 度假岛的可持续发展趋势',
+        'bali.f3': '85亿美元市场，7-8%增长 — 东盟最大市场印尼',
+        'bali.f4': '廉价能源和低工资 — 运营费用仅60%',
+        'bali.pdf': '下载商业计划PDF', 'bali.calc': '计算巴厘岛',
+        'trust.title': '为什么信任我们',
+        'trust.c1.title': '成熟设备', 'trust.c1.text': '中国制造商AWG设备，2年保修。产能1000–10000升/天。',
+        'trust.c2.title': '完全合法', 'trust.c2.text': 'BPOM（印尼）、俄罗斯消费者监督局。WHO/FDA水质认证。',
+        'trust.c3.title': '透明报告', 'trust.c3.text': '每月P&L给投资者。50/50利润分成。27%储备金结构。',
+        'trust.c4.title': '3-5个月启动', 'trust.c4.text': '7个阶段：文件→场地→设备→许可→启动→销售→自主运营。',
+        'trust.c5.title': '合作模式', 'trust.c5.text': '投资者100%出资，获得50%利润。组织者负责运营。',
+        'trust.c6.title': '192个国家数据', 'trust.c6.text': '湿度和水价数据。地点对比。按地区计算。'
     },
     es: {
         'nav.logo': 'AquaFuture',
@@ -453,7 +528,32 @@ const translations = {
         'contact.form.message': 'Su Mensaje',
         'contact.form.submit': 'Enviar Solicitud',
         'footer.text': 'Producción de agua premium del aire. Invirtiendo en un futuro sostenible.',
-        'footer.copyright': '© 2025 AquaFuture. Todos los derechos reservados.'
+        'footer.copyright': '© 2025 AquaFuture. Todos los derechos reservados.',
+        'nav.compare': 'Comparar', 'nav.bali': 'Bali', 'nav.trust': 'Confianza',
+        'hero.stat2': 'ROI inversor', 'hero.stat3': 'recuperación',
+        'hero.dynamicHint': 'Seleccione país y región en el calculador — su estimación aparece aquí',
+        'calculator.scenario.conservative': 'Conservador', 'calculator.scenario.base': 'Base', 'calculator.scenario.optimistic': 'Optimista',
+        'calculator.units': 'Nº de unidades', 'calculator.utilization': 'Utilización (%)',
+        'calculator.electricity': 'Electricidad ($/kWh)', 'calculator.rampUp': 'Ramp-up (meses)',
+        'calculator.inflation': 'Inflación precio (%/año)', 'calculator.npv': 'NPV', 'calculator.irr': 'TIR', 'calculator.ebitda': 'Margen EBITDA',
+        'wizard.step1': 'Ubicación', 'wizard.step2': 'Parámetros', 'wizard.step3': 'Resultados', 'wizard.back': 'Atrás', 'wizard.next': 'Siguiente',
+        'map.legend': 'Mapa de humedad regional:',
+        'compare.title': 'Comparación de Ubicaciones', 'compare.subtitle': 'EAU · Moscú · Sochi · Bali — mismos parámetros',
+        'bali.badge': '🌴 Proyecto Insignia', 'bali.title': 'Producción de Agua del Aire en Bali',
+        'bali.subtitle': 'Mercado premium · 78% humedad · 6M+ turistas al año',
+        'bali.stat1': 'humedad media', 'bali.stat2': 'precio agua/litro', 'bali.stat3': 'opex de ingresos', 'bali.stat4': 'meses al lanzamiento',
+        'bali.f1': 'Hoteles 4-5★, villas, restaurantes, spas — demanda premium lista',
+        'bali.f2': 'Posicionamiento ecológico — tendencia sustainability en la isla',
+        'bali.f3': 'Mercado $8.5B, crecimiento 7-8% — Indonesia, mayor mercado ASEAN',
+        'bali.f4': 'Energía barata y salarios bajos — opex solo 60%',
+        'bali.pdf': 'Descargar Plan de Negocios PDF', 'bali.calc': 'Calcular para Bali',
+        'trust.title': 'Por Qué Confiar',
+        'trust.c1.title': 'Equipo Probado', 'trust.c1.text': 'Unidades AWG de fabricantes chinos con garantía 2 años. 1000–10000 L/día.',
+        'trust.c2.title': 'Legalización Completa', 'trust.c2.text': 'BPOM (Indonesia), Rospotrebnadzor (Rusia). Certificación WHO/FDA.',
+        'trust.c3.title': 'Informes Transparentes', 'trust.c3.text': 'P&L mensual al inversor. 50/50 beneficios. Reserva 27%.',
+        'trust.c4.title': '3-5 meses al lanzamiento', 'trust.c4.text': '7 etapas: docs → sitio → equipo → licencias → lanzamiento → ventas → autonomía.',
+        'trust.c5.title': 'Modelo de Asociación', 'trust.c5.text': 'Inversor aporta 100%, recibe 50% beneficio. Organizador opera.',
+        'trust.c6.title': '192 países en calculador', 'trust.c6.text': 'Datos de humedad y precios. Comparación de ubicaciones.'
     }
 };
 
@@ -484,11 +584,38 @@ function setLanguage(lang) {
     // Update select option
     document.getElementById('langSelect').value = lang;
     
-    // Recalculate calculator with new language
-    if (typeof calculateROI === 'function') {
-        calculateROI();
-    }
+    if (typeof calculateROI === 'function') calculateROI();
+    if (typeof updateComparison === 'function') updateComparison();
+    if (typeof refreshCountrySelect === 'function') refreshCountrySelect();
+    if (typeof initTooltips === 'function') initTooltips();
 }
+
+window.METRIC_TOOLTIPS = {
+    ru: {
+        roi: 'ROI — годовой возврат на инвестиции инвестора. Формула: (годовая прибыль инвестора ÷ сумма инвестиции) × 100%.',
+        npv: 'NPV (Net Present Value) — чистая приведённая стоимость. Сумма дисконтированных денежных потоков минус инвестиция. Ставка дисконта 12%. Положительный NPV = проект выгоден.',
+        irr: 'IRR (Internal Rate of Return) — внутренняя норма доходности. Ставка, при которой NPV = 0. Показывает реальную доходность проекта в % годовых.',
+        ebitda: 'EBITDA margin — маржа до процентов, налогов и амортизации. (Выручка − операционные расходы) ÷ выручка × 100%. Показывает операционную эффективность.'
+    },
+    en: {
+        roi: 'ROI — annual return on investor capital. Formula: (investor annual profit ÷ investment) × 100%.',
+        npv: 'NPV — Net Present Value. Sum of discounted cash flows minus investment. Discount rate 12%. Positive NPV = profitable project.',
+        irr: 'IRR — Internal Rate of Return. The rate at which NPV equals zero. Shows real project yield in % per year.',
+        ebitda: 'EBITDA margin — (Revenue − operating costs) ÷ revenue × 100%. Shows operational efficiency.'
+    },
+    zh: {
+        roi: 'ROI — 投资者年化投资回报率。(投资者年利润 ÷ 投资额) × 100%。',
+        npv: 'NPV — 净现值。折现现金流之和减去投资。折现率12%。正NPV表示项目盈利。',
+        irr: 'IRR — 内部收益率。使NPV为零的折现率。以年化百分比表示真实收益率。',
+        ebitda: 'EBITDA利润率 — (收入 − 运营费用) ÷ 收入 × 100%。表示运营效率。'
+    },
+    es: {
+        roi: 'ROI — retorno anual sobre la inversión del inversor. (beneficio anual ÷ inversión) × 100%.',
+        npv: 'NPV — Valor Presente Neto. Flujos descontados menos inversión. Tasa 12%. NPV positivo = proyecto rentable.',
+        irr: 'IRR/TIR — Tasa Interna de Retorno. Tasa donde NPV = 0. Rendimiento real en % anual.',
+        ebitda: 'Margen EBITDA — (Ingresos − costos operativos) ÷ ingresos × 100%. Eficiencia operativa.'
+    }
+};
 
 // Initialize language on load
 document.addEventListener('DOMContentLoaded', () => {

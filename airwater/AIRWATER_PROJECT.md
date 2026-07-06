@@ -8,7 +8,7 @@ AirWater (AquaFuture) — статический лендинг для инве�
 ## Быстрый запуск (локально)
 
 ```bash
-cd /Users/polzovatel/Desktop/Claude-projects/Земли
+cd "/Users/polzovatel/Desktop/Claude-projects/AWC - Air Water Corporation"
 python3 -m http.server 8000
 ```
 

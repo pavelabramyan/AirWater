@@ -26,8 +26,9 @@ land_records*.db
 # Эфемериды (большие файлы)
 de421.bsp
 
-# PDF бизнес-планы
+# PDF бизнес-планы (кроме лендинга)
 BUSINESS_PLAN*.pdf
+!airwater/BUSINESS_PLAN_BALI.pdf
 
 # Логи
 logs/

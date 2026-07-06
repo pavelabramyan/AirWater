@@ -239,5 +239,8 @@ function formatCurrencyChart(amount) {
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
+    if (typeof Chart !== 'undefined' && typeof annotationPlugin !== 'undefined') {
+        Chart.register(annotationPlugin);
+    }
     // График будет создан при вызове calculateROI
 });
