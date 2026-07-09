@@ -1,5 +1,8 @@
 // Smooth scrolling, form, animations
 document.addEventListener('DOMContentLoaded', () => {
+    renderPublicContacts();
+    initAnalytics();
+
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -9,7 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const navbar = document.querySelector('.navbar');
     window.addEventListener('scroll', () => {
-        if (navbar) navbar.style.boxShadow = window.pageYOffset > 100 ? '0 4px 16px rgba(0,0,0,.12)' : '0 2px 8px rgba(0,0,0,.08)';
+        if (navbar) {
+            const onHero = window.pageYOffset < window.innerHeight * 3.5;
+            navbar.style.boxShadow = window.pageYOffset > 100 && !onHero
+                ? '0 4px 16px rgba(0,0,0,.12)'
+                : onHero ? 'none' : '0 2px 8px rgba(0,0,0,.08)';
+        }
     });
 
     const contactForm = document.getElementById('contactForm');
@@ -61,6 +69,75 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+function getConfig() {
+    return typeof AWC_CONFIG !== 'undefined' ? AWC_CONFIG : {};
+}
+
+function renderPublicContacts() {
+    const cfg = getConfig();
+    const links = [];
+
+    if (cfg.contactEmail) {
+        links.push({ href: `mailto:${cfg.contactEmail}`, label: cfg.contactEmail, external: false });
+    }
+    if (cfg.contactTelegram) {
+        const href = cfg.contactTelegram.startsWith('http')
+            ? cfg.contactTelegram
+            : `https://t.me/${cfg.contactTelegram.replace(/^@/, '')}`;
+        links.push({ href, label: 'Telegram', external: true });
+    }
+    if (cfg.contactPhone) {
+        const tel = cfg.contactPhone.replace(/\s/g, '');
+        links.push({ href: `tel:${tel}`, label: cfg.contactPhone, external: false });
+    }
+
+    const titleEl = document.getElementById('contactLinksTitle');
+    if (titleEl) titleEl.hidden = links.length === 0;
+
+    ['contactLinks', 'footerContactLinks'].forEach(id => {
+        const container = document.getElementById(id);
+        if (!container) return;
+        container.innerHTML = '';
+        if (links.length === 0) {
+            container.hidden = true;
+            return;
+        }
+        links.forEach(link => {
+            const a = document.createElement('a');
+            a.href = link.href;
+            a.textContent = link.label;
+            if (link.external) {
+                a.target = '_blank';
+                a.rel = 'noopener';
+            }
+            container.appendChild(a);
+        });
+        container.hidden = false;
+    });
+}
+
+function initAnalytics() {
+    const cfg = getConfig();
+    if (cfg.plausibleDomain) {
+        const script = document.createElement('script');
+        script.defer = true;
+        script.dataset.domain = cfg.plausibleDomain;
+        script.src = 'https://plausible.io/js/script.js';
+        document.head.appendChild(script);
+        return;
+    }
+    if (cfg.gaMeasurementId) {
+        const gtagLoader = document.createElement('script');
+        gtagLoader.async = true;
+        gtagLoader.src = `https://www.googletagmanager.com/gtag/js?id=${cfg.gaMeasurementId}`;
+        document.head.appendChild(gtagLoader);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function gtag() { window.dataLayer.push(arguments); };
+        window.gtag('js', new Date());
+        window.gtag('config', cfg.gaMeasurementId);
+    }
+}
+
 function formatSnapshotText(snap) {
     return [
         `📍 ${snap.country || '—'} / ${snap.region || '—'}`,
@@ -90,7 +167,7 @@ async function submitForm(data) {
         `💬 ${data.message || '—'}`
     ].join('\n');
 
-    const cfg = typeof AWC_CONFIG !== 'undefined' ? AWC_CONFIG : {};
+    const cfg = getConfig();
 
     if (cfg.webhookUrl) {
         const res = await fetch(cfg.webhookUrl, {
@@ -102,25 +179,11 @@ async function submitForm(data) {
         return;
     }
 
-    if (cfg.telegramBotToken && cfg.telegramBotToken !== 'YOUR_BOT_TOKEN' &&
-        cfg.telegramChatId && cfg.telegramChatId !== 'YOUR_CHAT_ID') {
-        const url = `https://api.telegram.org/bot${cfg.telegramBotToken}/sendMessage`;
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: cfg.telegramChatId, text, parse_mode: 'HTML' })
-        });
-        const json = await res.json();
-        if (!json.ok) throw new Error(json.description || 'Telegram error');
-        return;
-    }
-
     // Fallback: clipboard + console
     console.log('Form submission:', data, text);
     try {
         await navigator.clipboard.writeText(text);
     } catch (_) {}
-    // Show data in hidden field for user awareness
     const hidden = document.getElementById('calcSnapshotField');
     if (hidden) hidden.value = calcBlock;
 }
@@ -141,8 +204,7 @@ function showFormToast(msg, isError) {
 
 function getSuccessMessage() {
     const lang = window.currentLang || 'ru';
-    const cfg = typeof AWC_CONFIG !== 'undefined' ? AWC_CONFIG : {};
-    const hasBackend = (cfg.telegramBotToken && cfg.telegramBotToken !== 'YOUR_BOT_TOKEN') || cfg.webhookUrl;
+    const hasBackend = !!getConfig().webhookUrl;
     const msgs = {
         ru: hasBackend ? 'Спасибо! Заявка с параметрами калькулятора отправлена.' : 'Спасибо! Данные скопированы в буфер — отправьте менеджеру.',
         en: hasBackend ? 'Thank you! Application with calculator data sent.' : 'Thank you! Data copied to clipboard — send to manager.',
@@ -156,6 +218,8 @@ function getErrorMessage() {
     const lang = window.currentLang || 'ru';
     return { ru: 'Ошибка отправки:', en: 'Send error:', zh: '发送错误：', es: 'Error de envío:' }[lang] || 'Error:';
 }
+
+window.renderPublicContacts = renderPublicContacts;
 
 window.addEventListener('load', () => {
     document.querySelectorAll('.stat-number').forEach(stat => {

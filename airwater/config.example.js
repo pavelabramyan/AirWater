@@ -1,8 +1,14 @@
-// Скопируйте в config.js и заполните для отправки заявок в Telegram
+// Copy to config.js and fill in. Prefer webhookUrl — never put bot tokens in public JS for production.
 const AWC_CONFIG = {
-    // Telegram Bot API: создайте бота через @BotFather
-    telegramBotToken: 'YOUR_BOT_TOKEN',
-    telegramChatId: 'YOUR_CHAT_ID',
-    // Альтернатива: webhook URL (Formspree, Make.com, n8n)
-    webhookUrl: ''
+    // Preferred: Formspree / Make.com / n8n / Cloudflare Worker webhook that forwards to Telegram/email
+    webhookUrl: '',
+
+    // Optional public contacts shown in footer (leave empty to hide)
+    contactEmail: '',
+    contactTelegram: '', // e.g. https://t.me/username
+    contactPhone: '',    // e.g. +62...
+
+    // Optional analytics (Plausible domain OR GA4 measurement id)
+    plausibleDomain: '',
+    gaMeasurementId: '' // e.g. G-XXXXXXXX
 };

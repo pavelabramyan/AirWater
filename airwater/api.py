@@ -12,11 +12,11 @@ CORS(app)
 
 # Данные производительности установок и инвестиций
 PRODUCTION_OPTIONS = [
-    {"id": 1, "liters_per_day": 1000, "investment_usd": 100000},
-    {"id": 2, "liters_per_day": 2000, "investment_usd": 200000},
-    {"id": 3, "liters_per_day": 3000, "investment_usd": 300000},
-    {"id": 4, "liters_per_day": 5000, "investment_usd": 500000},
-    {"id": 5, "liters_per_day": 10000, "investment_usd": 1000000},
+    {"id": 1, "liters_per_day": 1000, "investment_usd": 150000},
+    {"id": 2, "liters_per_day": 2000, "investment_usd": 215000},
+    {"id": 3, "liters_per_day": 3000, "investment_usd": 320000},
+    {"id": 4, "liters_per_day": 5000, "investment_usd": 470000},
+    {"id": 5, "liters_per_day": 10000, "investment_usd": 960000},
 ]
 
 # Страны и регионы РФ с реальными оценками цен
@@ -171,10 +171,11 @@ def calculate_roi():
     """Расчёт ROI"""
     data = request.json
     
-    investment = data.get('investment', 500000)
+    investment = data.get('investment', 470000)
     daily_production = data.get('dailyProduction', 5000)
     price_per_liter = data.get('pricePerLiter', 0.50)
     operating_costs_percent = data.get('operatingCostsPercent', 75)
+    investor_share_percent = data.get('investorSharePercent', data.get('investorShare', 50))
     period = data.get('period', 5)
     humidity = data.get('humidity', 70)
     
@@ -186,17 +187,19 @@ def calculate_roi():
     annual_revenue = annual_production * price_per_liter
     operating_costs = annual_revenue * (operating_costs_percent / 100)
     annual_profit = annual_revenue - operating_costs
+    investor_profit = annual_profit * (investor_share_percent / 100)
     
-    # ROI и окупаемость
-    roi_percent = (annual_profit / investment) * 100 if investment > 0 else 0
-    payback_years = investment / annual_profit if annual_profit > 0 else float('inf')
+    # ROI и окупаемость (для инвестора)
+    roi_percent = (investor_profit / investment) * 100 if investment > 0 else 0
+    payback_years = investment / investor_profit if investor_profit > 0 else float('inf')
     
-    # Общая прибыль за период
-    total_profit = annual_profit * period
+    # Общая прибыль за период (доля инвестора)
+    total_profit = investor_profit * period
     
     # Точка безубыточности (в литрах)
-    if price_per_liter > 0:
-        breakeven_liters = investment / (price_per_liter * (1 - operating_costs_percent / 100))
+    if price_per_liter > 0 and investor_share_percent > 0:
+        profit_per_liter = price_per_liter * (1 - operating_costs_percent / 100) * (investor_share_percent / 100)
+        breakeven_liters = investment / profit_per_liter
         breakeven_days = breakeven_liters / adjusted_production if adjusted_production > 0 else float('inf')
     else:
         breakeven_liters = float('inf')
@@ -208,7 +211,9 @@ def calculate_roi():
         "annualProduction": round(annual_production, 0),
         "annualRevenue": round(annual_revenue, 2),
         "operatingCosts": round(operating_costs, 2),
-        "annualProfit": round(annual_profit, 2),
+        "annualProfit": round(investor_profit, 2),
+        "annualProjectProfit": round(annual_profit, 2),
+        "investorSharePercent": investor_share_percent,
         "roiPercent": round(roi_percent, 1),
         "paybackYears": round(payback_years, 2) if payback_years != float('inf') else None,
         "totalProfit": round(total_profit, 2),
