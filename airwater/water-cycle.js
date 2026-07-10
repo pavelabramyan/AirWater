@@ -71,86 +71,180 @@ function initWaterCycle() {
     });
     scene.add(new THREE.Mesh(skyGeo, skyMat));
 
-    /* ── Cliff / waterfall source ── */
-    const cliff = new THREE.Mesh(
-        new THREE.BoxGeometry(5, 1.2, 0.8),
-        new THREE.MeshStandardMaterial({ color: 0x2a3540, roughness: 0.85, metalness: 0.05 })
-    );
-    cliff.position.set(0, 2.8, -0.5);
-    scene.add(cliff);
-
-    /* ── WATERFALL streams (tubes) ── */
-    const streamCount = isMobile ? 5 : 9;
-    const streams = [];
-    const waterMat = new THREE.MeshPhysicalMaterial({
-        color: 0xc5ecff,
-        metalness: 0.05,
-        roughness: 0.02,
-        transmission: 0.55,
-        thickness: 0.8,
-        ior: 1.33,
-        transparent: true,
-        opacity: 0.95,
-        emissive: 0x226688,
-        emissiveIntensity: 0.15
-    });
-
-    for (let i = 0; i < streamCount; i++) {
-        const x = (i / (streamCount - 1) - 0.5) * 2.2;
-        const curve = new THREE.CatmullRomCurve3([
-            new THREE.Vector3(x, 2.2, 0),
-            new THREE.Vector3(x + (Math.random() - 0.5) * 0.15, 1.2, 0.1),
-            new THREE.Vector3(x + (Math.random() - 0.5) * 0.2, 0.2, 0.15),
-            new THREE.Vector3(x * 0.3, -0.6, 0.2)
-        ]);
-        const mesh = new THREE.Mesh(
-            new THREE.TubeGeometry(curve, 48, 0.1 + Math.random() * 0.06, 10, false),
-            waterMat.clone()
-        );
-        scene.add(mesh);
-        streams.push({ mesh, curve, x });
+    /* Soft circular particle texture (no hard squares / pipe look) */
+    function makeSoftDot(size = 128) {
+        const c = document.createElement('canvas');
+        c.width = c.height = size;
+        const ctx = c.getContext('2d');
+        const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+        g.addColorStop(0, 'rgba(255,255,255,1)');
+        g.addColorStop(0.35, 'rgba(200,240,255,0.55)');
+        g.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, size, size);
+        const t = new THREE.CanvasTexture(c);
+        t.colorSpace = THREE.SRGBColorSpace;
+        return t;
     }
+    const softDot = makeSoftDot();
 
-    /* ── Falling droplets (instanced) ── */
-    const N = isMobile ? 600 : 1400;
-    const dropGeo = new THREE.SphereGeometry(0.028, 6, 6);
-    const dropMat = new THREE.MeshPhysicalMaterial({
+    /* Water emerges from soft mist — no ledge / pipe beam */
+    const sourceMist = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: softDot,
+        color: 0x8ec8e0,
+        transparent: true,
+        opacity: 0.55,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+    }));
+    sourceMist.position.set(0, 2.35, -0.2);
+    sourceMist.scale.set(3.4, 1.1, 1);
+    scene.add(sourceMist);
+
+    const sourceMist2 = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: softDot,
         color: 0xffffff,
-        metalness: 0,
-        roughness: 0,
-        transmission: 0.92,
-        thickness: 0.15,
-        transparent: true
+        transparent: true,
+        opacity: 0.25,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+    }));
+    sourceMist2.position.set(0, 2.45, -0.15);
+    sourceMist2.scale.set(2.2, 0.7, 1);
+    scene.add(sourceMist2);
+
+    /* Water curtain — animated shader sheet (reads as water, not tubes) */
+    const curtainUniforms = {
+        uTime: { value: 0 },
+        uOpacity: { value: 1 },
+        uColor: { value: new THREE.Color(0x7ec8e8) }
+    };
+    const curtain = new THREE.Mesh(
+        new THREE.PlaneGeometry(2.4, 3.1, 1, 48),
+        new THREE.ShaderMaterial({
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+            side: THREE.DoubleSide,
+            uniforms: curtainUniforms,
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform float uTime;
+                uniform float uOpacity;
+                uniform vec3 uColor;
+                varying vec2 vUv;
+                float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
+                float noise(vec2 p){
+                    vec2 i = floor(p); vec2 f = fract(p);
+                    float a = hash(i), b = hash(i+vec2(1.,0.));
+                    float c = hash(i+vec2(0.,1.)), d = hash(i+vec2(1.,1.));
+                    vec2 u = f*f*(3.-2.*f);
+                    return mix(a,b,u.x) + (c-a)*u.y*(1.-u.x) + (d-b)*u.x*u.y;
+                }
+                void main(){
+                    float x = abs(vUv.x - 0.5) * 2.0;
+                    float edge = smoothstep(1.0, 0.15, x);
+                    float flow = vUv.y * 6.0 - uTime * 2.2;
+                    float n = noise(vec2(vUv.x * 14.0, flow));
+                    float n2 = noise(vec2(vUv.x * 28.0 + 3.0, flow * 1.4));
+                    float streaks = smoothstep(0.35, 0.85, n) * 0.55 + smoothstep(0.5, 0.9, n2) * 0.45;
+                    float fadeY = smoothstep(0.0, 0.12, vUv.y) * smoothstep(1.0, 0.78, vUv.y);
+                    float alpha = streaks * edge * fadeY * uOpacity * 0.55;
+                    vec3 col = mix(uColor, vec3(0.92, 0.98, 1.0), n2 * 0.45);
+                    gl_FragColor = vec4(col, alpha);
+                }
+            `
+        })
+    );
+    curtain.position.set(0, 0.75, -0.05);
+    scene.add(curtain);
+
+    /* Soft sparkle droplets (round Points — no stretched spheres) */
+    const N = isMobile ? 700 : 1600;
+    const dropGeo = new THREE.BufferGeometry();
+    const dropPos = new Float32Array(N * 3);
+    const dropState = Array.from({ length: N }, (_, i) => {
+        const x = (Math.random() - 0.5) * 2.1;
+        const y = 2.15 - Math.random() * 2.7;
+        const z = (Math.random() - 0.5) * 0.45;
+        dropPos[i * 3] = x;
+        dropPos[i * 3 + 1] = y;
+        dropPos[i * 3 + 2] = z;
+        return {
+            x, y, z,
+            vy: 0.018 + Math.random() * 0.028,
+            phase: Math.random() * 6.28,
+            wobble: 0.04 + Math.random() * 0.08
+        };
     });
-    const drops = new THREE.InstancedMesh(dropGeo, dropMat, N);
+    dropGeo.setAttribute('position', new THREE.BufferAttribute(dropPos, 3));
+    const dropMat = new THREE.PointsMaterial({
+        map: softDot,
+        color: 0xd8f4ff,
+        size: isMobile ? 0.055 : 0.07,
+        transparent: true,
+        opacity: 0.85,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        sizeAttenuation: true
+    });
+    const drops = new THREE.Points(dropGeo, dropMat);
     scene.add(drops);
 
-    const dropState = Array.from({ length: N }, (_, i) => ({
-        x: (Math.random() - 0.5) * 2.4,
-        y: 4 + Math.random() * 2,
-        z: (Math.random() - 0.5) * 0.5,
-        vy: 0.025 + Math.random() * 0.035,
-        phase: Math.random() * 6.28,
-        stream: i % streamCount,
-        size: 0.5 + Math.random() * 0.6
-    }));
+    /* Mist bloom at base */
+    const mistN = isMobile ? 180 : 320;
+    const mistGeo = new THREE.BufferGeometry();
+    const mistPos = new Float32Array(mistN * 3);
+    const mistState = Array.from({ length: mistN }, (_, i) => {
+        const x = (Math.random() - 0.5) * 2.2;
+        const y = -0.55 + Math.random() * 0.5;
+        const z = (Math.random() - 0.5) * 0.5;
+        mistPos[i * 3] = x; mistPos[i * 3 + 1] = y; mistPos[i * 3 + 2] = z;
+        return { x, y, z, phase: Math.random() * 6.28, drift: 0.0015 + Math.random() * 0.003 };
+    });
+    mistGeo.setAttribute('position', new THREE.BufferAttribute(mistPos, 3));
+    const mistMat = new THREE.PointsMaterial({
+        map: softDot,
+        color: 0xaadfff,
+        size: isMobile ? 0.12 : 0.18,
+        transparent: true,
+        opacity: 0,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+    });
+    const mist = new THREE.Points(mistGeo, mistMat);
+    scene.add(mist);
 
-    const dummy = new THREE.Object3D();
-
-    /* ── Pool / mist at waterfall base ── */
+    /* Soft glowing pool */
     const pool = new THREE.Mesh(
-        new THREE.CircleGeometry(1.8, 48),
+        new THREE.CircleGeometry(1.6, 64),
         new THREE.MeshStandardMaterial({
-            color: 0x1a4a60,
-            metalness: 0.7,
-            roughness: 0.15,
+            color: 0x0d3a52,
+            emissive: 0x1a6a88,
+            emissiveIntensity: 0.35,
+            metalness: 0.55,
+            roughness: 0.25,
             transparent: true,
-            opacity: 0.7
+            opacity: 0.75
         })
     );
     pool.rotation.x = -Math.PI / 2;
-    pool.position.set(0, -0.65, 0.15);
+    pool.position.set(0, -0.62, 0.1);
     scene.add(pool);
+
+    const poolGlow = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: softDot, color: 0x4ec4e8, transparent: true, opacity: 0.35,
+        depthWrite: false, blending: THREE.AdditiveBlending
+    }));
+    poolGlow.position.set(0, -0.55, 0.1);
+    poolGlow.scale.set(3.2, 1.4, 1);
+    scene.add(poolGlow);
 
     /* ── Clouds (sprites that GROW as water collects) ── */
     const cloudGroup = new THREE.Group();
@@ -283,18 +377,33 @@ function initWaterCycle() {
         bottles.push({ group: g, liquid, fill: 0 });
     }
 
-    /* Water jet from pipe to bottles */
-    const jetCurve = new THREE.CatmullRomCurve3([
+    /* Particle jet from pipe to bottles */
+    const jetN = isMobile ? 45 : 90;
+    const jetGeo = new THREE.SphereGeometry(0.01, 4, 4);
+    const jetMat = new THREE.MeshBasicMaterial({
+        color: 0xccffff,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+    const jetDrops = new THREE.InstancedMesh(jetGeo, jetMat, jetN);
+    machine.add(jetDrops);
+
+    const jetPath = [
         new THREE.Vector3(1.15, -0.1, 0.5),
-        new THREE.Vector3(0.6, -0.5, 0.75),
+        new THREE.Vector3(0.75, -0.35, 0.65),
+        new THREE.Vector3(0.35, -0.6, 0.78),
         new THREE.Vector3(0, -0.85, 0.85)
-    ]);
-    const jet = new THREE.Mesh(
-        new THREE.TubeGeometry(jetCurve, 24, 0.035, 8, false),
-        waterMat.clone()
-    );
-    jet.material.opacity = 0;
-    machine.add(jet);
+    ];
+    const jetState = Array.from({ length: jetN }, () => ({
+        t: Math.random(),
+        speed: 0.012 + Math.random() * 0.018,
+        wobble: Math.random() * 6.28,
+        size: 0.5 + Math.random() * 0.5
+    }));
+    const jetDummy = new THREE.Object3D();
+    const jetPt = new THREE.Vector3();
 
     /* ── Phase weights from scroll ── */
     function phase(p, a, b) {
@@ -316,48 +425,68 @@ function initWaterCycle() {
         camera.position.z = lerp(5.2, 4.8, p);
         camera.lookAt(0, lerp(0, -0.35, p), 0);
 
-        /* Waterfall streams */
-        streams.forEach(s => {
-            s.mesh.material.opacity = Math.max(0.15, fall * 0.95);
-            s.mesh.visible = fall > 0.01 || p < 0.35;
-        });
         pool.material.opacity = fall * 0.65 + gather * 0.3;
+        poolGlow.material.opacity = fall * 0.4 + gather * 0.15;
+        sourceMist.material.opacity = (0.35 + fall * 0.35) * (1 - suck * 0.8);
+        sourceMist2.material.opacity = (0.15 + fall * 0.2) * (1 - suck * 0.8);
+        sourceMist.scale.set(3.2 + Math.sin(elapsed * 0.001) * 0.15, 1.0 + Math.cos(elapsed * 0.0012) * 0.08, 1);
 
-        /* Droplets */
+        /* Water curtain shader */
+        curtainUniforms.uTime.value = elapsed * 0.001;
+        curtainUniforms.uOpacity.value = Math.max(fall, p < 0.35 ? 0.9 : 0) * (1 - suck * 0.9);
+        curtain.visible = curtainUniforms.uOpacity.value > 0.02;
+
+        /* Soft sparkle droplets */
+        const fallSpeed = 0.9 + fall * 1.3;
+        const dropArr = dropGeo.attributes.position.array;
         for (let i = 0; i < N; i++) {
             const d = dropState[i];
-            const sx = streams[d.stream]?.x ?? 0;
 
             if (fall > 0.02 || p < 0.35) {
-                d.y -= d.vy * (0.8 + fall * 1.2);
-                d.x = sx + Math.sin(elapsed * 0.003 + d.phase) * 0.12;
+                d.y -= d.vy * fallSpeed;
+                d.x += Math.sin(elapsed * 0.003 + d.phase) * 0.00035;
             }
 
-            /* Gather into clouds — droplets drift to cloud center and fade */
             if (gather > 0.05 && d.y < 0.5) {
-                d.x = lerp(d.x, 0, gather * 0.04);
-                d.y = lerp(d.y, -0.1 + Math.sin(d.phase) * 0.1, gather * 0.03);
+                d.x = lerp(d.x, 0, gather * 0.035);
+                d.y = lerp(d.y, -0.05 + Math.sin(d.phase) * 0.08, gather * 0.025);
             }
 
-            /* Sucked into machine */
             if (suck > 0.05 && d.y < 1.5) {
-                d.x = lerp(d.x, 0, suck * 0.06);
-                d.y = lerp(d.y, 0.7, suck * 0.05);
-                d.z = lerp(d.z, 0.5, suck * 0.04);
+                d.x = lerp(d.x, 0, suck * 0.055);
+                d.y = lerp(d.y, 0.7, suck * 0.045);
+                d.z = lerp(d.z, 0.5, suck * 0.035);
             }
 
-            if (d.y < -0.8 || (suck > 0.8 && d.y > 0.5 && d.y < 0.9)) {
-                d.y = 2.5 + Math.random();
-                d.x = (Math.random() - 0.5) * 2.2;
+            if (d.y < -0.6 || (suck > 0.8 && d.y > 0.5 && d.y < 0.9)) {
+                d.y = 2.1 + Math.random() * 0.35;
+                d.x = (Math.random() - 0.5) * 2.1;
+                d.z = (Math.random() - 0.5) * 0.45;
             }
 
-            const vis = Math.max(fall, p < 0.35 ? 0.7 : 0) * (1 - suck * 0.85);
-            dummy.position.set(d.x, d.y, d.z);
-            dummy.scale.setScalar(vis > 0.05 ? d.size : 0.001);
-            dummy.updateMatrix();
-            drops.setMatrixAt(i, dummy.matrix);
+            dropArr[i * 3] = d.x;
+            dropArr[i * 3 + 1] = d.y;
+            dropArr[i * 3 + 2] = d.z;
         }
-        drops.instanceMatrix.needsUpdate = true;
+        dropGeo.attributes.position.needsUpdate = true;
+        dropMat.opacity = (0.35 + fall * 0.55) * (1 - suck * 0.75);
+        drops.visible = dropMat.opacity > 0.04;
+
+        /* Mist spray at pool base */
+        mistMat.opacity = fall * 0.5 + gather * 0.2;
+        const mistArr = mistGeo.attributes.position.array;
+        mistState.forEach((m, i) => {
+            m.y += m.drift * (0.5 + fall);
+            m.x += Math.sin(elapsed * 0.002 + m.phase) * 0.0008;
+            if (m.y > -0.1) {
+                m.y = -0.55 + Math.random() * 0.25;
+                m.x = (Math.random() - 0.5) * 2.0;
+            }
+            mistArr[i * 3] = m.x;
+            mistArr[i * 3 + 1] = m.y;
+            mistArr[i * 3 + 2] = m.z + Math.sin(elapsed * 0.003 + m.phase) * 0.02;
+        });
+        mistGeo.attributes.position.needsUpdate = true;
 
         /* Clouds grow as water collects, shrink when sucked */
         cloudSprites.forEach((spr, i) => {
@@ -399,7 +528,29 @@ function initWaterCycle() {
         /* Bottles fill */
         bottleLine.visible = showBottles > 0.05;
         bottleLine.scale.setScalar(0.4 + showBottles * 0.6);
-        jet.material.opacity = fill * 0.85;
+        /* Particle jet to bottles */
+        jetDrops.visible = fill > 0.02;
+        jetMat.opacity = fill * 0.8;
+        for (let i = 0; i < jetN; i++) {
+            const j = jetState[i];
+            if (fill > 0.02) {
+                j.t += j.speed * fill;
+                if (j.t > 1) j.t -= 1;
+            }
+            const seg = j.t * (jetPath.length - 1);
+            const idx = Math.min(Math.floor(seg), jetPath.length - 2);
+            const frac = seg - idx;
+            jetPt.lerpVectors(jetPath[idx], jetPath[idx + 1], frac);
+            jetPt.x += Math.sin(elapsed * 0.008 + j.wobble) * 0.015 * fill;
+            jetPt.y += Math.cos(elapsed * 0.006 + j.wobble) * 0.01 * fill;
+            const jVis = fill > 0.05 ? j.size : 0.001;
+            jetDummy.position.copy(jetPt);
+            jetDummy.scale.setScalar(jVis);
+            jetDummy.updateMatrix();
+            jetDrops.setMatrixAt(i, jetDummy.matrix);
+        }
+        jetDrops.instanceMatrix.needsUpdate = true;
+
         bottles.forEach(b => {
             b.fill = Math.min(0.95, b.fill + fill * 0.018);
             b.liquid.scale.y = Math.max(0.001, b.fill);
