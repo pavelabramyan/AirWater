@@ -13,10 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const navbar = document.querySelector('.navbar');
     window.addEventListener('scroll', () => {
         if (navbar) {
-            const onHero = window.pageYOffset < window.innerHeight * 3.5;
-            navbar.style.boxShadow = window.pageYOffset > 100 && !onHero
+            navbar.style.boxShadow = window.pageYOffset > 100
                 ? '0 4px 16px rgba(0,0,0,.12)'
-                : onHero ? 'none' : '0 2px 8px rgba(0,0,0,.08)';
+                : '0 2px 8px rgba(0,0,0,.08)';
         }
     });
 

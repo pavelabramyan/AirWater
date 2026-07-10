@@ -33,7 +33,6 @@
 ├── chart.js                   # График безубыточности (Chart.js)
 ├── config.js / config.example.js  # Webhook, контакты, аналитика
 ├── favicon.svg / robots.txt / sitemap.xml
-├── water-cycle.js / water-cycle.css
 ├── api.py / requirements.txt  # Flask API (опционально)
 ├── postgres_airwater.sql
 ├── tools/                     # Скрипты генерации данных
@@ -113,7 +112,6 @@ Webhook получает JSON с полями формы и снимком ка�
 
 - HTML5, CSS3, Vanilla JavaScript (ES6+)
 - Chart.js 4.4.0, Leaflet 1.9.4
-- Three.js / GSAP — анимация водного цикла в hero
 - Google Fonts (Inter, Syne)
 
 ## Развёртывание

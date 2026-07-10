@@ -170,15 +170,24 @@ body {
     margin: 0 auto;
 }
 
-.hero-title {
-    font-size: clamp(36px, 6vw, 64px);
+.hero-brand {
+    font-family: 'Syne', 'Inter', sans-serif;
+    font-size: clamp(28px, 5vw, 48px);
     font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--primary-color);
+    margin: 0 0 16px;
+}
+
+.hero-title {
+    font-family: 'Syne', 'Inter', sans-serif;
+    font-size: clamp(28px, 4.5vw, 48px);
+    font-weight: 700;
     line-height: 1.2;
-    margin-bottom: 24px;
-    background: var(--gradient-2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    margin-bottom: 20px;
+    color: var(--text-dark);
+    background: none;
+    -webkit-text-fill-color: unset;
     animation: fadeInUp 0.8s ease;
 }
 
