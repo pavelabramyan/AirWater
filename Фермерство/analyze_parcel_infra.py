@@ -638,6 +638,128 @@ def nearest_of(lat: float, lon: float, items: list[dict], geoms: dict[int, list[
     return best
 
 
+def overpass_around(kind: str, lat: float, lon: float, radius: int, query_inner: str) -> list[dict]:
+    path = CACHE / f"around_{kind}_{round(lat, 3)}_{round(lon, 3)}_{radius}.json"
+    if path.exists():
+        return json.loads(path.read_text(encoding="utf-8"))
+    q = f"[out:json][timeout:30];({query_inner});out tags geom;"
+    try:
+        els = overpass(q, timeout=40, retries=3)
+    except Exception as exc:
+        print("   around fail", kind, exc)
+        els = []
+    path.write_text(json.dumps(els, ensure_ascii=False), encoding="utf-8")
+    time.sleep(1.4)
+    return els
+
+
+def tagged_from_overpass(els: list[dict], kind: str) -> list[dict]:
+    out = []
+    for el in els:
+        item = dict(el)
+        item["_kind"] = kind
+        if el.get("geometry"):
+            item["center"] = {
+                "lat": sum(p["lat"] for p in el["geometry"]) / len(el["geometry"]),
+                "lon": sum(p["lon"] for p in el["geometry"]) / len(el["geometry"]),
+            }
+        elif el.get("lat") is not None:
+            item["center"] = {"lat": el["lat"], "lon": el["lon"]}
+        out.append(item)
+    return out
+
+
+def enrich_networks() -> None:
+    """Добирает газ и ЛЭП более широким поиском, не пересчитывая всё заново."""
+    rows = load_parcels()
+    conn = get_conn()
+    cur = conn.cursor()
+    ensure_table(cur)
+    existing = {r["objdoc_id"]: dict(r) for r in cur.execute("SELECT * FROM parcel_infra_analysis")}
+    if len(existing) < 50:
+        conn.close()
+        print("Сначала нужен полный analyze()")
+        return
+
+    gas_clusters = cluster_rows(rows, radius_km=18)
+    gas_pool: list[dict] = []
+    gas_geoms: dict[int, list[dict]] = {}
+    print(f"Газ: кластеров {len(gas_clusters)}")
+    for i, cl in enumerate(gas_clusters, 1):
+        lat = sum(float(r["lat"]) for r in cl) / len(cl)
+        lon = sum(float(r["lon"]) for r in cl) / len(cl)
+        inner = (
+            f'way["man_made"="pipeline"]["substance"="gas"](around:20000,{lat:.5f},{lon:.5f});'
+            f'way["pipeline"="gas"](around:20000,{lat:.5f},{lon:.5f});'
+            f'node["name"~"ГРС"](around:20000,{lat:.5f},{lon:.5f});'
+        )
+        print(f"  газ {i}/{len(gas_clusters)}", flush=True)
+        tagged = tagged_from_overpass(overpass_around("gas", lat, lon, 20000, inner), "gas")
+        for el in tagged:
+            if el.get("geometry"):
+                gas_geoms[int(el["id"])] = el["geometry"]
+            gas_pool.append(el)
+        print(f"    +{len(tagged)}", flush=True)
+
+    miss_elec = [r for r in rows if not existing.get(r["objdoc_id"], {}).get("elec_km")]
+    elec_clusters = cluster_rows(miss_elec, radius_km=14) if miss_elec else []
+    elec_by_oid: dict[int, list[dict]] = defaultdict(list)
+    elec_geoms: dict[int, list[dict]] = {}
+    print(f"ЛЭП: без данных {len(miss_elec)}, кластеров {len(elec_clusters)}")
+    for i, cl in enumerate(elec_clusters, 1):
+        lat = sum(float(r["lat"]) for r in cl) / len(cl)
+        lon = sum(float(r["lon"]) for r in cl) / len(cl)
+        inner = (
+            f'way["power"~"^(line|minor_line)$"](around:12000,{lat:.5f},{lon:.5f});'
+            f'node["power"~"^(substation|transformer)$"](around:12000,{lat:.5f},{lon:.5f});'
+            f'way["power"="substation"](around:12000,{lat:.5f},{lon:.5f});'
+        )
+        print(f"  лэп {i}/{len(elec_clusters)}", flush=True)
+        tagged = tagged_from_overpass(overpass_around("power", lat, lon, 12000, inner), "power")
+        for el in tagged:
+            if el.get("geometry"):
+                elec_geoms[int(el["id"])] = el["geometry"]
+        for r in cl:
+            elec_by_oid[int(r["objdoc_id"])].extend(tagged)
+        print(f"    +{len(tagged)}", flush=True)
+
+    updated = 0
+    for row in rows:
+        oid = int(row["objdoc_id"])
+        rec = existing.get(oid)
+        if not rec:
+            continue
+        lat, lon = float(row["lat"]), float(row["lon"])
+        changed = False
+        if rec.get("gas_km") is None and gas_pool:
+            hit = nearest_of(lat, lon, gas_pool, gas_geoms)
+            if hit:
+                rec["gas_km"] = round(hit["dist"] / 1000, 3)
+                rec["gas_ok"] = verdict(hit["dist"], 350, 1600, 5000)
+                rec["gas_name"] = hit["name"]
+                changed = True
+        if rec.get("elec_km") is None and elec_by_oid.get(oid):
+            hit = nearest_of(lat, lon, elec_by_oid[oid], elec_geoms)
+            if hit:
+                rec["elec_km"] = round(hit["dist"] / 1000, 3)
+                rec["elec_ok"] = verdict(hit["dist"], 400, 2000, 8000)
+                rec["elec_name"] = hit["name"]
+                changed = True
+        if changed:
+            cur.execute(
+                """
+                UPDATE parcel_infra_analysis
+                SET gas_ok=?, gas_km=?, gas_name=?, elec_ok=?, elec_km=?, elec_name=?
+                WHERE objdoc_id=?
+                """,
+                (rec["gas_ok"], rec["gas_km"], rec["gas_name"], rec["elec_ok"], rec["elec_km"], rec["elec_name"], oid),
+            )
+            updated += 1
+    conn.commit()
+    conn.close()
+    print(f"Обновлено участков: {updated}")
+
+
 def analyze() -> None:
     rows = load_parcels()
     tile = 0.08
@@ -792,10 +914,12 @@ def apply_html() -> None:
     cur = conn.cursor()
     cur.execute(
         """
-        SELECT a.*, p.address, p.area_ha, d.cost_value
+        SELECT a.*, p.address, p.area_ha, d.cost_value,
+               c.cottage_score, c.cottage_recommendation, c.nearest_city, c.nearest_city_km
         FROM parcel_infra_analysis a
         JOIN farmland_parcels p ON p.objdoc_id = a.objdoc_id
         LEFT JOIN farmland_details d ON d.objdoc_id = a.objdoc_id
+        LEFT JOIN cottage_settlement_assessments c ON c.objdoc_id = a.objdoc_id
         """
     )
     by_cad = {r["cadastral_number"]: dict(r) for r in cur.fetchall()}
@@ -830,6 +954,8 @@ def apply_html() -> None:
                 "soil": a.get("soil_type") or "",
                 "izhs": a.get("izhs") or "",
                 "program": a.get("program_note") or "",
+                "kp_score": a.get("cottage_score") if a.get("cottage_score") is not None else "",
+                "kp_reco": a.get("cottage_recommendation") or "",
             }
         )
     new_data = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
@@ -848,6 +974,17 @@ def apply_html() -> None:
             "    #detail h3 { margin: 0 0 8px; font-size: 15px; }\n"
             "    #detail p { margin: 0 0 6px; color: #ddd; }",
         )
+    if "<th>Оценка КП</th>" not in html and "<th>Перевод в ИЖС</th>" in html:
+        html = html.replace(
+            "            <th>Перевод в ИЖС</th>\n",
+            "            <th>Перевод в ИЖС</th>\n            <th>Оценка КП</th>\n",
+        )
+    if "Оценка КП:" not in html:
+        html = html.replace(
+            '        `<div class="block"><b>ИЖС:</b> ${p.izhs}</div>` +',
+            '        `<div class="block"><b>ИЖС:</b> ${p.izhs}</div>` +\n'
+            '        `<div class="block"><b>Оценка КП:</b> ${p.kp_score} · ${p.kp_reco}</div>` +',
+        )
     if "<th>Газ</th>" not in html:
         html = html.replace(
             "            <th>Кадастровая стоимость, ₽</th>\n",
@@ -859,7 +996,8 @@ def apply_html() -> None:
             "            <th>Водоём</th>\n"
             "            <th>Водоснабжение</th>\n"
             "            <th>Почва</th>\n"
-            "            <th>Перевод в ИЖС</th>\n",
+            "            <th>Перевод в ИЖС</th>\n"
+            "            <th>Оценка КП</th>\n",
         )
     # rebuild tbody
     tbody = []
@@ -882,6 +1020,7 @@ def apply_html() -> None:
             f"<td class='an'>{p['water_supply']}</td>"
             f"<td class='an'>{p['soil']}</td>"
             f"<td class='an'>{p['izhs']}</td>"
+            f"<td class='an'>{p.get('kp_score','')} · {p.get('kp_reco','')}</td>"
             "</tr>"
         )
     html = re.sub(
@@ -914,6 +1053,7 @@ def apply_html() -> None:
         `<div class="block"><b>Водоснабжение:</b> ${p.water_supply}</div>` +
         `<div class="block"><b>Почва:</b> ${p.soil}</div>` +
         `<div class="block"><b>ИЖС:</b> ${p.izhs}</div>` +
+        `<div class="block"><b>Оценка КП:</b> ${p.kp_score} · ${p.kp_reco}</div>` +
         `<div class="block">${p.program}</div></div>`;
     }
     function fillDetail(p) {
@@ -940,6 +1080,9 @@ def apply_html() -> None:
 if __name__ == "__main__":
     import sys
     if "--html-only" in sys.argv:
+        apply_html()
+    elif "--enrich" in sys.argv:
+        enrich_networks()
         apply_html()
     else:
         analyze()
