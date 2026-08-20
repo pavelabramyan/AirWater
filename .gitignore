@@ -31,3 +31,6 @@ BUSINESS_PLAN*.pdf
 
 # Логи
 logs/
+
+# Кэш OSM/почвы для анализа участков
+Фермерство/data_cache/
