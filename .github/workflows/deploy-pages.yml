@@ -1,0 +1,51 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [main, clean-main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch AirWater site from main
+        run: git fetch origin main --depth 1
+
+      - name: Build site
+        run: |
+          mkdir -p _site
+          git archive origin/main airwater | tar -x -C .
+          cp -R airwater/. _site/
+          mkdir -p _site/mo-sx
+          if [ -f "Фермерство/mo_sx_1ha.html" ]; then
+            cp "Фермерство/mo_sx_1ha.html" _site/mo-sx/index.html
+          elif [ -f airwater/mo-sx/index.html ]; then
+            cp airwater/mo-sx/index.html _site/mo-sx/index.html
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
