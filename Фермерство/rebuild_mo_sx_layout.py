@@ -20,8 +20,6 @@ def extract(name: str, text: str) -> str:
 def main() -> None:
     text = SRC.read_text(encoding="utf-8")
     data = extract("DATA", text)
-    ckad_path = Path(__file__).with_name("ckad.geojson")
-    ckad = ckad_path.read_text(encoding="utf-8").strip() if ckad_path.exists() else extract("CKAD", text)
     html = f"""<!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -82,7 +80,6 @@ def main() -> None:
     }}
     .legend-item {{ display: flex; align-items: center; gap: 6px; }}
     .swatch {{ width: 16px; height: 10px; background: rgba(255,208,0,.75); border: 2px solid #c49200; }}
-    .swatch-ckad {{ width: 18px; height: 0; border-top: 4px solid #ff4d00; }}
     .side {{
       flex: 1; min-height: 0; overflow: auto; -webkit-overflow-scrolling: touch;
       padding: 10px var(--pad) calc(16px + env(safe-area-inset-bottom));
@@ -157,7 +154,6 @@ def main() -> None:
         <div class="basemaps" id="basemaps"></div>
         <div class="legend">
           <span class="legend-item"><span class="swatch"></span> Земли СХ</span>
-          <span class="legend-item"><span class="swatch-ckad"></span> ЦКАД</span>
         </div>
       </div>
       <aside class="side">
@@ -169,7 +165,6 @@ def main() -> None:
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     const DATA = {data};
-    const CKAD = {ckad};
 
     function parcelStyle(active) {{
       const z = map ? map.getZoom() : 8;
@@ -307,11 +302,7 @@ def main() -> None:
       currentBase = bases[name] || bases.sat;
       currentBase.forEach((lyr) => lyr.addTo(map));
       document.querySelectorAll(".basemaps button").forEach((b) => b.classList.toggle("on", b.dataset.base === name));
-      if (window._overlaysReady) {{
-        ckadCasing.bringToFront();
-        ckadLine.bringToFront();
-        geo.bringToFront();
-      }}
+      if (window._overlaysReady) geo.bringToFront();
     }}
     const baseBox = document.getElementById("basemaps");
     [
@@ -329,17 +320,6 @@ def main() -> None:
       baseBox.appendChild(b);
     }});
     setBase("yandex");
-
-    function ckadStyle(casing) {{
-      const z = map.getZoom();
-      const w = z < 9 ? 7 : z < 12 ? 5 : 3.5;
-      if (casing) return {{ color: "#7A1F00", weight: w + 3, opacity: 0.95, lineJoin: "round", lineCap: "round" }};
-      return {{ color: "#FF4D00", weight: w, opacity: 1, lineJoin: "round", lineCap: "round" }};
-    }}
-    const ckadSvg = L.svg({{ padding: 0.5 }});
-    const ckadCasing = L.geoJSON(CKAD, {{ renderer: ckadSvg, style: () => ckadStyle(true) }}).addTo(map);
-    const ckadLine = L.geoJSON(CKAD, {{ renderer: ckadSvg, style: () => ckadStyle(false) }}).addTo(map);
-    ckadLine.bindPopup("ЦКАД · А-113 · кольцо 339 км, OSM");
 
     const layers = [];
     const dots = [];
@@ -372,15 +352,11 @@ def main() -> None:
     }}
     function restyleAll() {{
       layers.forEach((lyr, i) => lyr.setStyle(parcelStyle(i === active)));
-      ckadCasing.setStyle(ckadStyle(true));
-      ckadLine.setStyle(ckadStyle(false));
       syncDots();
     }}
     let active = -1;
     map.on("zoomend", restyleAll);
-    map.fitBounds(geo.getBounds().extend(ckadLine.getBounds()), {{ padding: [24, 24] }});
-    ckadCasing.bringToFront();
-    ckadLine.bringToFront();
+    map.fitBounds(geo.getBounds(), {{ padding: [24, 24] }});
 
     const q = document.getElementById("q");
     function highlight(i, fly) {{
