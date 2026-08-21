@@ -59,6 +59,20 @@ def main() -> None:
       width: 100%; padding: 11px 12px; border: 1px solid #c9c3b6;
       border-radius: 10px; background: #fff; color: var(--text); font-size: 16px;
     }}
+    .tools {{ display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; align-items: center; }}
+    .tools select, .tools button, .help-btn {{
+      appearance: none; border: 1px solid #c9c3b6; background: #fff; color: var(--text);
+      border-radius: 10px; padding: 8px 10px; font: 13px inherit; cursor: pointer;
+    }}
+    .tools button.on, .help-btn.on {{ background: #fff6d6; border-color: var(--gold); font-weight: 700; }}
+    .help {{
+      display: none; margin-top: 8px; background: #fff8e8; border: 1px solid #e6d7a8;
+      border-radius: 10px; padding: 10px 12px; font-size: 13px; color: #3a3732;
+    }}
+    .help.open {{ display: block; }}
+    .help b {{ display: block; margin: 8px 0 3px; }}
+    .help b:first-child {{ margin-top: 0; }}
+    .found {{ margin: 6px 0 0; color: var(--muted); font-size: 12px; }}
     .layout {{ flex: 1; min-height: 0; display: flex; flex-direction: column; }}
     .map-col {{ flex: 0 0 auto; position: relative; }}
     #map {{ height: 42dvh; min-height: 220px; background: #e8e4da; }}
@@ -149,6 +163,31 @@ def main() -> None:
       <h1>Земли СХ от 1 га — Московская область</h1>
       <p class="meta">215 участков · 3 114,87 га · газ, свет, дороги, вода, почва, кадастр, ИЖС (ориентир, не ТУ)</p>
       <input id="q" type="search" placeholder="Поиск по адресу или кадастровому номеру" enterkeyhint="search">
+      <div class="tools">
+        <select id="sort" aria-label="Сортировка">
+          <option value="kp">Сортировать: КП</option>
+          <option value="ha">Сортировать: площадь</option>
+          <option value="cost">Сортировать: кадастр</option>
+          <option value="costha">Сортировать: ₽/га</option>
+          <option value="gas">Сортировать: газ</option>
+          <option value="elec">Сортировать: свет</option>
+          <option value="road">Сортировать: дорога</option>
+          <option value="fed">Сортировать: трасса</option>
+          <option value="water">Сортировать: вода</option>
+        </select>
+        <button type="button" id="dir" title="Направление">по убыванию</button>
+        <button type="button" id="best">Лучшие</button>
+        <button type="button" class="help-btn" id="helpBtn">Как пользоваться</button>
+      </div>
+      <div class="help" id="help">
+        <b>Как работать с картой</b>
+        Жёлтые контуры — участки СХ. Кликни контур или карточку: справа откроется разбор. Колесо и кнопки +/− — масштаб, слои сверху слева: Яндекс, спутник, 2ГИС, Google, рельеф. В карточке ссылки «НСПД» и «map.ru» открывают тот же кадастровый номер на официальных картах.
+        <b>Что такое КП</b>
+        КП — коттеджный посёлок. Балл 23–80 — эвристика «насколько участок удобен под КП»: площадь, сети, дороги, кадастр, адрес, перевод в ИЖС. Это не юридический статус и не ТУ. Рекомендации: «Приоритетно изучить» → «В работу после юрпроверки» → «Смотреть точечно» → «Низкий приоритет».
+        <b>Сортировка и отбор</b>
+        Выбери параметр и «по убыванию / по возрастанию»: список и карта обновятся. «Лучшие» оставляет приоритетные КП (балл от 70 или «Приоритетно изучить») и сортирует их по баллу вниз. Поиск по адресу и кадастру можно сочетать с сортировкой.
+      </div>
+      <p class="found" id="found"></p>
     </header>
     <div class="layout">
       <div class="map-col">
@@ -377,6 +416,7 @@ def main() -> None:
       if (rebuild) {{
         const view = map ? {{ center: map.getCenter(), zoom: map.getZoom() }} : null;
         createMap(name, view);
+        if (window.applyView) window.applyView();
         if (active >= 0) highlight(active, false);
         return;
       }}
@@ -406,19 +446,52 @@ def main() -> None:
 
     const list = document.getElementById("list");
     list.innerHTML = DATA.features.map((f, i) => itemHtml(f.properties, i)).join("");
-    const rows = [...list.querySelectorAll(".item")];
+    function rowOf(i) {{ return list.querySelector('.item[data-i="' + i + '"]'); }}
 
     const q = document.getElementById("q");
+    const sortEl = document.getElementById("sort");
+    const dirBtn = document.getElementById("dir");
+    const bestBtn = document.getElementById("best");
+    const helpBtn = document.getElementById("helpBtn");
+    const helpBox = document.getElementById("help");
+    const foundEl = document.getElementById("found");
+    let desc = true;
+    let onlyBest = false;
+    function parseKm(s) {{
+      if (s == null) return null;
+      const t = String(s).toLowerCase().replace(/\\s/g, "").replace(",", ".");
+      if (!t || t.includes("н/д") || t.includes("нет")) return null;
+      const m = t.match(/([\\d.]+)(км|м)/);
+      if (!m) return null;
+      const n = parseFloat(m[1]);
+      return m[2] === "м" ? n / 1000 : n;
+    }}
+    function sortValue(p, key) {{
+      if (key === "kp") return Number(p.kp_score);
+      if (key === "ha") return Number(p.ha);
+      if (key === "cost") return p.cost == null ? null : Number(p.cost);
+      if (key === "costha") return p.cost == null || !p.ha ? null : Number(p.cost) / Number(p.ha);
+      if (key === "gas") return parseKm(p.gas_km);
+      if (key === "elec") return parseKm(p.elec_km);
+      if (key === "road") return parseKm(p.road_km);
+      if (key === "fed") return parseKm(p.fed_km);
+      if (key === "water") return p.water_on === "да" ? 0 : parseKm(p.water_km);
+      return null;
+    }}
+    function isBest(p) {{
+      return Number(p.kp_score) >= 70 || p.kp_reco === "Приоритетно изучить";
+    }}
     function highlight(i, fly) {{
       if (active >= 0 && layers[active]) layers[active].setStyle(parcelStyle(false));
       active = i;
-      rows.forEach((r) => r.classList.remove("active"));
-      if (i >= 0 && layers[i]) {{
+      list.querySelectorAll(".item").forEach((r) => r.classList.remove("active"));
+      const row = rowOf(i);
+      if (i >= 0 && layers[i] && row) {{
         layers[i].setStyle(parcelStyle(true));
         layers[i].bringToFront();
-        rows[i].classList.add("active");
+        row.classList.add("active");
         fillDetail(DATA.features[i].properties);
-        rows[i].scrollIntoView({{ behavior: "smooth", block: "nearest" }});
+        row.scrollIntoView({{ behavior: "smooth", block: "nearest" }});
         if (fly) {{
           map.fitBounds(layers[i].getBounds(), {{ padding: [40, 40], maxZoom: 15 }});
           layers[i].openPopup();
@@ -427,11 +500,25 @@ def main() -> None:
     }}
     function applyFilter() {{
       const s = q.value.trim().toLowerCase();
+      const key = sortEl.value;
+      const idxs = DATA.features.map((f, i) => i).filter((i) => {{
+        const p = DATA.features[i].properties;
+        const textOk = !s || p.address.toLowerCase().includes(s) || p.cad.toLowerCase().includes(s);
+        return textOk && (!onlyBest || isBest(p));
+      }});
+      idxs.sort((a, b) => {{
+        const va = sortValue(DATA.features[a].properties, key);
+        const vb = sortValue(DATA.features[b].properties, key);
+        if (va == null && vb == null) return 0;
+        if (va == null) return 1;
+        if (vb == null) return -1;
+        return desc ? vb - va : va - vb;
+      }});
       const visible = [];
       DATA.features.forEach((f, i) => {{
-        const p = f.properties;
-        const ok = !s || p.address.toLowerCase().includes(s) || p.cad.toLowerCase().includes(s);
-        rows[i].style.display = ok ? "" : "none";
+        const row = rowOf(i);
+        const ok = idxs.includes(i);
+        row.style.display = ok ? "" : "none";
         if (ok) {{
           if (!geo.hasLayer(layers[i])) geo.addLayer(layers[i]);
           if (!dotsLayer.hasLayer(dots[i])) dotsLayer.addLayer(dots[i]);
@@ -441,12 +528,36 @@ def main() -> None:
           if (dotsLayer.hasLayer(dots[i])) dotsLayer.removeLayer(dots[i]);
         }}
       }});
+      idxs.forEach((i) => list.appendChild(rowOf(i)));
+      foundEl.textContent = "Показано " + idxs.length + " из 215";
       if (visible.length) {{
         map.fitBounds(L.featureGroup(visible).getBounds(), {{ padding: [24, 24], maxZoom: 12 }});
       }}
     }}
+    dirBtn.addEventListener("click", () => {{
+      desc = !desc;
+      dirBtn.textContent = desc ? "по убыванию" : "по возрастанию";
+      applyFilter();
+    }});
+    bestBtn.addEventListener("click", () => {{
+      onlyBest = !onlyBest;
+      bestBtn.classList.toggle("on", onlyBest);
+      if (onlyBest) {{
+        sortEl.value = "kp";
+        desc = true;
+        dirBtn.textContent = "по убыванию";
+      }}
+      applyFilter();
+    }});
+    helpBtn.addEventListener("click", () => {{
+      helpBox.classList.toggle("open");
+      helpBtn.classList.toggle("on", helpBox.classList.contains("open"));
+    }});
     q.addEventListener("input", applyFilter);
-    rows.forEach((el, i) => el.addEventListener("click", () => highlight(i, true)));
+    sortEl.addEventListener("change", applyFilter);
+    list.querySelectorAll(".item").forEach((el) => el.addEventListener("click", () => highlight(Number(el.dataset.i), true)));
+    window.applyView = applyFilter;
+    applyFilter();
     const resize = () => {{ if (map) {{ map.invalidateSize(); restyleAll(); }} }};
     window.addEventListener("resize", resize);
     setTimeout(resize, 200);
