@@ -105,6 +105,8 @@
     .popup { max-width: 260px; }
     .popup .cad { font-weight: 700; }
     .popup .chips { margin-top: 8px; }
+    .ext { margin: 8px 0 0; font-size: 13px; }
+    .ext a { color: #1a5fb4; }
     .leaflet-control-attribution { font-size: 10px; }
     @media (min-width: 900px) {
       header { padding: 12px 18px; }
@@ -226,6 +228,8 @@
         `<h2>${esc(p.cad)}</h2>` +
         `<p class="addr">${esc(p.address)}</p>` +
         chipsHtml(p, "detail") +
+        `<p class="ext"><a href="https://nspd.gov.ru/map?query=${encodeURIComponent(p.cad)}" target="_blank" rel="noopener">НСПД</a> · ` +
+          `<a href="https://map.ru/pkk?search=${encodeURIComponent(p.cad)}" target="_blank" rel="noopener">map.ru</a></p>` +
         `<div class="notes">` +
           `<div class="note"><span class="k">Газ</span><div class="v">${esc(p.gas_ok)}. ${esc(p.gas_name)}. ${esc(p.gas_volume)}</div></div>` +
           `<div class="note"><span class="k">Электричество</span><div class="v">${esc(p.elec_ok)}. ${esc(p.elec_name)}. ${esc(p.elec_volume)}</div></div>` +
@@ -241,46 +245,125 @@
         chipsHtml(p, "list") + `</button>`;
     }
 
-    const map = L.map("map", { renderer: L.canvas({ padding: 0.5 }), zoomControl: false }).setView([55.6, 37.4], 8);
-    L.control.zoom({ position: "topright" }).addTo(map);
-
-    const bases = {
-      sat: [
-        L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
-          maxZoom: 19, attribution: "Tiles © Esri"
-        }),
-        L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png", {
-          maxZoom: 19, attribution: "© CARTO"
-        })
-      ],
-      twogis: [
-        L.tileLayer("https://tile{s}.maps.2gis.com/tiles?x={x}&y={y}&z={z}", {
+    const CRS3395 = L.extend({}, L.CRS.Earth, {
+      code: "EPSG:3395",
+      projection: L.Projection.Mercator,
+      transformation: (function () {
+        const scale = 0.5 / (Math.PI * L.Projection.Mercator.R);
+        return L.transformation(scale, 0.5, -scale, 0.5);
+      })()
+    });
+    function featureCenter(feature) {
+      const acc = [];
+      (function walk(c) {
+        if (typeof c[0] === "number") acc.push(c);
+        else c.forEach(walk);
+      })(feature.geometry.coordinates);
+      return [acc.reduce((s, p) => s + p[1], 0) / acc.length, acc.reduce((s, p) => s + p[0], 0) / acc.length];
+    }
+    function makeTiles(name) {
+      if (name === "sat") {
+        return [
+          L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+            maxZoom: 19, attribution: "Tiles © Esri"
+          }),
+          L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png", {
+            maxZoom: 19, attribution: "© CARTO"
+          })
+        ];
+      }
+      if (name === "twogis") {
+        return [L.tileLayer("https://tile{s}.maps.2gis.com/tiles?x={x}&y={y}&z={z}", {
           subdomains: "0123", maxZoom: 18, attribution: "© 2ГИС"
-        })
-      ],
-      yandex: [
-        L.tileLayer("https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale=1&lang=ru_RU", {
+        })];
+      }
+      if (name === "yandex") {
+        return [L.tileLayer("https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale=1&lang=ru_RU", {
           maxZoom: 19, attribution: "© Яндекс"
-        })
-      ],
-      google: [
-        L.tileLayer("https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+        })];
+      }
+      if (name === "google") {
+        return [L.tileLayer("https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
           subdomains: "0123", maxZoom: 20, attribution: "© Google"
-        })
-      ],
-      relief: [
-        L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-          subdomains: "abc", maxZoom: 17, attribution: "© OpenStreetMap, © OpenTopoMap (CC-BY-SA)"
-        })
-      ]
-    };
-    let currentBase = [];
-    function setBase(name) {
-      currentBase.forEach((lyr) => map.removeLayer(lyr));
-      currentBase = bases[name] || bases.sat;
+        })];
+      }
+      return [L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+        subdomains: "abc", maxZoom: 17, attribution: "© OpenStreetMap, © OpenTopoMap (CC-BY-SA)"
+      })];
+    }
+
+    let map, geo, dotsLayer, currentBase = [], currentBaseName = "";
+    const layers = [];
+    const dots = [];
+    let active = -1;
+
+    function attachParcels() {
+      layers.splice(0, layers.length);
+      dots.splice(0, dots.length);
+      dotsLayer = L.layerGroup();
+      geo = L.geoJSON(DATA, {
+        style: () => parcelStyle(false),
+        onEachFeature: (feature, lyr) => {
+          const i = layers.length;
+          lyr.bindPopup(popupHtml(feature.properties));
+          lyr.on("click", () => highlight(i, false));
+          layers.push(lyr);
+          const dot = L.circleMarker(featureCenter(feature), {
+            radius: 7, color: "#5C4300", weight: 2, fillColor: "#FFD000", fillOpacity: 0.95
+          });
+          dot.bindPopup(popupHtml(feature.properties));
+          dot.on("click", () => highlight(i, false));
+          dots.push(dot);
+        }
+      }).addTo(map);
+      dots.forEach((d) => d.addTo(dotsLayer));
+    }
+    function syncDots() {
+      if (!map) return;
+      const showDots = map.getZoom() < 11;
+      if (showDots && !map.hasLayer(dotsLayer)) dotsLayer.addTo(map);
+      if (!showDots && map.hasLayer(dotsLayer)) map.removeLayer(dotsLayer);
+    }
+    function restyleAll() {
+      layers.forEach((lyr, i) => lyr.setStyle(parcelStyle(i === active)));
+      syncDots();
+    }
+    function createMap(name, view) {
+      if (map) {
+        map.remove();
+        map = null;
+      }
+      map = L.map("map", {
+        crs: name === "yandex" ? CRS3395 : L.CRS.EPSG3857,
+        renderer: L.canvas({ padding: 0.5 }),
+        zoomControl: false
+      });
+      L.control.zoom({ position: "topright" }).addTo(map);
+      currentBase = makeTiles(name);
       currentBase.forEach((lyr) => lyr.addTo(map));
+      attachParcels();
+      map.on("zoomend", restyleAll);
+      if (view) map.setView(view.center, view.zoom);
+      else map.fitBounds(geo.getBounds(), { padding: [24, 24] });
+      currentBaseName = name;
       document.querySelectorAll(".basemaps button").forEach((b) => b.classList.toggle("on", b.dataset.base === name));
-      if (window._overlaysReady) geo.bringToFront();
+      syncDots();
+      setTimeout(() => map.invalidateSize(), 50);
+    }
+    function setBase(name) {
+      const rebuild = !map || (name === "yandex") !== (currentBaseName === "yandex");
+      if (rebuild) {
+        const view = map ? { center: map.getCenter(), zoom: map.getZoom() } : null;
+        createMap(name, view);
+        if (active >= 0) highlight(active, false);
+        return;
+      }
+      currentBase.forEach((lyr) => map.removeLayer(lyr));
+      currentBase = makeTiles(name);
+      currentBase.forEach((lyr) => lyr.addTo(map));
+      currentBaseName = name;
+      document.querySelectorAll(".basemaps button").forEach((b) => b.classList.toggle("on", b.dataset.base === name));
+      geo.bringToFront();
     }
     const baseBox = document.getElementById("basemaps");
     [
@@ -297,44 +380,11 @@
       b.addEventListener("click", () => setBase(id));
       baseBox.appendChild(b);
     });
-    setBase("yandex");
-
-    const layers = [];
-    const dots = [];
-    const dotsLayer = L.layerGroup();
-    const geo = L.geoJSON(DATA, {
-      style: () => parcelStyle(false),
-      onEachFeature: (feature, lyr) => {
-        const i = layers.length;
-        lyr.bindPopup(popupHtml(feature.properties));
-        lyr.on("click", () => highlight(i, false));
-        layers.push(lyr);
-        const c = lyr.getBounds().getCenter();
-        const dot = L.circleMarker(c, {
-          radius: 7, color: "#5C4300", weight: 2, fillColor: "#FFD000", fillOpacity: 0.95
-        });
-        dot.bindPopup(popupHtml(feature.properties));
-        dot.on("click", () => highlight(i, false));
-        dots.push(dot);
-      }
-    }).addTo(map);
+    createMap("yandex");
 
     const list = document.getElementById("list");
     list.innerHTML = DATA.features.map((f, i) => itemHtml(f.properties, i)).join("");
     const rows = [...list.querySelectorAll(".item")];
-
-    function syncDots() {
-      const showDots = map.getZoom() < 11;
-      if (showDots && !map.hasLayer(dotsLayer)) dotsLayer.addTo(map);
-      if (!showDots && map.hasLayer(dotsLayer)) map.removeLayer(dotsLayer);
-    }
-    function restyleAll() {
-      layers.forEach((lyr, i) => lyr.setStyle(parcelStyle(i === active)));
-      syncDots();
-    }
-    let active = -1;
-    map.on("zoomend", restyleAll);
-    map.fitBounds(geo.getBounds(), { padding: [24, 24] });
 
     const q = document.getElementById("q");
     function highlight(i, fly) {
@@ -375,10 +425,7 @@
     }
     q.addEventListener("input", applyFilter);
     rows.forEach((el, i) => el.addEventListener("click", () => highlight(i, true)));
-    dots.forEach((d) => d.addTo(dotsLayer));
-    window._overlaysReady = true;
-    syncDots();
-    const resize = () => { map.invalidateSize(); restyleAll(); };
+    const resize = () => { if (map) { map.invalidateSize(); restyleAll(); } };
     window.addEventListener("resize", resize);
     setTimeout(resize, 200);
   </script>
