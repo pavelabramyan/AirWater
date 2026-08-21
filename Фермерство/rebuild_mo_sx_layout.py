@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Пересобирает mo_sx_1ha.html: мобильная вёрстка, карточки вместо широкой таблицы."""
+"""Пересобирает mo_sx_1ha.html: чипы, кадастр, слои 2ГИС / Яндекс / Google."""
 
 from __future__ import annotations
 
@@ -63,6 +63,16 @@ def main() -> None:
     .layout {{ flex: 1; min-height: 0; display: flex; flex-direction: column; }}
     .map-col {{ flex: 0 0 auto; position: relative; }}
     #map {{ height: 42dvh; min-height: 220px; background: #e8e4da; }}
+    .basemaps {{
+      position: absolute; top: 10px; left: 10px; z-index: 500;
+      display: flex; flex-wrap: wrap; gap: 4px; max-width: calc(100% - 68px);
+    }}
+    .basemaps button {{
+      appearance: none; border: 1px solid #c9c3b6; background: rgba(255,255,255,.94);
+      border-radius: 999px; padding: 6px 10px; font: 12px/1.2 inherit; color: #1c1a16;
+      cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.1);
+    }}
+    .basemaps button.on {{ background: #fff6d6; border-color: var(--gold); font-weight: 700; }}
     .legend {{
       position: absolute; left: 10px; bottom: 10px; z-index: 500;
       display: flex; gap: 8px; flex-wrap: wrap;
@@ -85,15 +95,25 @@ def main() -> None:
     .card.empty {{ color: var(--muted); }}
     .card h2 {{ margin: 0 0 4px; font-size: 16px; }}
     .card .addr {{ color: #3a3732; margin: 0 0 8px; }}
-    .stats {{ color: var(--muted); font-size: 13px; margin-bottom: 8px; }}
-    .chips {{ display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }}
+    .chips {{ display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; }}
     .chip {{
-      background: #efe8d8; border-radius: 999px; padding: 5px 8px;
-      font-size: 12px; color: #2a2618;
+      display: inline-flex; align-items: center; gap: 5px;
+      background: #efe8d8; border-radius: 999px; padding: 5px 9px;
+      font-size: 12px; color: #2a2618; max-width: 100%;
     }}
-    .rows {{ display: grid; gap: 8px; }}
-    .row .k {{ display: block; color: var(--muted); font-size: 11px; margin-bottom: 2px; }}
-    .row .v {{ font-size: 13px; }}
+    .chip i {{ font-style: normal; opacity: .72; font-size: 11px; }}
+    .chip.money {{ background: #e4eedc; }}
+    .chip.gas {{ background: #f3e4d4; }}
+    .chip.elec {{ background: #e4e8f6; }}
+    .chip.road {{ background: #ece6dc; }}
+    .chip.fed {{ background: #f6e4d8; }}
+    .chip.water {{ background: #dceef4; }}
+    .chip.soil {{ background: #e8e2d0; }}
+    .chip.kp {{ background: #efe4c8; }}
+    .chip.izhs {{ background: #f3e0dc; }}
+    .notes {{ display: grid; gap: 8px; margin-top: 10px; }}
+    .note .k {{ display: block; color: var(--muted); font-size: 11px; margin-bottom: 2px; }}
+    .note .v {{ font-size: 13px; }}
     .list {{ display: flex; flex-direction: column; gap: 8px; }}
     .item {{
       cursor: pointer; width: 100%; text-align: left; color: inherit;
@@ -106,8 +126,9 @@ def main() -> None:
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }}
     .leaflet-popup-content {{ color: #111; margin: 10px 12px; }}
-    .popup {{ max-width: 240px; }}
+    .popup {{ max-width: 260px; }}
     .popup .cad {{ font-weight: 700; }}
+    .popup .chips {{ margin-top: 8px; }}
     .leaflet-control-attribution {{ font-size: 10px; }}
     @media (min-width: 900px) {{
       header {{ padding: 12px 18px; }}
@@ -116,7 +137,7 @@ def main() -> None:
       .map-col {{ flex: 1; min-width: 0; display: flex; flex-direction: column; }}
       #map {{ flex: 1; height: auto; min-height: 0; }}
       .side {{
-        width: min(420px, 40vw); border-left: 1px solid var(--line);
+        width: min(440px, 42vw); border-left: 1px solid var(--line);
         padding: 12px 14px 18px;
       }}
     }}
@@ -126,12 +147,13 @@ def main() -> None:
   <div class="app">
     <header>
       <h1>Земли СХ от 1 га — Московская область</h1>
-      <p class="meta">215 участков · 3 114,87 га · газ, свет, дороги, вода, почва, ИЖС (ориентир, не ТУ)</p>
+      <p class="meta">215 участков · 3 114,87 га · газ, свет, дороги, вода, почва, кадастр, ИЖС (ориентир, не ТУ)</p>
       <input id="q" type="search" placeholder="Поиск по адресу или кадастровому номеру" enterkeyhint="search">
     </header>
     <div class="layout">
       <div class="map-col">
         <div id="map"></div>
+        <div class="basemaps" id="basemaps"></div>
         <div class="legend">
           <span class="legend-item"><span class="swatch"></span> Земли СХ</span>
           <span class="legend-item"><span class="swatch-ckad"></span> ЦКАД</span>
@@ -162,17 +184,65 @@ def main() -> None:
     function fmtHa(ha) {{
       return ha.toLocaleString("ru-RU", {{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}) + " га";
     }}
-    function fmtRub(v) {{
-      if (v == null) return "нет данных";
-      return v.toLocaleString("ru-RU", {{ maximumFractionDigits: 0 }}) + " ₽";
+    function fmtMoney(v, suffix) {{
+      if (v == null || !isFinite(v)) return null;
+      const n = Number(v);
+      if (n >= 1e6) return (n / 1e6).toLocaleString("ru-RU", {{ maximumFractionDigits: 1 }}) + " млн ₽" + (suffix || "");
+      if (n >= 1e3) return (n / 1e3).toLocaleString("ru-RU", {{ maximumFractionDigits: 0 }}) + " тыс. ₽" + (suffix || "");
+      return n.toLocaleString("ru-RU", {{ maximumFractionDigits: 0 }}) + " ₽" + (suffix || "");
+    }}
+    function fmtCost(v) {{ return fmtMoney(v) || "н/д"; }}
+    function fmtCostFull(v) {{
+      if (v == null) return "кадастровая стоимость не указана";
+      return Number(v).toLocaleString("ru-RU", {{ maximumFractionDigits: 0 }}) + " ₽";
+    }}
+    function fmtCostHa(cost, ha) {{
+      if (cost == null || !ha) return "н/д";
+      return fmtMoney(cost / ha) || "н/д";
     }}
     function esc(s) {{
       return String(s ?? "").replace(/[&<>"]/g, (ch) => ({{ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }}[ch]));
     }}
+    function izhsChip(p) {{
+      const m = /Сложность:\\s*([^.,]+)/.exec(p.izhs || "");
+      return "ИЖС: " + (m ? m[1].trim() : "нужен перевод");
+    }}
+    function waterChip(p) {{
+      if (p.water_on === "да") return "водоём на участке, " + (p.water_type || "есть") + (p.water_size ? ", " + p.water_size : "");
+      return (p.water_type || "водоём") + " " + (p.water_km || "");
+    }}
+    function chip(cls, icon, text, title) {{
+      return `<span class="chip ${{cls}}"${{title ? ` title="${{esc(title)}}"` : ""}}><i>${{esc(icon)}}</i>${{esc(text)}}</span>`;
+    }}
+    function chipsHtml(p, kind) {{
+      const extra = kind !== "list";
+      const out = [
+        chip("area", "га", fmtHa(p.ha).replace(" га", "")),
+        chip("money", "кадастр", fmtCost(p.cost), fmtCostFull(p.cost)),
+        chip("money", "₽/га", fmtCostHa(p.cost, p.ha)),
+        chip("gas", "газ", p.gas_km),
+        chip("elec", "свет", p.elec_km),
+        chip("road", "дорога", p.road_km),
+        chip("fed", "трасса", ((p.fed_name || "") + " " + (p.fed_km || "")).trim()),
+        chip("water", "вода", waterChip(p)),
+        chip("soil", "почва", kind === "list" ? String(p.soil || "").split(";")[0] : p.soil),
+        chip("kp", "КП", String(p.kp_score) + (p.kp_reco ? " · " + p.kp_reco : "")),
+      ];
+      if (extra) {{
+        out.push(
+          chip("gas", "подкл. газа", p.gas_ok),
+          chip("elec", "подкл. света", p.elec_ok),
+          chip("road", "какая дорога", p.road_name),
+          chip("water", "водоснабжение", p.water_supply),
+          chip("izhs", "ИЖС", izhsChip(p).replace(/^ИЖС:\\s*/, ""))
+        );
+      }}
+      return `<div class="chips">${{out.join("")}}</div>`;
+    }}
     function popupHtml(p) {{
       return `<div class="popup"><div class="cad">${{esc(p.cad)}}</div>` +
         `<div>${{esc(p.address)}}</div>` +
-        `<div>${{fmtHa(p.ha)}} · газ ${{esc(p.gas_km)}} · свет ${{esc(p.elec_km)}}</div></div>`;
+        chipsHtml(p, "list") + `</div>`;
     }}
     function fillDetail(p) {{
       const box = document.getElementById("detail");
@@ -181,22 +251,12 @@ def main() -> None:
       box.innerHTML =
         `<h2>${{esc(p.cad)}}</h2>` +
         `<p class="addr">${{esc(p.address)}}</p>` +
-        `<div class="stats">${{fmtHa(p.ha)}} · ${{fmtRub(p.cost)}} · КП ${{esc(p.kp_score)}} · ${{esc(p.kp_reco)}}</div>` +
-        `<div class="chips">` +
-          `<span class="chip">Газ ${{esc(p.gas_km)}}</span>` +
-          `<span class="chip">Свет ${{esc(p.elec_km)}}</span>` +
-          `<span class="chip">${{esc(p.fed_name)}} ${{esc(p.fed_km)}}</span>` +
-        `</div>` +
-        `<div class="rows">` +
-          `<div class="row"><span class="k">Газ</span><div class="v">${{esc(p.gas_ok)}}. ${{esc(p.gas_name)}}. ${{esc(p.gas_volume)}}</div></div>` +
-          `<div class="row"><span class="k">Электричество</span><div class="v">${{esc(p.elec_ok)}}. ${{esc(p.elec_name)}}. ${{esc(p.elec_volume)}}</div></div>` +
-          `<div class="row"><span class="k">Дорога</span><div class="v">${{esc(p.road_name)}}, ${{esc(p.road_km)}}</div></div>` +
-          `<div class="row"><span class="k">Федеральная трасса</span><div class="v">${{esc(p.fed_name)}}, ${{esc(p.fed_km)}}</div></div>` +
-          `<div class="row"><span class="k">Водоём</span><div class="v">на участке ${{esc(p.water_on)}}; ${{esc(p.water_type)}}, ${{esc(p.water_km)}}, ${{esc(p.water_size)}}</div></div>` +
-          `<div class="row"><span class="k">Водоснабжение</span><div class="v">${{esc(p.water_supply)}}</div></div>` +
-          `<div class="row"><span class="k">Почва</span><div class="v">${{esc(p.soil)}}</div></div>` +
-          `<div class="row"><span class="k">Перевод в ИЖС</span><div class="v">${{esc(p.izhs)}}</div></div>` +
-          `<div class="row"><span class="k">Программа КП</span><div class="v">${{esc(p.program)}}</div></div>` +
+        chipsHtml(p, "detail") +
+        `<div class="notes">` +
+          `<div class="note"><span class="k">Газ</span><div class="v">${{esc(p.gas_ok)}}. ${{esc(p.gas_name)}}. ${{esc(p.gas_volume)}}</div></div>` +
+          `<div class="note"><span class="k">Электричество</span><div class="v">${{esc(p.elec_ok)}}. ${{esc(p.elec_name)}}. ${{esc(p.elec_volume)}}</div></div>` +
+          `<div class="note"><span class="k">Перевод в ИЖС</span><div class="v">${{esc(p.izhs)}}</div></div>` +
+          `<div class="note"><span class="k">Программа КП</span><div class="v">${{esc(p.program)}}</div></div>` +
         `</div>`;
       box.scrollIntoView({{ behavior: "smooth", block: "nearest" }});
     }}
@@ -204,22 +264,64 @@ def main() -> None:
       return `<button type="button" class="item" data-i="${{i}}">` +
         `<div class="cad">${{esc(p.cad)}}</div>` +
         `<div class="addr">${{esc(p.address)}}</div>` +
-        `<div class="chips">` +
-          `<span class="chip">${{fmtHa(p.ha)}}</span>` +
-          `<span class="chip">газ ${{esc(p.gas_km)}}</span>` +
-          `<span class="chip">свет ${{esc(p.elec_km)}}</span>` +
-          `<span class="chip">КП ${{esc(p.kp_score)}}</span>` +
-        `</div></button>`;
+        chipsHtml(p, "list") + `</button>`;
     }}
 
     const map = L.map("map", {{ renderer: L.canvas({{ padding: 0.5 }}), zoomControl: false }}).setView([55.6, 37.4], 8);
     L.control.zoom({{ position: "topright" }}).addTo(map);
-    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{{z}}/{{y}}/{{x}}", {{
-      maxZoom: 19, attribution: "Tiles © Esri"
-    }}).addTo(map);
-    L.tileLayer("https://{{s}}.basemaps.cartocdn.com/dark_only_labels/{{z}}/{{x}}/{{y}}{{r}}.png", {{
-      maxZoom: 19, attribution: "© CARTO"
-    }}).addTo(map);
+
+    const bases = {{
+      sat: [
+        L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{{z}}/{{y}}/{{x}}", {{
+          maxZoom: 19, attribution: "Tiles © Esri"
+        }}),
+        L.tileLayer("https://{{s}}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{{z}}/{{x}}/{{y}}{{r}}.png", {{
+          maxZoom: 19, attribution: "© CARTO"
+        }})
+      ],
+      twogis: [
+        L.tileLayer("https://tile{{s}}.maps.2gis.com/tiles?x={{x}}&y={{y}}&z={{z}}", {{
+          subdomains: "0123", maxZoom: 18, attribution: "© 2ГИС"
+        }})
+      ],
+      yandex: [
+        L.tileLayer("https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={{x}}&y={{y}}&z={{z}}&scale=1&lang=ru_RU", {{
+          maxZoom: 19, attribution: "© Яндекс"
+        }})
+      ],
+      google: [
+        L.tileLayer("https://mt{{s}}.google.com/vt/lyrs=m&x={{x}}&y={{y}}&z={{z}}", {{
+          subdomains: "0123", maxZoom: 20, attribution: "© Google"
+        }})
+      ]
+    }};
+    let currentBase = [];
+    function setBase(name) {{
+      currentBase.forEach((lyr) => map.removeLayer(lyr));
+      currentBase = bases[name] || bases.sat;
+      currentBase.forEach((lyr) => lyr.addTo(map));
+      document.querySelectorAll(".basemaps button").forEach((b) => b.classList.toggle("on", b.dataset.base === name));
+      if (window._overlaysReady) {{
+        ckadCasing.bringToFront();
+        ckadLine.bringToFront();
+        geo.bringToFront();
+      }}
+    }}
+    const baseBox = document.getElementById("basemaps");
+    [
+      ["sat", "Спутник"],
+      ["twogis", "2ГИС"],
+      ["yandex", "Яндекс"],
+      ["google", "Google"]
+    ].forEach(([id, label]) => {{
+      const b = document.createElement("button");
+      b.type = "button";
+      b.dataset.base = id;
+      b.textContent = label;
+      b.addEventListener("click", () => setBase(id));
+      baseBox.appendChild(b);
+    }});
+    setBase("sat");
 
     const ckadSvg = L.svg({{ padding: 0.5 }});
     const ckadCasing = L.geoJSON(CKAD, {{
@@ -311,6 +413,7 @@ def main() -> None:
     q.addEventListener("input", applyFilter);
     rows.forEach((el, i) => el.addEventListener("click", () => highlight(i, true)));
     dots.forEach((d) => d.addTo(dotsLayer));
+    window._overlaysReady = true;
     syncDots();
     const resize = () => {{ map.invalidateSize(); restyleAll(); }};
     window.addEventListener("resize", resize);
