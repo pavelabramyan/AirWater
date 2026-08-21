@@ -20,7 +20,8 @@ def extract(name: str, text: str) -> str:
 def main() -> None:
     text = SRC.read_text(encoding="utf-8")
     data = extract("DATA", text)
-    ckad = extract("CKAD", text)
+    ckad_path = Path(__file__).with_name("ckad.geojson")
+    ckad = ckad_path.read_text(encoding="utf-8").strip() if ckad_path.exists() else extract("CKAD", text)
     html = f"""<!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -293,6 +294,11 @@ def main() -> None:
         L.tileLayer("https://mt{{s}}.google.com/vt/lyrs=m&x={{x}}&y={{y}}&z={{z}}", {{
           subdomains: "0123", maxZoom: 20, attribution: "© Google"
         }})
+      ],
+      relief: [
+        L.tileLayer("https://{{s}}.tile.opentopomap.org/{{z}}/{{x}}/{{y}}.png", {{
+          subdomains: "abc", maxZoom: 17, attribution: "© OpenStreetMap, © OpenTopoMap (CC-BY-SA)"
+        }})
       ]
     }};
     let currentBase = [];
@@ -309,10 +315,11 @@ def main() -> None:
     }}
     const baseBox = document.getElementById("basemaps");
     [
+      ["yandex", "Яндекс"],
       ["sat", "Спутник"],
       ["twogis", "2ГИС"],
-      ["yandex", "Яндекс"],
-      ["google", "Google"]
+      ["google", "Google"],
+      ["relief", "Рельеф"]
     ].forEach(([id, label]) => {{
       const b = document.createElement("button");
       b.type = "button";
@@ -321,18 +328,18 @@ def main() -> None:
       b.addEventListener("click", () => setBase(id));
       baseBox.appendChild(b);
     }});
-    setBase("sat");
+    setBase("yandex");
 
+    function ckadStyle(casing) {{
+      const z = map.getZoom();
+      const w = z < 9 ? 7 : z < 12 ? 5 : 3.5;
+      if (casing) return {{ color: "#7A1F00", weight: w + 3, opacity: 0.95, lineJoin: "round", lineCap: "round" }};
+      return {{ color: "#FF4D00", weight: w, opacity: 1, lineJoin: "round", lineCap: "round" }};
+    }}
     const ckadSvg = L.svg({{ padding: 0.5 }});
-    const ckadCasing = L.geoJSON(CKAD, {{
-      renderer: ckadSvg,
-      style: {{ color: "#7A1F00", weight: 8, opacity: 0.95, lineJoin: "round", lineCap: "round" }}
-    }}).addTo(map);
-    const ckadLine = L.geoJSON(CKAD, {{
-      renderer: ckadSvg,
-      style: {{ color: "#FF4D00", weight: 4, opacity: 1, lineJoin: "round", lineCap: "round" }}
-    }}).addTo(map);
-    ckadLine.bindPopup("ЦКАД · A-113");
+    const ckadCasing = L.geoJSON(CKAD, {{ renderer: ckadSvg, style: () => ckadStyle(true) }}).addTo(map);
+    const ckadLine = L.geoJSON(CKAD, {{ renderer: ckadSvg, style: () => ckadStyle(false) }}).addTo(map);
+    ckadLine.bindPopup("ЦКАД · А-113 · кольцо 339 км, OSM");
 
     const layers = [];
     const dots = [];
@@ -365,6 +372,8 @@ def main() -> None:
     }}
     function restyleAll() {{
       layers.forEach((lyr, i) => lyr.setStyle(parcelStyle(i === active)));
+      ckadCasing.setStyle(ckadStyle(true));
+      ckadLine.setStyle(ckadStyle(false));
       syncDots();
     }}
     let active = -1;
