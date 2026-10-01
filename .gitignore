@@ -1,4 +1,5 @@
 .DS_Store
+/Чаты по датам/
 .cursor/
 __pycache__/
 *.pyc
