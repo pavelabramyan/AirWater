@@ -1,22 +1,17 @@
-// Smooth scrolling, form, animations
+// Smooth scrolling, form, navbar polish
 document.addEventListener('DOMContentLoaded', () => {
     renderPublicContacts();
     initAnalytics();
 
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
         anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (!href || href === '#') return;
+            const target = document.querySelector(href);
+            if (!target) return;
             e.preventDefault();
-            document.querySelector(this.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
-    });
-
-    const navbar = document.querySelector('.navbar');
-    window.addEventListener('scroll', () => {
-        if (navbar) {
-            navbar.style.boxShadow = window.pageYOffset > 100
-                ? '0 4px 16px rgba(0,0,0,.12)'
-                : '0 2px 8px rgba(0,0,0,.08)';
-        }
     });
 
     const contactForm = document.getElementById('contactForm');
@@ -50,22 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-    document.querySelectorAll('.about-card, .advantage-item, .result-card, .trust-card, .bali-stat, .compare-card').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
 });
 
 function getConfig() {
@@ -93,7 +72,7 @@ function renderPublicContacts() {
     const titleEl = document.getElementById('contactLinksTitle');
     if (titleEl) titleEl.hidden = links.length === 0;
 
-    ['contactLinks', 'footerContactLinks'].forEach(id => {
+    ['contactLinks', 'footerContactLinks'].forEach((id) => {
         const container = document.getElementById(id);
         if (!container) return;
         container.innerHTML = '';
@@ -101,7 +80,7 @@ function renderPublicContacts() {
             container.hidden = true;
             return;
         }
-        links.forEach(link => {
+        links.forEach((link) => {
             const a = document.createElement('a');
             a.href = link.href;
             a.textContent = link.label;
@@ -178,7 +157,6 @@ async function submitForm(data) {
         return;
     }
 
-    // Fallback: clipboard + console
     console.log('Form submission:', data, text);
     try {
         await navigator.clipboard.writeText(text);
@@ -221,9 +199,16 @@ function getErrorMessage() {
 window.renderPublicContacts = renderPublicContacts;
 
 window.addEventListener('load', () => {
-    document.querySelectorAll('.stat-number').forEach(stat => {
-        const v = stat.textContent;
-        if (!isNaN(parseInt(v))) animateValue(stat, 0, parseInt(v), 2000);
+    if (window.AWCAnimate?.prefersReduce?.()) return;
+    document.querySelectorAll('.stat-number[data-count]').forEach((stat) => {
+        const end = parseInt(stat.getAttribute('data-count'), 10);
+        if (!Number.isNaN(end)) {
+            if (window.AWCAnimate?.animateValue) {
+                window.AWCAnimate.animateValue(stat, 0, end, 1800, (v) => String(Math.floor(v)));
+            } else {
+                animateValue(stat, 0, end, 1800);
+            }
+        }
     });
 });
 

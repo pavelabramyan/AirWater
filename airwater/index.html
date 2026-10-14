@@ -20,14 +20,14 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar" id="navbar">
         <div class="container">
             <div class="nav-content">
-                <div class="logo">
-                    <span class="logo-icon">💧</span>
+                <a href="#top" class="logo">
+                    <span class="logo-icon" aria-hidden="true">💧</span>
                     <span class="logo-text" data-i18n="nav.logo">AquaFuture</span>
-                </div>
-                <div class="nav-links">
+                </a>
+                <div class="nav-links" id="navLinksDesktop">
                     <a href="#about" data-i18n="nav.about">О проекте</a>
                     <a href="#calculator" data-i18n="nav.calculator">Калькулятор</a>
                     <a href="#compare" data-i18n="nav.compare">Сравнение</a>
@@ -36,20 +36,36 @@
                     <a href="#contact" data-i18n="nav.contact">Контакты</a>
                 </div>
                 <div class="lang-selector">
-                    <select id="langSelect">
+                    <select id="langSelect" aria-label="Language">
                         <option value="ru">🇷🇺 RU</option>
                         <option value="en">🇬🇧 EN</option>
                         <option value="zh">🇨🇳 中文</option>
                         <option value="es">🇪🇸 ES</option>
                     </select>
                 </div>
+                <button type="button" class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false" aria-controls="navDrawer">
+                    <span></span><span></span><span></span>
+                </button>
             </div>
         </div>
     </nav>
+    <div class="nav-drawer" id="navDrawer" hidden>
+        <div class="nav-drawer-backdrop" id="navDrawerBackdrop"></div>
+        <nav class="nav-drawer-panel" aria-label="Mobile">
+            <a href="#about" data-i18n="nav.about">О проекте</a>
+            <a href="#calculator" data-i18n="nav.calculator">Калькулятор</a>
+            <a href="#compare" data-i18n="nav.compare">Сравнение</a>
+            <a href="#bali" data-i18n="nav.bali">Бали</a>
+            <a href="#trust" data-i18n="nav.trust">Надёжность</a>
+            <a href="#contact" data-i18n="nav.contact">Контакты</a>
+        </nav>
+    </div>
 
     <!-- Hero -->
     <section class="hero" id="top">
-        <div class="hero-background" aria-hidden="true"></div>
+        <div class="hero-background" aria-hidden="true">
+            <canvas id="heroParticles"></canvas>
+        </div>
         <div class="container">
             <div class="hero-content">
                 <p class="hero-brand" data-i18n="nav.logo">AquaFuture</p>
@@ -57,7 +73,7 @@
                 <p class="hero-subtitle" data-i18n="hero.subtitle">Инновационная технология. Устойчивый бизнес. Глобальный масштаб.</p>
                 <div class="hero-stats">
                     <div class="stat-item">
-                        <div class="stat-number">5000</div>
+                        <div class="stat-number" data-count="5000">5000</div>
                         <div class="stat-label" data-i18n="hero.stat1">литров в сутки</div>
                     </div>
                     <div class="stat-item">
@@ -75,27 +91,31 @@
         </div>
     </section>
 
+    <div class="wave-divider" aria-hidden="true" style="--wave-fill: var(--color-surface-2)">
+        <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M0,24 C240,48 480,0 720,18 C960,36 1200,48 1440,18 L1440,48 L0,48 Z"/></svg>
+    </div>
+
     <!-- About Section -->
     <section id="about" class="about">
         <div class="container">
             <h2 class="section-title" data-i18n="about.title">О проекте</h2>
             <div class="about-grid">
-                <div class="about-card">
+                <div class="about-card reveal">
                     <div class="card-icon">🌍</div>
                     <h3 data-i18n="about.card1.title">Глобальное масштабирование</h3>
                     <p data-i18n="about.card1.text">Размещение производств в регионах с высокой влажностью и платежеспособным спросом на премиальную воду</p>
                 </div>
-                <div class="about-card">
+                <div class="about-card reveal">
                     <div class="card-icon">🔬</div>
                     <h3 data-i18n="about.card2.title">Передовая технология</h3>
                     <p data-i18n="about.card2.text">Установки производительностью 5000 л/сутки из Китая + автоматизированные линии розлива и упаковки</p>
                 </div>
-                <div class="about-card">
+                <div class="about-card reveal">
                     <div class="card-icon">📈</div>
                     <h3 data-i18n="about.card3.title">Высокая рентабельность</h3>
                     <p data-i18n="about.card3.text">Быстрая окупаемость за счет низких операционных затрат и растущего спроса на экологичную воду</p>
                 </div>
-                <div class="about-card">
+                <div class="about-card reveal">
                     <div class="card-icon">✅</div>
                     <h3 data-i18n="about.card4.title">Полная готовность</h3>
                     <p data-i18n="about.card4.text">Лицензирование, сертификация, аренда помещений - все этапы проработаны и готовы к реализации</p>
@@ -317,10 +337,10 @@
             <h2 class="bali-title" data-i18n="bali.title">Производство воды из воздуха на Бали</h2>
             <p class="bali-subtitle" data-i18n="bali.subtitle">Премиальный рынок · 78% влажность · 6+ млн туристов в год</p>
             <div class="bali-stats">
-                <div class="bali-stat"><div class="bali-stat-num">78%</div><div class="bali-stat-label" data-i18n="bali.stat1">средняя влажность</div></div>
-                <div class="bali-stat"><div class="bali-stat-num">$0.42</div><div class="bali-stat-label" data-i18n="bali.stat2">цена воды/литр</div></div>
-                <div class="bali-stat"><div class="bali-stat-num">60%</div><div class="bali-stat-label" data-i18n="bali.stat3">opex от выручки</div></div>
-                <div class="bali-stat"><div class="bali-stat-num">3-5</div><div class="bali-stat-label" data-i18n="bali.stat4">мес. до запуска</div></div>
+                <div class="bali-stat reveal"><div class="bali-stat-num">78%</div><div class="bali-stat-label" data-i18n="bali.stat1">средняя влажность</div></div>
+                <div class="bali-stat reveal"><div class="bali-stat-num">$0.42</div><div class="bali-stat-label" data-i18n="bali.stat2">цена воды/литр</div></div>
+                <div class="bali-stat reveal"><div class="bali-stat-num">60%</div><div class="bali-stat-label" data-i18n="bali.stat3">opex от выручки</div></div>
+                <div class="bali-stat reveal"><div class="bali-stat-num">3-5</div><div class="bali-stat-label" data-i18n="bali.stat4">мес. до запуска</div></div>
             </div>
             <div class="bali-features">
                 <div class="bali-feature"><span>🏨</span><p data-i18n="bali.f1">Отели 4-5★, виллы, рестораны, спа — готовый премиальный спрос</p></div>
@@ -340,32 +360,32 @@
         <div class="container">
             <h2 class="section-title" data-i18n="trust.title">Почему нам доверяют</h2>
             <div class="trust-grid">
-                <div class="trust-card">
+                <div class="trust-card reveal">
                     <div class="trust-icon">🏭</div>
                     <h3 data-i18n="trust.c1.title">Проверенное оборудование</h3>
                     <p data-i18n="trust.c1.text">AWG-установки от китайских производителей с гарантией 2 года. Производительность 1000–10000 л/сутки.</p>
                 </div>
-                <div class="trust-card">
+                <div class="trust-card reveal">
                     <div class="trust-icon">📋</div>
                     <h3 data-i18n="trust.c2.title">Полная легализация</h3>
                     <p data-i18n="trust.c2.text">BPOM (Индонезия), Роспотребнадзор (РФ). Сертификация воды WHO/FDA. Регистрация бренда.</p>
                 </div>
-                <div class="trust-card">
+                <div class="trust-card reveal">
                     <div class="trust-icon">📊</div>
                     <h3 data-i18n="trust.c3.title">Прозрачная отчётность</h3>
                     <p data-i18n="trust.c3.text">Ежемесячный P&L инвестору. Доля прибыли 50/50. Структура инвестиций с резервом 27%.</p>
                 </div>
-                <div class="trust-card">
+                <div class="trust-card reveal">
                     <div class="trust-icon">🚀</div>
                     <h3 data-i18n="trust.c4.title">3-5 месяцев до запуска</h3>
                     <p data-i18n="trust.c4.text">7 этапов: документы → площадка → оборудование → лицензии → запуск → продажи → автономность.</p>
                 </div>
-                <div class="trust-card">
+                <div class="trust-card reveal">
                     <div class="trust-icon">🤝</div>
                     <h3 data-i18n="trust.c5.title">Партнёрская модель</h3>
                     <p data-i18n="trust.c5.text">Инвестор вкладывает 100%, получает 50% прибыли. Организатор берёт на себя операционку.</p>
                 </div>
-                <div class="trust-card">
+                <div class="trust-card reveal">
                     <div class="trust-icon">🌍</div>
                     <h3 data-i18n="trust.c6.title">192 страны в калькуляторе</h3>
                     <p data-i18n="trust.c6.text">Данные по влажности и ценам воды. Сравнение локаций. Расчёт под ваш регион.</p>
@@ -379,28 +399,28 @@
         <div class="container">
             <h2 class="section-title" data-i18n="advantages.title">Почему это выгодно</h2>
             <div class="advantages-list">
-                <div class="advantage-item">
+                <div class="advantage-item reveal">
                     <div class="advantage-number">01</div>
                     <div class="advantage-content">
                         <h3 data-i18n="advantages.item1.title">Растущий рынок</h3>
                         <p data-i18n="advantages.item1.text">Мировой рынок бутилированной воды растет на 7-8% ежегодно. Спрос на премиальную экологичную воду особенно высок в развивающихся регионах.</p>
                     </div>
                 </div>
-                <div class="advantage-item">
+                <div class="advantage-item reveal">
                     <div class="advantage-number">02</div>
                     <div class="advantage-content">
                         <h3 data-i18n="advantages.item2.title">Низкие операционные затраты</h3>
                         <p data-i18n="advantages.item2.text">Не требуется подключение к водопроводу. Энергопотребление оптимизировано. Минимальный штат сотрудников благодаря автоматизации.</p>
                     </div>
                 </div>
-                <div class="advantage-item">
+                <div class="advantage-item reveal">
                     <div class="advantage-number">03</div>
                     <div class="advantage-content">
                         <h3 data-i18n="advantages.item3.title">Экологичность</h3>
                         <p data-i18n="advantages.item3.text">100% экологичное производство без вреда для окружающей среды. Уникальное позиционирование на рынке премиальной воды.</p>
                     </div>
                 </div>
-                <div class="advantage-item">
+                <div class="advantage-item reveal">
                     <div class="advantage-number">04</div>
                     <div class="advantage-content">
                         <h3 data-i18n="advantages.item4.title">Масштабируемость</h3>
@@ -418,22 +438,27 @@
             <div class="investment-breakdown">
                 <div class="breakdown-item">
                     <span class="breakdown-label" data-i18n="investment.item1">Оборудование (установка + линии)</span>
+                    <span class="breakdown-bar" aria-hidden="true"><i style="--w:33%"></i></span>
                     <span class="breakdown-value">33%</span>
                 </div>
                 <div class="breakdown-item">
                     <span class="breakdown-label" data-i18n="investment.item2">Логистика и монтаж</span>
+                    <span class="breakdown-bar" aria-hidden="true"><i style="--w:9%"></i></span>
                     <span class="breakdown-value">9%</span>
                 </div>
                 <div class="breakdown-item">
                     <span class="breakdown-label" data-i18n="investment.item3">Площадка, лицензии, маркетинг</span>
+                    <span class="breakdown-bar" aria-hidden="true"><i style="--w:11%"></i></span>
                     <span class="breakdown-value">11%</span>
                 </div>
                 <div class="breakdown-item">
                     <span class="breakdown-label" data-i18n="investment.item4">Резервный фонд</span>
+                    <span class="breakdown-bar" aria-hidden="true"><i style="--w:27%"></i></span>
                     <span class="breakdown-value">27%</span>
                 </div>
                 <div class="breakdown-item">
                     <span class="breakdown-label" data-i18n="investment.item5">Комиссия организатора</span>
+                    <span class="breakdown-bar" aria-hidden="true"><i style="--w:20%"></i></span>
                     <span class="breakdown-value">20%</span>
                 </div>
             </div>
@@ -446,7 +471,8 @@
             <h2 class="section-title" data-i18n="roadmap.title">Этапы запуска производства</h2>
             <p class="section-subtitle" data-i18n="roadmap.subtitle">От подписания договора до автономной работы — 3-5 месяцев</p>
             
-            <div class="timeline">
+            <div class="timeline" id="roadmapTimeline">
+                <div class="timeline-progress" id="timelineProgress" aria-hidden="true"></div>
                 <!-- Этап 1: Документы -->
                 <div class="timeline-item">
                     <div class="timeline-icon">01</div>
@@ -608,6 +634,8 @@
         </div>
     </footer>
 
+    <a href="#calculator" class="mobile-sticky-cta" id="mobileStickyCta" data-i18n="hero.cta">Рассчитать инвестицию</a>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
@@ -620,6 +648,7 @@
     <script src="chart.js"></script>
     <script src="map.js"></script>
     <script src="config.js"></script>
+    <script src="animations.js"></script>
     <script src="main.js"></script>
     <script>
     document.getElementById('baliPresetBtn')?.addEventListener('click', () => {
