@@ -76,9 +76,12 @@
                 d.x += d.vx + Math.sin((d.y + i * 12) * 0.002) * 0.15;
                 if (d.y > h + 10) spawn(i);
                 ctx.beginPath();
-                ctx.fillStyle = `rgba(11, 107, 203, ${d.a})`;
+                ctx.fillStyle = `rgba(186, 248, 255, ${d.a})`;
+                ctx.shadowColor = 'rgba(0, 194, 215, 0.8)';
+                ctx.shadowBlur = 8 * devicePixelRatio;
                 ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
                 ctx.fill();
+                ctx.shadowBlur = 0;
             }
             raf = requestAnimationFrame(tick);
         }
