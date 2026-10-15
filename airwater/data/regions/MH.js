@@ -1,0 +1,1 @@
+window.AWC_REGIONS=window.AWC_REGIONS||{};window.AWC_REGIONS["MH"]=[{"iso": "MH-L", "en": "Ralik", "ru": "Ралик", "es": "Ralik", "zh": "拉利克", "native": "Titled", "lat": 8.2, "lng": 167.8, "humidity": 80}, {"iso": "MH-T", "en": "Ratak", "ru": "Ратак", "es": "Ratak", "zh": "拉塔克", "native": "Ratak", "lat": 8.6, "lng": 170.8, "humidity": 80}];

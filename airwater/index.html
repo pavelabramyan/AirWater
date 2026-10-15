@@ -259,7 +259,8 @@
                     </div>
                 </div>
 
-                <div class="calculator-results wizard-step-panel" data-step="3">
+                <p id="calcSource" class="calc-source"></p>
+            <div class="calculator-results wizard-step-panel" data-step="3">
                     <div class="result-card highlight">
                         <div class="result-label">
                             <span data-i18n="calculator.roi">ROI</span>
@@ -643,7 +644,8 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
-    <script src="country_regions.js"></script>
+    <script src="data/sources.js"></script>
+    <script src="data/countries.js"></script>
     <script src="locations.js"></script>
     <script src="i18n.js"></script>
     <script src="calculator.js?v=4"></script>
@@ -656,27 +658,19 @@
     <script src="main.js"></script>
     <script>
     document.getElementById('baliPresetBtn')?.addEventListener('click', () => {
-        const lang = window.currentLang || 'ru';
-        const presets = {
-            ru: { country: 'Индонезия', region: 'Бали' },
-            en: { country: 'Indonesia', region: 'Bali' },
-            zh: { country: '印度尼西亚', region: '巴厘岛' },
-            es: { country: 'Indonesia', region: 'Bali' }
-        };
-        const p = presets[lang] || presets.ru;
         const cs = document.getElementById('countrySelect');
         if (!cs) return;
-        cs.value = p.country;
-        cs.dispatchEvent(new Event('change'));
-        setTimeout(() => {
+        cs.value = 'ID';
+        loadRegions('ID').then(() => {
+            fillRegionSelect('ID');
             const rs = document.getElementById('regionSelect');
-            if (rs) { rs.value = p.region; rs.dispatchEvent(new Event('change')); }
+            if (rs) { rs.value = 'ID-BA'; rs.dispatchEvent(new Event('change')); }
             document.getElementById('capacityUtilization').value = 100;
             document.getElementById('rampUpMonths').value = 0;
             document.getElementById('priceInflation').value = 0;
             document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
             calculateROI();
-        }, 80);
+        });
     });
     </script>
 </body>

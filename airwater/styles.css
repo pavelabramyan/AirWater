@@ -1022,6 +1022,13 @@ section {
     height: 360px;
 }
 
+.calc-source {
+    margin: 8px 0 18px;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--color-text-muted);
+}
+
 /* Wizard */
 .calc-wizard {
     display: none;

@@ -157,7 +157,7 @@ const translations = {
         'trust.c3.title': 'Прозрачная отчётность', 'trust.c3.text': 'Ежемесячный P&L инвестору. Доля прибыли 50/50. Структура инвестиций с резервом 27%.',
         'trust.c4.title': '3-5 месяцев до запуска', 'trust.c4.text': '7 этапов: документы → площадка → оборудование → лицензии → запуск → продажи → автономность.',
         'trust.c5.title': 'Партнёрская модель', 'trust.c5.text': 'Инвестор вкладывает 100%, получает 50% прибыли. Организатор берёт на себя операционку.',
-        'trust.c6.title': '192 страны в калькуляторе', 'trust.c6.text': 'Данные по влажности и ценам воды. Сравнение локаций. Расчёт под ваш регион.'
+        'trust.c6.title': '197 стран в калькуляторе', 'trust.c6.text': 'Данные по влажности и ценам воды. Сравнение локаций. Расчёт под ваш регион.'
     },
     en: {
         'nav.logo': 'AquaFuture',
@@ -317,7 +317,7 @@ const translations = {
         'trust.c3.title': 'Transparent Reporting', 'trust.c3.text': 'Monthly P&L to investor. 50/50 profit share. Investment structure with 27% reserve.',
         'trust.c4.title': '3-5 months to launch', 'trust.c4.text': '7 stages: docs → site → equipment → licenses → launch → sales → autonomy.',
         'trust.c5.title': 'Partnership Model', 'trust.c5.text': 'Investor contributes 100%, receives 50% profit. Organizer handles operations.',
-        'trust.c6.title': '192 countries in calculator', 'trust.c6.text': 'Humidity and water price data. Location comparison. Calculation for your region.'
+        'trust.c6.title': '197 countries in calculator', 'trust.c6.text': 'Humidity and water price data. Location comparison. Calculation for your region.'
     },
     zh: {
         'nav.logo': 'AquaFuture',
@@ -477,7 +477,7 @@ const translations = {
         'trust.c3.title': '透明报告', 'trust.c3.text': '每月P&L给投资者。50/50利润分成。27%储备金结构。',
         'trust.c4.title': '3-5个月启动', 'trust.c4.text': '7个阶段：文件→场地→设备→许可→启动→销售→自主运营。',
         'trust.c5.title': '合作模式', 'trust.c5.text': '投资者100%出资，获得50%利润。组织者负责运营。',
-        'trust.c6.title': '192个国家数据', 'trust.c6.text': '湿度和水价数据。地点对比。按地区计算。'
+        'trust.c6.title': '197个国家数据', 'trust.c6.text': '湿度和水价数据。地点对比。按地区计算。'
     },
     es: {
         'nav.logo': 'AquaFuture',
@@ -637,42 +637,96 @@ const translations = {
         'trust.c3.title': 'Informes Transparentes', 'trust.c3.text': 'P&L mensual al inversor. 50/50 beneficios. Reserva 27%.',
         'trust.c4.title': '3-5 meses al lanzamiento', 'trust.c4.text': '7 etapas: docs → sitio → equipo → licencias → lanzamiento → ventas → autonomía.',
         'trust.c5.title': 'Modelo de Asociación', 'trust.c5.text': 'Inversor aporta 100%, recibe 50% beneficio. Organizador opera.',
-        'trust.c6.title': '192 países en calculador', 'trust.c6.text': 'Datos de humedad y precios. Comparación de ubicaciones.'
+        'trust.c6.title': '197 países en calculador', 'trust.c6.text': 'Datos de humedad y precios. Comparación de ubicaciones.'
     }
 };
 
 window.currentLang = 'ru';
 let currentLang = 'ru'; // Keep for backward compatibility
 
+function translationFor(lang, key) {
+    return (translations[lang] && translations[lang][key])
+        || (translations.en && translations.en[key])
+        || '';
+}
+
+function ensureNationalLanguage(country) {
+    const select = document.getElementById('langSelect');
+    if (!select || !country) return;
+    const code = country.lang;
+    if (!code || ['ru', 'en', 'zh', 'es'].includes(code)) return;
+    let option = [...select.options].find(opt => opt.value === code);
+    if (!option) {
+        option = document.createElement('option');
+        option.value = code;
+        select.appendChild(option);
+    }
+    option.textContent = (country.native || code) + ' · ' + code.toUpperCase();
+}
+
 function setLanguage(lang) {
     window.currentLang = lang;
     currentLang = lang; // Keep for backward compatibility
-    document.documentElement.lang = lang;
+    document.documentElement.lang = lang === 'zh' ? 'zh' : lang;
     
-    // Update all elements with data-i18n attribute
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (translations[lang] && translations[lang][key]) {
-            el.innerHTML = translations[lang][key];
-        }
+        const text = translationFor(lang, key);
+        if (text) el.innerHTML = text;
     });
     
-    // Update placeholders
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
         const key = el.getAttribute('data-i18n-placeholder');
-        if (translations[lang] && translations[lang][key]) {
-            el.placeholder = translations[lang][key];
-        }
+        const text = translationFor(lang, key);
+        if (text) el.placeholder = text;
     });
     
-    // Update select option
-    document.getElementById('langSelect').value = lang;
+    const select = document.getElementById('langSelect');
+    if (select && [...select.options].some(opt => opt.value === lang)) select.value = lang;
     
     if (typeof calculateROI === 'function') calculateROI();
     if (typeof updateComparison === 'function') updateComparison();
     if (typeof refreshCountrySelect === 'function') refreshCountrySelect();
     if (typeof initTooltips === 'function') initTooltips();
 }
+
+const CALC_LANGS = {
+    fr: ['À propos','Calculateur','Comparer','Bali','Confiance','Contact','Calculer l’investissement','Calculateur de rendement','Pays *','Région *','Humidité moyenne','ROI investisseur','Marge nette','Revenu annuel','Profit investisseur après impôt','Retour sur investissement','Profit sur la période'],
+    de: ['Über uns','Rechner','Vergleich','Bali','Vertrauen','Kontakt','Investition rechnen','Renditerechner','Land *','Region *','Mittlere Luftfeuchte','ROI des Investors','Nettomarge','Jahresumsatz','Investorengewinn nach Steuer','Amortisation','Gewinn im Zeitraum'],
+    pt: ['Sobre','Calculadora','Comparar','Bali','Confiança','Contacto','Calcular investimento','Calculadora de retorno','País *','Região *','Humidade média','ROI do investidor','Margem líquida','Receita anual','Lucro do investidor após imposto','Retorno','Lucro no período'],
+    ar: ['عن المشروع','الحاسبة','مقارنة','بالي','الموثوقية','اتصال','احسب الاستثمار','حاسبة العائد','البلد *','المنطقة *','متوسط الرطوبة','عائد المستثمر','الهامش الصافي','الإيراد السنوي','ربح المستثمر بعد الضريبة','الاسترداد','الربح خلال الفترة'],
+    fa: ['درباره','ماشین‌حساب','مقایسه','بالی','اعتماد','تماس','محاسبه سرمایه‌گذاری','ماشین‌حساب بازده','کشور *','منطقه *','رطوبت میانگین','بازده سرمایه‌گذار','حاشیه خالص','درآمد سالانه','سود سرمایه‌گذار پس از مالیات','بازگشت سرمایه','سود دوره'],
+    tr: ['Hakkında','Hesaplayıcı','Karşılaştırma','Bali','Güven','İletişim','Yatırımı hesapla','Getiri hesaplayıcı','Ülke *','Bölge *','Ortalama nem','Yatırımcı ROI','Net marj','Yıllık gelir','Vergi sonrası yatırımcı kârı','Geri ödeme','Dönem kârı'],
+    ja: ['概要','計算機','比較','バリ','信頼','連絡','投資を計算','収益計算機','国 *','地域 *','平均湿度','投資家ROI','純利益率','年間売上','税引後の投資家利益','回収','期間利益'],
+    hi: ['परिचय','कैलकुलेटर','तुलना','बाली','विश्वास','संपर्क','निवेश गणना','रिटर्न कैलकुलेटर','देश *','क्षेत्र *','औसत आर्द्रता','निवेशक ROI','शुद्ध मार्जिन','वार्षिक आय','कर के बाद निवेशक लाभ','वापसी','अवधि का लाभ']
+};
+const CALC_KEYS = ['nav.about','nav.calculator','nav.compare','nav.bali','nav.trust','nav.contact','hero.cta','calculator.title','calculator.country','calculator.region','calculator.humidity','calculator.roi','calculator.ebitda','calculator.revenue','calculator.profit','calculator.payback','calculator.total'];
+Object.entries(CALC_LANGS).forEach(([code, values]) => {
+    translations[code] = {};
+    CALC_KEYS.forEach((key, i) => { translations[code][key] = values[i]; });
+});
+
+translations.id = {
+    'nav.about': 'Tentang',
+    'nav.calculator': 'Kalkulator',
+    'nav.compare': 'Perbandingan',
+    'nav.bali': 'Bali',
+    'nav.trust': 'Keandalan',
+    'nav.contact': 'Kontak',
+    'hero.cta': 'Hitung investasi',
+    'calculator.title': 'Kalkulator hasil investasi',
+    'calculator.country': 'Negara *',
+    'calculator.region': 'Wilayah *',
+    'calculator.humidity': 'Kelembapan rata-rata',
+    'calculator.roi': 'ROI investor',
+    'calculator.npv': 'NPV',
+    'calculator.irr': 'IRR',
+    'calculator.ebitda': 'Marjin bersih',
+    'calculator.revenue': 'Pendapatan tahunan',
+    'calculator.profit': 'Laba investor setelah pajak',
+    'calculator.payback': 'Pengembalian modal',
+    'calculator.total': 'Laba selama periode'
+};
 
 window.METRIC_TOOLTIPS = {
     ru: {

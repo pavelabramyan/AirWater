@@ -35,13 +35,15 @@ function updateMapHeatmap() {
     if (!countryData) return;
 
     Object.entries(countryData.regions).forEach(([name, region]) => {
+        const lang = window.currentLang || 'ru';
+        const label = region.region ? awcPlaceName(region.region, lang, countryData.country?.lang) : name;
         if (region.humidity == null || !region.coords) return;
         const color = humidityColor(region.humidity);
         const circle = L.circle(region.coords, {
             color, fillColor: color, fillOpacity: 0.35,
             radius: 40000, weight: 1
         }).addTo(map);
-        circle.bindPopup(`<b>${name}</b><br>💧 ${region.humidity}% · $${region.waterPriceUsd1L}/L`);
+        circle.bindPopup(`<b>${label}</b><br>💧 ${region.humidity}% · $${region.waterPriceUsd1L}/L`);
         heatmapLayers.push(circle);
     });
 }
@@ -66,16 +68,19 @@ function updateMap(countryName, regionName) {
         iconSize: [28, 28], iconAnchor: [14, 14]
     });
 
+    const lang = window.currentLang || 'ru';
+    const countryLabel = country.country ? awcPlaceName(country.country, lang, country.country.lang) : countryName;
     const cc = country.coords;
-    countryMarker = L.marker(cc, { icon: blueIcon }).addTo(map).bindPopup(`<b>${countryName}</b>`);
+    countryMarker = L.marker(cc, { icon: blueIcon }).addTo(map).bindPopup(`<b>${countryLabel}</b>`);
 
     if (regionName && country.regions[regionName]) {
         const region = country.regions[regionName];
+        const regionLabel = region.region ? awcPlaceName(region.region, lang, country.country?.lang) : regionName;
         const rc = Array.isArray(region.coords) ? region.coords : cc;
         regionMarker = L.marker(rc, { icon: redIcon }).addTo(map);
         const h = region.humidity ?? '—';
         const p = region.waterPriceUsd1L ?? '—';
-        regionMarker.bindPopup(`<b>${regionName}</b><br>💧 ${h}% · $${p}/L`).openPopup();
+        regionMarker.bindPopup(`<b>${regionLabel}</b><br>💧 ${h}% · $${p}/L`).openPopup();
         regionLayer = L.circle(rc, {
             color: humidityColor(region.humidity || 50),
             fillColor: humidityColor(region.humidity || 50),

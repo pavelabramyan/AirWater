@@ -1,0 +1,1 @@
+window.AWC_REGIONS=window.AWC_REGIONS||{};window.AWC_REGIONS["VA"]=[{"iso": "VA", "en": "Vatican City", "ru": "Ватикан", "es": "Ciudad del Vaticano", "zh": "梵蒂冈", "native": "Vaticano", "lat": 41.9, "lng": 12.4, "humidity": 67}];

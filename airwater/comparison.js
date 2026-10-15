@@ -1,47 +1,32 @@
-const COMPARE_LOCATIONS = {
-    ru: [
-        { id: 'uae',    label: '🇦🇪 ОАЭ (Дубай)',     country: 'ОАЭ', region: 'Дубай' },
-        { id: 'moscow', label: '🇷🇺 Москва',          country: 'Россия', region: 'Москва' },
-        { id: 'sochi',  label: '🇷🇺 Сочи',            country: 'Россия', region: 'Сочи' },
-        { id: 'bali',   label: '🇮🇩 Бали',            country: 'Индонезия', region: 'Бали' }
-    ],
-    en: [
-        { id: 'uae',    label: '🇦🇪 UAE (Dubai)',     country: 'United Arab Emirates', region: 'Dubai' },
-        { id: 'moscow', label: '🇷🇺 Moscow',          country: 'Russia', region: 'Moscow' },
-        { id: 'sochi',  label: '🇷🇺 Sochi',           country: 'Russia', region: 'Sochi' },
-        { id: 'bali',   label: '🇮🇩 Bali',            country: 'Indonesia', region: 'Bali' }
-    ],
-    zh: [
-        { id: 'uae',    label: '🇦🇪 阿联酋（迪拜）',   country: '阿联酋', region: '迪拜' },
-        { id: 'moscow', label: '🇷🇺 莫斯科',          country: '俄罗斯', region: '莫斯科' },
-        { id: 'sochi',  label: '🇷🇺 索契',            country: '俄罗斯', region: '索契' },
-        { id: 'bali',   label: '🇮🇩 巴厘岛',          country: '印度尼西亚', region: '巴厘岛' }
-    ],
-    es: [
-        { id: 'uae',    label: '🇦🇪 EAU (Dubái)',     country: 'Emiratos Árabes Unidos', region: 'Dubái' },
-        { id: 'moscow', label: '🇷🇺 Moscú',           country: 'Rusia', region: 'Moscú' },
-        { id: 'sochi',  label: '🇷🇺 Sochi',           country: 'Rusia', region: 'Sochi' },
-        { id: 'bali',   label: '🇮🇩 Bali',            country: 'Indonesia', region: 'Bali' }
-    ]
-};
+const COMPARE_LOCATIONS = [
+    { id: 'uae', iso: 'AE', region: 'AE-DU', flag: '🇦🇪' },
+    { id: 'moscow', iso: 'RU', region: 'RU-MOW', flag: '🇷🇺' },
+    { id: 'krasnodar', iso: 'RU', region: 'RU-KDA', flag: '🇷🇺' },
+    { id: 'bali', iso: 'ID', region: 'ID-BA', flag: '🇮🇩' }
+];
 
 function getCompareLocations() {
     const lang = window.currentLang || 'ru';
-    return COMPARE_LOCATIONS[lang] || COMPARE_LOCATIONS.ru;
+    return COMPARE_LOCATIONS.map(item => {
+        const country = awcCountry(item.iso);
+        const region = (window.AWC_REGIONS[item.iso] || []).find(r => r.iso === item.region);
+        const place = region ? awcPlaceName(region, lang, country?.lang) : item.region;
+        return { ...item, country: item.iso, label: `${item.flag} ${place}` };
+    });
 }
 
-function computeLocationMetrics(country, region) {
-    const locations = getLocationsData();
-    const countryData = locations[country];
-    if (!countryData?.regions[region]) return null;
-
-    const r = countryData.regions[region];
+function computeLocationMetrics(iso, regionIso) {
+    const country = awcCountry(iso);
+    const region = (window.AWC_REGIONS[iso] || []).find(r => r.iso === regionIso);
+    if (!country || !region) return null;
     const params = getCalculatorParams();
     return computeMetrics({
         ...params,
-        humidity: r.humidity,
-        pricePerLiter: r.waterPriceUsd1L ?? params.pricePerLiter,
-        operatingCostsPercent: COUNTRY_OPERATING_COSTS[country] || params.operatingCostsPercent
+        humidity: region.humidity,
+        pricePerLiter: country.water ?? params.pricePerLiter,
+        electricityCost: country.elec,
+        taxRate: country.tax / 100,
+        monthlyWage: country.wage
     });
 }
 
@@ -91,11 +76,11 @@ function updateComparison() {
             const rs = document.getElementById('regionSelect');
             if (!cs) return;
             cs.value = btn.dataset.country;
-            cs.dispatchEvent(new Event('change'));
-            setTimeout(() => {
+            loadRegions(btn.dataset.country).then(() => {
+                fillRegionSelect(btn.dataset.country);
                 if (rs) { rs.value = btn.dataset.region; rs.dispatchEvent(new Event('change')); }
                 document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
-            }, 50);
+            });
         });
     });
 }
@@ -104,8 +89,9 @@ function updateHeroFromCalculator(m, params) {
     const heroDynamic = document.getElementById('heroDynamic');
     if (!heroDynamic) return;
 
-    const country = document.getElementById('countrySelect')?.value;
-    const region = document.getElementById('regionSelect')?.value;
+    const country = awcCountry(document.getElementById('countrySelect')?.value);
+    const regionIso = document.getElementById('regionSelect')?.value;
+    const region = (window.AWC_REGIONS[country?.iso] || []).find(r => r.iso === regionIso);
     if (!country || !region) {
         heroDynamic.classList.remove('visible');
         return;
@@ -113,11 +99,12 @@ function updateHeroFromCalculator(m, params) {
 
     heroDynamic.classList.add('visible');
     const lang = window.currentLang || 'ru';
+    const place = awcPlaceName(region, lang, country.lang);
     const texts = {
-        ru: `Ваш расчёт: ${region} · ROI ${formatNumber(m.roiPercent)}% · окупаемость ${m.paybackYears < 1 ? Math.round(m.paybackYears*12)+' мес.' : formatNumber(m.paybackYears)+' лет'}`,
-        en: `Your estimate: ${region} · ROI ${formatNumber(m.roiPercent)}% · payback ${m.paybackYears < 1 ? Math.round(m.paybackYears*12)+' mo.' : formatNumber(m.paybackYears)+' yrs'}`,
-        zh: `您的估算：${region} · ROI ${formatNumber(m.roiPercent)}% · 回收期 ${m.paybackYears < 1 ? Math.round(m.paybackYears*12)+' 月' : formatNumber(m.paybackYears)+' 年'}`,
-        es: `Su cálculo: ${region} · ROI ${formatNumber(m.roiPercent)}% · recuperación ${m.paybackYears < 1 ? Math.round(m.paybackYears*12)+' mes.' : formatNumber(m.paybackYears)+' años'}`
+        ru: `Ваш расчёт: ${place} · ROI ${formatNumber(m.roiPercent)}% · окупаемость ${m.paybackYears < 1 ? Math.round(m.paybackYears*12)+' мес.' : formatNumber(m.paybackYears)+' лет'}`,
+        en: `Your estimate: ${place} · ROI ${formatNumber(m.roiPercent)}% · payback ${m.paybackYears < 1 ? Math.round(m.paybackYears*12)+' mo.' : formatNumber(m.paybackYears)+' yrs'}`,
+        zh: `您的估算：${place} · ROI ${formatNumber(m.roiPercent)}% · 回收期 ${m.paybackYears < 1 ? Math.round(m.paybackYears*12)+' 月' : formatNumber(m.paybackYears)+' 年'}`,
+        es: `Su cálculo: ${place} · ROI ${formatNumber(m.roiPercent)}% · recuperación ${m.paybackYears < 1 ? Math.round(m.paybackYears*12)+' mes.' : formatNumber(m.paybackYears)+' años'}`
     };
     heroDynamic.textContent = texts[lang] || texts.en;
 
@@ -127,4 +114,6 @@ function updateHeroFromCalculator(m, params) {
     if (statNums[2]) statNums[2].textContent = m.paybackYears < 1 ? Math.round(m.paybackYears*12) + (lang==='ru'?' мес.':' mo.') : formatNumber(m.paybackYears) + (lang==='ru'?' лет':' yrs');
 }
 
-document.addEventListener('DOMContentLoaded', () => updateComparison());
+document.addEventListener('DOMContentLoaded', () => {
+    Promise.all(['AE', 'RU', 'ID', 'US', 'IR'].map(loadRegions)).then(() => updateComparison());
+});

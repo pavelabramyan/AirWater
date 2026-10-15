@@ -27,7 +27,7 @@ const KWH_PER_LITER = (65 * 24) / 5000;
 // Тара $0,03/л вместо $800/мес из сметы: на 3 900 л/сут это было бы $0,007/л, бутылка 0,5–5 л столько не стоит.
 const PACKAGING_USD_PER_LITER = 0.03;
 // Верх вилки зарплат из плана ($350+$600+$300) + аренда $400 + логистика $500 + сервис $400 + прочее $300.
-const FIXED_MONTHLY_PER_UNIT = 1250 + 400 + 500 + 400 + 300;
+const NON_WAGE_MONTHLY = 400 + 500 + 400 + 300;
 // Оборудование, доставка и монтаж $212 600 из $470 000, срок 8 лет. Резерв и комиссия не амортизируются.
 const DEPRECIABLE_SHARE = 212600 / 470000;
 const DEPRECIATION_YEARS = 8;
@@ -89,7 +89,7 @@ function computeMetrics(params) {
     const {
         investment, pricePerLiter, operatingCostsPercent, investorSharePercent,
         period, baseCapacity, humidity, utilization, unitCount,
-        rampUpMonths, priceInflation, electricityCost, scenario
+        rampUpMonths, priceInflation, electricityCost, scenario, taxRate, monthlyWage
     } = params;
 
     const scen = SCENARIOS[scenario] || SCENARIOS.base;
@@ -121,11 +121,12 @@ function computeMetrics(params) {
         const annualRevenue = annualProduction * yearPrice;
         const electricity = annualProduction * KWH_PER_LITER * electricityRate;
         const packaging = annualProduction * PACKAGING_USD_PER_LITER;
-        const fixed = FIXED_MONTHLY_PER_UNIT * 12 * unitCount;
+        const wage = Number.isFinite(monthlyWage) ? monthlyWage : 400;
+        const fixed = (wage * 3 + NON_WAGE_MONTHLY) * 12 * unitCount;
         const extra = annualRevenue * (scen.extraRevenueCost || 0);
         const cashOpex = electricity + packaging + fixed + extra;
         const ebit = annualRevenue - cashOpex - annualDepreciation;
-        const tax = Math.max(0, ebit) * CORPORATE_TAX;
+        const tax = Math.max(0, ebit) * (Number.isFinite(taxRate) ? taxRate : CORPORATE_TAX);
         const netProfit = ebit - tax;
         const investorProfit = netProfit * (investorSharePercent / 100);
 
@@ -153,10 +154,11 @@ function computeMetrics(params) {
     let breakevenDays = Infinity;
     const yearProd = dailyProduction * daysPerYear * unitCount;
     const yearRevenue = yearProd * effectivePrice;
-    const yearCash = yearProd * KWH_PER_LITER * electricityRate + yearProd * PACKAGING_USD_PER_LITER + FIXED_MONTHLY_PER_UNIT * 12 * unitCount;
+    const wageYear = Number.isFinite(monthlyWage) ? monthlyWage : 400;
+    const yearCash = yearProd * KWH_PER_LITER * electricityRate + yearProd * PACKAGING_USD_PER_LITER + (wageYear * 3 + NON_WAGE_MONTHLY) * 12 * unitCount;
     const contributionPerLiter = effectivePrice - KWH_PER_LITER * electricityRate - PACKAGING_USD_PER_LITER;
     if (contributionPerLiter > 0) {
-        const fixedAndCapital = FIXED_MONTHLY_PER_UNIT * 12 * unitCount + annualDepreciation;
+        const fixedAndCapital = (wageYear * 3 + NON_WAGE_MONTHLY) * 12 * unitCount + annualDepreciation;
         breakevenDays = (fixedAndCapital / contributionPerLiter) / (dailyProduction * unitCount || 1);
     }
 
@@ -208,7 +210,9 @@ function getCalculatorParams() {
         unitCount: parseInt(document.getElementById('unitCount')?.value, 10) || 1,
         rampUpMonths: numOr(document.getElementById('rampUpMonths')?.value, 0),
         priceInflation: numOr(document.getElementById('priceInflation')?.value, 0),
-        electricityCost: numOr(document.getElementById('electricityCost')?.value, 0.09),
+        electricityCost: numOr(window.AWC_PLACE?.elec, numOr(document.getElementById('electricityCost')?.value, 0.09)),
+        taxRate: Number.isFinite(window.AWC_PLACE?.tax) ? window.AWC_PLACE.tax / 100 : CORPORATE_TAX,
+        monthlyWage: Number.isFinite(window.AWC_PLACE?.wage) ? window.AWC_PLACE.wage : 400,
         scenario: currentScenario
     };
 }
@@ -233,6 +237,7 @@ function calculateROI() {
     set('ebitda', formatNumber(m.netMargin) + '%');
     const opexEl = document.getElementById('operatingCosts');
     if (opexEl) opexEl.value = formatNumber(m.effectiveOpex);
+    if (typeof renderCalcSource === 'function') renderCalcSource();
 
     const paybackEl = document.getElementById('paybackPeriod');
     if (paybackEl) {
@@ -310,13 +315,32 @@ function setWaterPrice(price) {
     calculateROI();
 }
 
-function setOperatingCostsByCountry(countryName) {
-    const el = document.getElementById('operatingCosts');
-    if (el && countryName) {
-        const costs = COUNTRY_OPERATING_COSTS[countryName] || DEFAULT_OPERATING_COSTS;
-        el.value = costs;
-        baseOperatingCosts = costs;
+function applyPlace(country, region) {
+    if (!country || !region) {
+        window.AWC_PLACE = null;
+        return;
     }
+    window.AWC_PLACE = {
+        iso: country.iso,
+        region: region.iso,
+        humidity: region.humidity,
+        water: country.water,
+        elec: country.elec,
+        tax: country.tax,
+        wage: country.wage,
+        flags: country.flags || {}
+    };
+    const elec = document.getElementById('electricityCost');
+    if (elec && country.elec != null) elec.value = country.elec;
+    if (country.water != null) {
+        currentWaterPrice = country.water;
+        const price = document.getElementById('pricePerLiter');
+        if (price) price.value = country.water;
+    }
+    currentHumidity = region.humidity ?? null;
+    const humidity = document.getElementById('humidityDisplay');
+    if (humidity) humidity.value = currentHumidity != null ? currentHumidity + '%' : '—';
+    if (typeof ensureNationalLanguage === 'function') ensureNationalLanguage(country);
 }
 
 function updateInvestmentFromCapacity() {
@@ -329,6 +353,24 @@ function updateInvestmentFromCapacity() {
     calculateROI();
 }
 
+function fillRegionSelect(iso) {
+    const regionSelect = document.getElementById('regionSelect');
+    const country = awcCountry(iso);
+    const lang = window.currentLang || 'ru';
+    const prev = regionSelect.value;
+    regionSelect.innerHTML = `<option value="">${getSelectRegionText('region')}</option>`;
+    const rows = (window.AWC_REGIONS[iso] || []).slice().sort((a, b) => awcPlaceName(a, lang, country?.lang).localeCompare(awcPlaceName(b, lang, country?.lang)));
+    rows.forEach(region => {
+        const opt = document.createElement('option');
+        opt.value = region.iso;
+        const ht = region.humidity != null ? `${region.humidity}%` : '—';
+        opt.textContent = `${awcPlaceName(region, lang, country?.lang)} (${ht})`;
+        regionSelect.appendChild(opt);
+    });
+    regionSelect.disabled = rows.length === 0;
+    if (prev && rows.some(r => r.iso === prev)) regionSelect.value = prev;
+}
+
 function initLocationSelects() {
     refreshCountrySelect();
     if (window._locationSelectsInit) return;
@@ -339,41 +381,34 @@ function initLocationSelects() {
     if (!countrySelect || !regionSelect) return;
 
     countrySelect.addEventListener('change', function () {
-        const locations = getLocationsData();
-        const sel = this.value;
+        const iso = this.value;
         regionSelect.innerHTML = `<option value="">${getSelectRegionText('region')}</option>`;
-        regionSelect.disabled = !sel;
-        if (sel && locations[sel]) {
-            Object.keys(locations[sel].regions).sort().forEach(rname => {
-                const r = locations[sel].regions[rname];
-                const opt = document.createElement('option');
-                opt.value = rname;
-                const ht = r?.humidity != null ? `${r.humidity}%` : '—';
-                opt.textContent = `${rname} (${ht})`;
-                regionSelect.appendChild(opt);
-            });
-            setOperatingCostsByCountry(sel);
-            if (typeof updateMap === 'function') updateMap(sel, null);
-        } else {
-            if (typeof initMap === 'function') initMap();
+        regionSelect.disabled = true;
+        window.AWC_PLACE = null;
+        currentHumidity = null;
+        if (!iso) {
+            calculateROI();
+            return;
         }
-        setHumidity(null);
-        setWaterPrice(null);
+        loadRegions(iso).then(() => {
+            fillRegionSelect(iso);
+            if (typeof updateMap === 'function') updateMap(iso, null);
+            calculateROI();
+        });
     });
 
     regionSelect.addEventListener('change', function () {
-        const locations = getLocationsData();
-        const sel = countrySelect.value;
-        const reg = this.value;
-        if (sel && reg && locations[sel]?.regions[reg]) {
-            const r = locations[sel].regions[reg];
-            setHumidity(r.humidity ?? null);
-            if (r.waterPriceUsd1L != null) setWaterPrice(r.waterPriceUsd1L);
-            if (typeof updateMap === 'function') updateMap(sel, reg);
+        const iso = countrySelect.value;
+        const country = awcCountry(iso);
+        const region = (window.AWC_REGIONS[iso] || []).find(r => r.iso === this.value);
+        if (country && region) {
+            applyPlace(country, region);
+            if (typeof updateMap === 'function') updateMap(iso, region.iso);
         } else {
-            setHumidity(null);
-            setWaterPrice(null);
+            window.AWC_PLACE = null;
+            currentHumidity = null;
         }
+        calculateROI();
     });
 }
 
@@ -381,15 +416,19 @@ function refreshCountrySelect() {
     const countrySelect = document.getElementById('countrySelect');
     if (!countrySelect) return;
     const prev = countrySelect.value;
-    const locations = getLocationsData();
+    const lang = window.currentLang || 'ru';
+    const rows = awcCountries().slice().sort((a, b) => awcPlaceName(a, lang, a.lang).localeCompare(awcPlaceName(b, lang, b.lang)));
     countrySelect.innerHTML = `<option value="">${getSelectRegionText('country')}</option>`;
-    Object.keys(locations).sort().forEach(name => {
+    rows.forEach(country => {
         const opt = document.createElement('option');
-        opt.value = name;
-        opt.textContent = name;
+        opt.value = country.iso;
+        opt.textContent = awcPlaceName(country, lang, country.lang);
         countrySelect.appendChild(opt);
     });
-    if (prev && locations[prev]) countrySelect.value = prev;
+    if (prev && awcCountry(prev)) {
+        countrySelect.value = prev;
+        fillRegionSelect(prev);
+    }
 }
 
 function getSelectRegionText(type) {
