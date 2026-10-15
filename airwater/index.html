@@ -221,27 +221,29 @@
                             </div>
                             <div class="input-group">
                                 <label data-i18n="calculator.utilization">Загрузка мощности (%)</label>
-                                <input type="number" id="capacityUtilization" min="50" max="100" step="5" value="80">
+                                <input type="number" id="capacityUtilization" min="50" max="100" step="5" value="100">
                             </div>
                         </div>
                         <div class="input-row-2">
                             <div class="input-group">
-                                <label data-i18n="calculator.operating">Операционные расходы (%)</label>
-                                <input type="number" id="operatingCosts" min="20" max="90" step="5" value="75">
+                                <label data-i18n="calculator.operating">Денежные расходы, % выручки</label>
+                                <input type="text" id="operatingCosts" value="—" readonly>
+                                <small data-i18n="calculator.operating.note">Электричество, тара, люди, аренда. Считается само, не задаётся процентом</small>
                             </div>
                             <div class="input-group">
                                 <label data-i18n="calculator.electricity">Электроэнергия ($/кВт·ч)</label>
-                                <input type="number" id="electricityCost" min="0.05" max="0.5" step="0.01" value="0.12">
+                                <input type="number" id="electricityCost" min="0" max="0.5" step="0.01" value="0.09">
+                                <small data-i18n="calculator.electricity.note">65 кВт на установку 5 000 л/сут, 0,31 кВт·ч на литр</small>
                             </div>
                         </div>
                         <div class="input-row-2">
                             <div class="input-group">
                                 <label data-i18n="calculator.rampUp">Ramp-up (мес.)</label>
-                                <input type="number" id="rampUpMonths" min="0" max="12" step="1" value="3">
+                                <input type="number" id="rampUpMonths" min="0" max="12" step="1" value="0">
                             </div>
                             <div class="input-group">
                                 <label data-i18n="calculator.inflation">Инфляция цены (%/год)</label>
-                                <input type="number" id="priceInflation" min="0" max="15" step="0.5" value="3">
+                                <input type="number" id="priceInflation" min="0" max="15" step="0.5" value="0">
                             </div>
                         </div>
                         <div class="input-row-2">
@@ -644,7 +646,7 @@
     <script src="country_regions.js"></script>
     <script src="locations.js"></script>
     <script src="i18n.js"></script>
-    <script src="calculator.js"></script>
+    <script src="calculator.js?v=4"></script>
     <script src="comparison.js"></script>
     <script src="wizard.js"></script>
     <script src="chart.js"></script>
@@ -669,7 +671,9 @@
         setTimeout(() => {
             const rs = document.getElementById('regionSelect');
             if (rs) { rs.value = p.region; rs.dispatchEvent(new Event('change')); }
-            document.getElementById('operatingCosts').value = 60;
+            document.getElementById('capacityUtilization').value = 100;
+            document.getElementById('rampUpMonths').value = 0;
+            document.getElementById('priceInflation').value = 0;
             document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
             calculateROI();
         }, 80);

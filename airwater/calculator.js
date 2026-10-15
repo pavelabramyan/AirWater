@@ -16,10 +16,22 @@ const COUNTRY_OPERATING_COSTS = {
 const DEFAULT_OPERATING_COSTS = 75;
 
 const SCENARIOS = {
-    conservative: { priceMult: 0.85, opexAdd: 10, utilization: 70, labelKey: 'calculator.scenario.conservative' },
-    base:         { priceMult: 1.0,  opexAdd: 0,  utilization: 80, labelKey: 'calculator.scenario.base' },
-    optimistic:   { priceMult: 1.10, opexAdd: -10, utilization: 90, labelKey: 'calculator.scenario.optimistic' }
+    conservative: { priceMult: 0.85, extraRevenueCost: 0.08, labelKey: 'calculator.scenario.conservative' },
+    base:         { priceMult: 1.0,  extraRevenueCost: 0,    labelKey: 'calculator.scenario.base' },
+    optimistic:   { priceMult: 1.10, extraRevenueCost: 0,    labelKey: 'calculator.scenario.optimistic' }
 };
+
+// Паспорт установки в бизнес-плане: 5 000 л/сут при 80% влажности, 65 кВт.
+const RATED_HUMIDITY = 80;
+const KWH_PER_LITER = (65 * 24) / 5000;
+// Тара $0,03/л вместо $800/мес из сметы: на 3 900 л/сут это было бы $0,007/л, бутылка 0,5–5 л столько не стоит.
+const PACKAGING_USD_PER_LITER = 0.03;
+// Верх вилки зарплат из плана ($350+$600+$300) + аренда $400 + логистика $500 + сервис $400 + прочее $300.
+const FIXED_MONTHLY_PER_UNIT = 1250 + 400 + 500 + 400 + 300;
+// Оборудование, доставка и монтаж $212 600 из $470 000, срок 8 лет. Резерв и комиссия не амортизируются.
+const DEPRECIABLE_SHARE = 212600 / 470000;
+const DEPRECIATION_YEARS = 8;
+const CORPORATE_TAX = 0.22;
 
 let currentHumidity = null;
 let currentWaterPrice = null;
@@ -48,9 +60,9 @@ function getMonthsText() {
 // ─── Влажность → литры ───────────────────────────────────────
 function humidityToProduction(baseCapacity, humidity) {
     if (humidity === null || humidity <= 0) return baseCapacity;
-    // Эффективность: при 100% влажности = 100%, при 50% = ~75% (не линейно)
-    const efficiency = 0.5 + (humidity / 100) * 0.5;
-    return Math.round(baseCapacity * efficiency);
+    // Паспорт уже задан при 80% влажности. При 78% это 4 875 л/сут, не 78% от паспорта.
+    const factor = Math.min(1, humidity / RATED_HUMIDITY);
+    return Math.round(baseCapacity * factor);
 }
 
 function updateHumidityVisual(baseCapacity, humidity, dailyProduction) {
@@ -63,10 +75,10 @@ function updateHumidityVisual(baseCapacity, humidity, dailyProduction) {
     if (formula) {
         const lang = window.currentLang || 'ru';
         const texts = {
-            ru: `${formatNumber(baseCapacity)} л/сут (номинал) × ${pct}% влажности → ${formatNumber(dailyProduction)} л/сут`,
-            en: `${formatNumber(baseCapacity)} L/day (nominal) × ${pct}% humidity → ${formatNumber(dailyProduction)} L/day`,
-            zh: `${formatNumber(baseCapacity)} 升/天（额定）× ${pct}% 湿度 → ${formatNumber(dailyProduction)} 升/天`,
-            es: `${formatNumber(baseCapacity)} L/día (nominal) × ${pct}% humedad → ${formatNumber(dailyProduction)} L/día`
+            ru: `${formatNumber(baseCapacity)} л/сут при 80% → ${formatNumber(dailyProduction)} л/сут при ${pct}%`,
+            en: `${formatNumber(baseCapacity)} L/day at 80% → ${formatNumber(dailyProduction)} L/day at ${pct}%`,
+            zh: `${formatNumber(baseCapacity)} 升/天（80%湿度）→ ${formatNumber(dailyProduction)} 升/天（${pct}%）`,
+            es: `${formatNumber(baseCapacity)} L/día al 80% → ${formatNumber(dailyProduction)} L/día al ${pct}%`
         };
         formula.textContent = humidity !== null ? (texts[lang] || texts.en) : '—';
     }
@@ -82,18 +94,16 @@ function computeMetrics(params) {
 
     const scen = SCENARIOS[scenario] || SCENARIOS.base;
     const effectivePrice = pricePerLiter * scen.priceMult;
-    const effectiveOpex = Math.max(20, Math.min(95, operatingCostsPercent + scen.opexAdd));
-    const effectiveUtil = scen.utilization > 0 ? scen.utilization : utilization;
+    const effectiveUtil = utilization;
+    const electricityRate = Number.isFinite(electricityCost) ? electricityCost : 0.09;
 
     const nominalDaily = humidityToProduction(baseCapacity, humidity);
     const dailyProduction = Math.round(nominalDaily * (effectiveUtil / 100));
     const totalInvestment = investment * unitCount;
-
-    // Электроэнергия: ~0.5 кВт·ч/л, влияет на opex
-    const elecCostAnnual = dailyProduction * 365 * 0.5 * electricityCost * unitCount;
     const daysPerYear = 365;
+    const annualDepreciation = totalInvestment * DEPRECIABLE_SHARE / DEPRECIATION_YEARS;
 
-    let totalRevenue = 0, totalOpex = 0, totalProfit = 0;
+    let totalRevenue = 0, totalOpex = 0, totalNet = 0, totalProfit = 0;
     const cashFlows = [-totalInvestment];
     let cumulative = -totalInvestment;
 
@@ -101,21 +111,27 @@ function computeMetrics(params) {
         const inflMult = Math.pow(1 + priceInflation / 100, y - 1);
         const yearPrice = effectivePrice * inflMult;
 
-        let yearDays = daysPerYear;
         let yearDailyProd = dailyProduction;
         if (y === 1 && rampUpMonths > 0) {
             const rampFactor = Math.max(0.3, 1 - rampUpMonths / 24);
             yearDailyProd = Math.round(dailyProduction * rampFactor);
         }
 
-        const annualProduction = yearDailyProd * yearDays * unitCount;
+        const annualProduction = yearDailyProd * daysPerYear * unitCount;
         const annualRevenue = annualProduction * yearPrice;
-        const operatingCosts = annualRevenue * (effectiveOpex / 100) + elecCostAnnual;
-        const annualProfit = annualRevenue - operatingCosts;
-        const investorProfit = annualProfit * (investorSharePercent / 100);
+        const electricity = annualProduction * KWH_PER_LITER * electricityRate;
+        const packaging = annualProduction * PACKAGING_USD_PER_LITER;
+        const fixed = FIXED_MONTHLY_PER_UNIT * 12 * unitCount;
+        const extra = annualRevenue * (scen.extraRevenueCost || 0);
+        const cashOpex = electricity + packaging + fixed + extra;
+        const ebit = annualRevenue - cashOpex - annualDepreciation;
+        const tax = Math.max(0, ebit) * CORPORATE_TAX;
+        const netProfit = ebit - tax;
+        const investorProfit = netProfit * (investorSharePercent / 100);
 
         totalRevenue += annualRevenue;
-        totalOpex += operatingCosts;
+        totalOpex += cashOpex;
+        totalNet += netProfit;
         totalProfit += investorProfit;
         cashFlows.push(investorProfit);
         cumulative += investorProfit;
@@ -123,24 +139,32 @@ function computeMetrics(params) {
 
     const avgAnnualRevenue = totalRevenue / period;
     const avgInvestorProfit = totalProfit / period;
+    const avgCashOpex = totalOpex / period;
+    const avgNetProfit = totalNet / period;
     const roiPercent = totalInvestment > 0 ? (avgInvestorProfit / totalInvestment) * 100 : 0;
     const paybackYears = avgInvestorProfit > 0 ? totalInvestment / avgInvestorProfit : Infinity;
-    const ebitdaMargin = avgAnnualRevenue > 0 ? ((avgAnnualRevenue - avgAnnualRevenue * effectiveOpex / 100) / avgAnnualRevenue) * 100 : 0;
+    const ebitdaMargin = avgAnnualRevenue > 0 ? ((avgAnnualRevenue - avgCashOpex) / avgAnnualRevenue) * 100 : 0;
+    const netMargin = avgAnnualRevenue > 0 ? (avgNetProfit / avgAnnualRevenue) * 100 : 0;
+    const effectiveOpex = avgAnnualRevenue > 0 ? (avgCashOpex / avgAnnualRevenue) * 100 : 0;
 
     const npv = calcNPV(cashFlows, 0.12);
     const irr = calcIRR(cashFlows);
 
     let breakevenDays = Infinity;
-    if (effectivePrice > 0 && effectiveOpex < 100 && investorSharePercent > 0) {
-        const profitPerLiter = effectivePrice * (1 - effectiveOpex / 100) * (investorSharePercent / 100);
-        const breakevenLiters = totalInvestment / profitPerLiter;
-        breakevenDays = dailyProduction > 0 ? breakevenLiters / (dailyProduction * unitCount) : Infinity;
+    const yearProd = dailyProduction * daysPerYear * unitCount;
+    const yearRevenue = yearProd * effectivePrice;
+    const yearCash = yearProd * KWH_PER_LITER * electricityRate + yearProd * PACKAGING_USD_PER_LITER + FIXED_MONTHLY_PER_UNIT * 12 * unitCount;
+    const contributionPerLiter = effectivePrice - KWH_PER_LITER * electricityRate - PACKAGING_USD_PER_LITER;
+    if (contributionPerLiter > 0) {
+        const fixedAndCapital = FIXED_MONTHLY_PER_UNIT * 12 * unitCount + annualDepreciation;
+        breakevenDays = (fixedAndCapital / contributionPerLiter) / (dailyProduction * unitCount || 1);
     }
 
     return {
         dailyProduction, nominalDaily, effectivePrice, effectiveOpex, effectiveUtil,
         totalInvestment, avgAnnualRevenue, avgInvestorProfit, roiPercent, paybackYears,
-        totalProfit, npv, irr, ebitdaMargin, breakevenDays, cashFlows, cumulative
+        totalProfit, npv, irr, ebitdaMargin, netMargin, avgCashOpex, breakevenDays, cashFlows, cumulative,
+        yearRevenue, yearCash
     };
 }
 
@@ -164,22 +188,27 @@ function calcIRR(cashFlows) {
     return rate * 100;
 }
 
+function numOr(raw, fallback) {
+    const n = parseFloat(raw);
+    return Number.isFinite(n) ? n : fallback;
+}
+
 function getCalculatorParams() {
     const capacitySelect = document.getElementById('productionCapacity');
     const baseCapacity = capacitySelect ? parseInt(capacitySelect.value) : 5000;
     return {
-        investment: parseFloat(document.getElementById('investmentAmount')?.value) || 470000,
-        pricePerLiter: parseFloat(document.getElementById('pricePerLiter')?.value) || 0.5,
-        operatingCostsPercent: parseFloat(document.getElementById('operatingCosts')?.value) || 75,
-        investorSharePercent: parseFloat(document.getElementById('investorShare')?.value) || 50,
-        period: parseFloat(document.getElementById('period')?.value) || 5,
+        investment: numOr(document.getElementById('investmentAmount')?.value, 470000),
+        pricePerLiter: numOr(document.getElementById('pricePerLiter')?.value, 0.5),
+        operatingCostsPercent: numOr(document.getElementById('operatingCosts')?.value, 75),
+        investorSharePercent: numOr(document.getElementById('investorShare')?.value, 50),
+        period: numOr(document.getElementById('period')?.value, 5),
         baseCapacity,
         humidity: currentHumidity,
-        utilization: parseFloat(document.getElementById('capacityUtilization')?.value) || 80,
-        unitCount: parseInt(document.getElementById('unitCount')?.value) || 1,
-        rampUpMonths: parseInt(document.getElementById('rampUpMonths')?.value) || 3,
-        priceInflation: parseFloat(document.getElementById('priceInflation')?.value) || 3,
-        electricityCost: parseFloat(document.getElementById('electricityCost')?.value) || 0.12,
+        utilization: numOr(document.getElementById('capacityUtilization')?.value, 100),
+        unitCount: parseInt(document.getElementById('unitCount')?.value, 10) || 1,
+        rampUpMonths: numOr(document.getElementById('rampUpMonths')?.value, 0),
+        priceInflation: numOr(document.getElementById('priceInflation')?.value, 0),
+        electricityCost: numOr(document.getElementById('electricityCost')?.value, 0.09),
         scenario: currentScenario
     };
 }
@@ -192,7 +221,7 @@ function calculateROI() {
     const prodInput = document.getElementById('dailyProduction');
     if (prodInput) prodInput.value = m.dailyProduction;
 
-    updateHumidityVisual(params.baseCapacity * params.unitCount, currentHumidity, m.dailyProduction);
+    updateHumidityVisual(params.baseCapacity * params.unitCount, currentHumidity, m.nominalDaily * params.unitCount);
 
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     set('roi', formatNumber(m.roiPercent) + '%');
@@ -201,7 +230,9 @@ function calculateROI() {
     set('totalProfit', formatCurrency(m.totalProfit));
     set('npv', formatCurrency(m.npv));
     set('irr', formatNumber(m.irr) + '%');
-    set('ebitda', formatNumber(m.ebitdaMargin) + '%');
+    set('ebitda', formatNumber(m.netMargin) + '%');
+    const opexEl = document.getElementById('operatingCosts');
+    if (opexEl) opexEl.value = formatNumber(m.effectiveOpex);
 
     const paybackEl = document.getElementById('paybackPeriod');
     if (paybackEl) {
